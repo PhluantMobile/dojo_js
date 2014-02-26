@@ -19,7 +19,7 @@ pcf = {
 	        return navigator.userAgent.match(/IEMobile/i);
 	    },
 	    any: function() {
-	        return (this.isMobile.Android() || this.isMobile.BlackBerry() || this.isMobile.iOS() || this.isMobile.Opera() || this.isMobile.Windows());
+	        return (this.Android() || this.BlackBerry() || this.iOS() || this.Opera() || this.Windows());
 	    }
 	},
 	isMraid: false,
@@ -94,7 +94,6 @@ pcf = {
 		}
 	},
 	geolocation: function(vars, callback){
-		console.log('in geolocation');
 		var varsExport = {
 			'url': this.webServiceUrl+'geolocation/export',
 			'method': 'GET',
@@ -107,7 +106,6 @@ pcf = {
 		this.ajax(varsExport, callback);
 	},
 	geolocation_prompt: function(failover, callback){
-		console.log('in geolocation prompt function');
 		var self = this;
 		navigator.geolocation.getCurrentPosition(function(position){
 			var location = {
@@ -117,7 +115,6 @@ pcf = {
             callback(location);
         },function(e){
         	if(failover){
-        		console.log(callback);
         		self.geolocation(false, callback);
         	}
         });
@@ -164,7 +161,7 @@ pcf = {
 		    mraid.setExpandProperties({useCustomClose:true});
 		    mraid.addEventListener('stateChange', function(){
 		        if(ph_adIsExpanded){
-		            self.closeCallback():
+		            self.closeCallback();
 		            adIsExpanded = false;
 		        }
 		    });
@@ -248,11 +245,7 @@ pcf = {
 		}
 		if(this.isPhad){
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
-			console.log(vars);
-			console.log(typeof(vars.hide_close_btn));
 			if(typeof(vars.hide_close_btn) != 'undefined'){
-				console.log('defined');
-				console.log(vars.hide_close_btn);
 				if(vars.hide_close_btn){
 					phVidClose.style.display = 'none';
 				}
