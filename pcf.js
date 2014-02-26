@@ -147,11 +147,6 @@ pcf = {
 			return document.getElementById(id);
 		}
 	},
-	import: function(vars){
-		for(var i in vars){
-			this[i] = vars[i];
-		}
-	},
 	init: function(callback){
 		this.closeCallback = callback;
 		this.iosVersion = this.iosVersionCheck();
@@ -200,6 +195,11 @@ pcf = {
 			return false;
 		}
 	},
+	sessionImport: function(vars){
+		for(var i in vars){
+			this[i] = vars[i];
+		}
+	},
 	track: function(vars){
 		if(this.isPhad){
 			ph.u.track('interaction', 'cint='+vars.name, this.sessionID);
@@ -244,6 +244,13 @@ pcf = {
 			properties.style.width = properties.style.height.replace('px','')*(16/9)+'px';
 		}
 		if(this.isPhad){
+			console.log(vars);
+			console.log(this.campaignID);
+			console.log(this.executionID);
+			console.log(this.sessionID);
+			console.log(this.videoId);
+			console.log(typeof(ph));
+			console.log(typeof(ph.v));
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
 			if(typeof(vars.hide_close_btn) != 'undefined'){
 				if(vars.hide_close_btn){
