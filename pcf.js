@@ -141,9 +141,7 @@ pcf = {
 	video: function(vars){
 		var self = this;
 		this.videoPlaying = true;
-		console.log(vars.container_id);
 		this.videoId = vars.container_id;
-		console.log(this.videoId);
 		if(typeof(this.videoId) == 'string'){
 			this.videoId = this.gid(this.videoId);
 		}
@@ -177,6 +175,8 @@ pcf = {
 		}
 		if(this.isPhad){
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
+			console.log(vars);
+			console.log(typeof(vars.hide_close_btn));
 			if(typeof(vars.hide_close_btn) != 'undefined'){
 				console.log('defined');
 				console.log(vars.hide_close_btn);
