@@ -178,6 +178,8 @@ pcf = {
 		if(this.isPhad){
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
 			if(typeof(vars.hide_close_btn) != 'undefined'){
+				console.log('defined');
+				console.log(vars.hide_close_btn);
 				if(vars.hide_close_btn){
 					phVidClose.style.display = 'none';
 				}
