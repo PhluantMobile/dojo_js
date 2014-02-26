@@ -128,10 +128,12 @@ pcf = {
 		}
 	},
 	init: function(vars){
+		console.log('in init');
+		console.log(vars);
 		for(var i in vars){
 			this[i] = vars[i];
 		}
-	}
+	},
 	track: function(vars){
 		if(this.isPhad){
 			ph.u.track('interaction', 'cint='+vars.name, this.sessionID);
