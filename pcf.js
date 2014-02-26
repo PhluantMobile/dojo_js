@@ -165,7 +165,6 @@ pcf = {
 				properties.style[i] = vars.style[i];
 			}
 		}
-		console.log(properties);
 		if(properties.style.width == '0px' && properties.style.height == '0px'){
 			console.log('at least a height or a width for the video element or its parent element must be declared');
 			return false;
@@ -178,8 +177,10 @@ pcf = {
 		}
 		if(this.isPhad){
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
-			if(typeof(vars.hide_close_btn) == true){
-				phVidClose.style.display = 'none';
+			if(typeof(vars.hide_close_btn) != 'undefined'){
+				if(vars.hide_close_btn){
+					phVidClose.style.display = 'none';
+				}
 			}
 		}
 		else{
