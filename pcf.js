@@ -157,7 +157,6 @@ pcf = {
 		var self = this;
 		self.closeCallback = callback;
 		self.iosVersion = self.iosVersionCheck();
-		
 		if (typeof(mraid) != "undefined"){
 		    self.isMraid = true;
 		    mraid.setExpandProperties({useCustomClose:true});
@@ -251,13 +250,6 @@ pcf = {
 			properties.style.width = properties.style.height.replace('px','')*(16/9)+'px';
 		}
 		if(this.isPhad){
-			console.log(vars);
-			console.log(this.campaignID);
-			console.log(this.executionID);
-			console.log(this.sessionID);
-			console.log(this.videoId);
-			console.log(typeof(ph));
-			console.log(typeof(ph.v));
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
 			if(typeof(vars.hide_close_btn) != 'undefined'){
 				if(vars.hide_close_btn){
@@ -279,7 +271,6 @@ pcf = {
 		for(var i in properties.style){
 			ph_videoElement.style[i] = properties.style[i];
 		}
-		
 		setTimeout(function(){
 			ph_videoElement.play();
 		});
