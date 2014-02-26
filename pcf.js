@@ -2,6 +2,11 @@ pcf = {
 	isPhad: false,
 	videoPlaying: false,
 	videoId: null,
+	hashtag: null,
+	executionID: null,
+	campaignID: null,
+	sessionID: null,
+	gId: null,
 	webServiceUrl: 'http://lbs.phluant.com/web_services/',
 	ajax: function(vars, callback){
 		ajaxRequest = new XMLHttpRequest(); 
@@ -37,7 +42,7 @@ pcf = {
 	},
 	clickthru: function(vars){
 		if(this.isPhad){
-			ph.u.clickthru(vars.url, vars.name, sessionID);
+			ph.u.clickthru(vars.url, vars.name, this.sessionID);
 		}
 		else{
 			console.log(vars.name);
@@ -49,7 +54,7 @@ pcf = {
 			this.videoClose();
 		}
 		if(this.isPhad){
-			ph.t.close("MainPanel", sessionID);
+			ph.t.close("MainPanel", this.sessionID);
 		}
 		else{
 			console.log('contracting');
@@ -57,7 +62,7 @@ pcf = {
 	},
 	expand: function(vars){
 		if(this.isPhad){
-			ph.t.expand('MainPanel', sessionID, false, {'width' : vars.width, 'height' : vars.height});
+			ph.t.expand('MainPanel', this.sessionID, false, {'width' : vars.width, 'height' : vars.height});
 		}
 		else{
 			console.log('expanding to '+vars.width+'px width, '+vars.height+'px height.');
@@ -114,16 +119,22 @@ pcf = {
 		this.ajax(varsExport, callback);
 	},
 	gid: function(id){
+
 		if(this.isPhad){
-			return gId(id);
+			return this.gId(id);
 		}
 		else{
 			return document.getElementById(id);
 		}
 	},
+	init: function(vars){
+		for(var i in vars){
+			this[i] = vars[i];
+		}
+	}
 	track: function(vars){
 		if(this.isPhad){
-			ph.u.track('interaction', 'cint='+vars.name, sessionID);
+			ph.u.track('interaction', 'cint='+vars.name, this.sessionID);
 		}
 		else{
 			console.log(vars.name);
@@ -168,7 +179,7 @@ pcf = {
 			properties.style.width = properties.style.height.replace('px','')*(16/9)+'px';
 		}
 		if(this.isPhad){
-			ph.v.play(vars.video_url, vars.name, campaignID, executionID, sessionID, this.videoId);
+			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
 			if(typeof(vars.video_close_btn) == false){
 				phVidClose.style.display = 'none';
 			}
