@@ -1,4 +1,28 @@
 pcf = {
+	adIsExpanded: false,
+	closeCallback: null,
+	iosVersion: null,
+	isMobile: {
+	    Android: function() {
+	        return navigator.userAgent.match(/Android/i);
+	    },
+	    BlackBerry: function() {
+	        return navigator.userAgent.match(/BlackBerry/i);
+	    },
+	    iOS: function() {
+	        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+	    },
+	    Opera: function() {
+	        return navigator.userAgent.match(/Opera Mini/i);
+	    },
+	    Windows: function() {
+	        return navigator.userAgent.match(/IEMobile/i);
+	    },
+	    any: function() {
+	        return (this.isMobile.Android() || this.isMobile.BlackBerry() || this.isMobile.iOS() || this.isMobile.Opera() || this.isMobile.Windows());
+	    }
+	},
+	isMraid: false,
 	isPhad: false,
 	videoPlaying: false,
 	videoId: null,
@@ -59,6 +83,7 @@ pcf = {
 		else{
 			console.log('contracting');
 		}
+		this.closeCallback();
 	},
 	expand: function(vars){
 		if(this.isPhad){
@@ -125,9 +150,57 @@ pcf = {
 			return document.getElementById(id);
 		}
 	},
-	init: function(vars){
+	import: function(vars){
 		for(var i in vars){
 			this[i] = vars[i];
+		}
+	},
+	init: function(callback){
+		this.closeCallback = callback;
+		this.iosVersion = this.iosVersionCheck();
+		var self = this;
+		if (typeof(mraid) != "undefined"){
+		    isMraid = true;
+		    mraid.setExpandProperties({useCustomClose:true});
+		    mraid.addEventListener('stateChange', function(){
+		        if(ph_adIsExpanded){
+		            self.closeCallback():
+		            adIsExpanded = false;
+		        }
+		    });
+		    document.body.style.margin="0px";
+		    container.style.position="absolute";
+		    var newMetaTag = document.createElement('meta');
+		    newMetaTag.name = "viewport";
+		    newMetaTag.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";
+		    document.getElementsByTagName('head')[0].appendChild( newMetaTag );
+		}
+	},
+	iosVersionCheck: function() {
+	    var agent = window.navigator.userAgent,
+	        start = agent.indexOf( 'OS ' );
+	    if( ( agent.indexOf( 'iPhone' ) > -1 || agent.indexOf( 'iPad' ) > -1 ) && start > -1 ){
+	        return window.Number( agent.substr( start + 3, 3 ).replace( '_', '.' ) );
+	    }
+	    return 0;
+	},
+	queryString: function(jsonConvert){
+		var url = window.location.href;
+		if(url.indexOf('?') != -1){
+			var urlObj = new Object();
+			var qString = url.split('?');
+			var params = qString[1].split('&');
+			for(var i=0; i<params.length; i++){
+				var result = params[i].split('=');
+				urlObj[result[0]] = decodeURIComponent(result[1]);
+			}
+			if(jsonConvert){
+				urlObj = JSON.stringify(urlObj);
+			}
+			return urlObj;
+		}
+		else{
+			return false;
 		}
 	},
 	track: function(vars){
