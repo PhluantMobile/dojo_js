@@ -77,6 +77,9 @@ pcf = {
 		if(this.videoPlaying){
 			this.videoClose();
 		}
+		if(this.isMraid){
+			mraid.close();
+		}
 		if(this.isPhad){
 			ph.t.close("MainPanel", this.sessionID);
 		}
@@ -91,6 +94,9 @@ pcf = {
 		}
 		else{
 			console.log('expanding to '+vars.width+'px width, '+vars.height+'px height.');
+		}
+		if(this.isMraid){
+			this.adIsExpanded = true;
 		}
 	},
 	geolocation: function(vars, callback){
@@ -148,16 +154,17 @@ pcf = {
 		}
 	},
 	init: function(callback){
-		this.closeCallback = callback;
-		this.iosVersion = this.iosVersionCheck();
 		var self = this;
+		self.closeCallback = callback;
+		self.iosVersion = self.iosVersionCheck();
+		
 		if (typeof(mraid) != "undefined"){
-		    isMraid = true;
+		    self.isMraid = true;
 		    mraid.setExpandProperties({useCustomClose:true});
 		    mraid.addEventListener('stateChange', function(){
-		        if(ph_adIsExpanded){
+		        if(self.adIsExpanded){
 		            self.closeCallback();
-		            adIsExpanded = false;
+		            self.adIsExpanded = false;
 		        }
 		    });
 		    document.body.style.margin="0px";
