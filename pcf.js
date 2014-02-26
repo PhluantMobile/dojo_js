@@ -273,7 +273,7 @@ pcf = {
 		}
 		setTimeout(function(){
 			ph_videoElement.play();
-		});
+		},500);
 		 ph_videoElement.addEventListener('ended', function(){
 	        self.videoClose();
 	    });
