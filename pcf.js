@@ -89,8 +89,7 @@ pcf = {
 				'lat': position.coords.latitude,
 				'lng': position.coords.longitude
 			}
-			console.log(location);
-            vars.callback(location);
+            callback(location);
         },function(e){
         	if(failover){
         		console.log(callback);
@@ -119,7 +118,6 @@ pcf = {
 		this.ajax(varsExport, callback);
 	},
 	gid: function(id){
-
 		if(this.isPhad){
 			return this.gId(id);
 		}
@@ -128,8 +126,6 @@ pcf = {
 		}
 	},
 	init: function(vars){
-		console.log('in init');
-		console.log(vars);
 		for(var i in vars){
 			this[i] = vars[i];
 		}
@@ -182,7 +178,7 @@ pcf = {
 		}
 		if(this.isPhad){
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
-			if(typeof(vars.video_close_btn) == false){
+			if(typeof(vars.hide_close_btn) == true){
 				phVidClose.style.display = 'none';
 			}
 		}
