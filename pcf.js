@@ -135,12 +135,9 @@ pcf = {
 				'type': 'get_stores',
 			}
 		};
-		var required = ['campaign_id'];
-		for(var i=0; i<requried.length; i++){
-			if(typeof(vars[required[i]]) == 'undefined'){
-				console.log(required[i]+' is a required attribute for this function');
-				return false;
-			}
+		if(typeof(vars.campaign_id) == 'undefined'){
+			console.log('campaign_id is a required attribute for this function');
+			return false;
 		}
 		for(var i in vars){
 			varsExport.data[i] = vars[i];
@@ -156,6 +153,7 @@ pcf = {
 		}
 	},
 	gmaps_draw: function(vars){
+		console.log(vars);
 		var mapZoom = 10;
 		if(typeof(vars.map_zoom) != 'undefined'){
 			mapZoom = vars.map_zoom;
@@ -198,18 +196,6 @@ pcf = {
 		        });
 	        }
     	}
-	},
-	gmaps_init: function(callback){
-		if(this.isPhad){
-			ph.l.load(gmapsUrl);
-		}
-		else{
-			var gHead = document.getElementsByTagName('head').item(0);
-			var gScript= document.createElement("script");
-			gScript.type = "text/javascript";
-			gScript.src= gmapsUrl;
-			gHead.appendChild( gScript);
-		}
 	},
 	gmaps_geo: function(vars){
 		if(this.geocoder == null){
