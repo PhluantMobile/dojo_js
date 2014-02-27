@@ -1,6 +1,8 @@
 pcf = {
 	adIsExpanded: false,
 	closeCallback: null,
+	geocoder: null,
+	gmapsUrl: 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false',
 	iosVersion: null,
 	isMobile: {
 	    Android: function() {
@@ -152,6 +154,80 @@ pcf = {
 		else{
 			return document.getElementById(id);
 		}
+	},
+	gmaps_draw: function(vars){
+		var mapZoom = 10;
+		if(typeof(vars.map_zoom) != 'undefined'){
+			mapZoom = vars.map_zoom;
+		}
+		var mapOptions = {
+	        zoom: mapZoom,
+	        center: new google.maps.LatLng(vars.lat, vars.lng),
+	        disableDefaultUI: true,
+	        mapTypeId: google.maps.MapTypeId.ROADMAP
+	    };
+	    if(typeof(vars.map_id) == 'undefined'){
+	    	console.log('A map id must be specified');
+	    	return false;
+	    }
+	    else{
+	    	if(typeof(vars.map_id) == 'string'){
+	    		vars.map_id = this.gid(vars.map_id);
+	    	}
+	    }
+	    var map = new google.maps.Map(vars.map_id, mapOptions);
+	    for (var i in vars.markers) {
+	        var marker = vars.markers[i];
+	        var myLatLng = new google.maps.LatLng(marker.lat, marker.lng);
+	        var marker = new google.maps.Marker( {
+	            position: myLatLng,
+	            map: map,
+	            title: marker.title,
+	            zIndex: marker.zIndex
+	        } );
+	        if(typeof(marker.clickthru) != 'undefined'){
+	        	google.maps.event.addListener(marker, 'click', function() {
+		            var url = 'http://maps.google.com/?saddr='+vars.lat+','+vars.lng+'&daddr='+marker.lat+','+marker.lng;
+		            if(this.isPhad){
+		            	ph.u.clickthru(url, 'GoogleMaps', marker.clickthru.name, this.sessionID);
+		            }
+		            else{
+		            	console.log(marker.clickthru.name);
+		            	window.open(url, '_blank');
+		            }
+		        });
+	        }
+    	}
+	},
+	gmaps_init: function(callback){
+		if(this.isPhad){
+			ph.l.load(gmapsUrl);
+		}
+		else{
+			var gHead = document.getElementsByTagName('head').item(0);
+			var gScript= document.createElement("script");
+			gScript.type = "text/javascript";
+			gScript.src= gmapsUrl;
+			gHead.appendChild( gScript);
+		}
+	},
+	gmaps_geo: function(vars){
+		if(this.geocoder == null){
+			this.geocoder = new google.maps.Geocoder();
+		}
+		var self = this;
+		geocoder.geocode( { 'address': vars.address}, function(results, status) {
+			if(status == google.maps.GeocoderStatus.OK) {
+				vars.callback(results);
+	         }
+	         else{
+	         	if(typeof(vars.failover) != 'undefined'){
+	         		if(vars.failover){
+	         			self.geolocation(false, vars.callback);
+	         		}
+	         	}
+	         }
+	    });
 	},
 	init: function(callback){
 		var self = this;
