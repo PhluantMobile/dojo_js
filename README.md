@@ -1,22 +1,24 @@
 # Phluant Client Framework Library
 
-The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the PCF libraray is to provide our clients with a code base thiat works both inside and outside of our ad serving network, which will substantially reduce the amount of time our company needs to launch a rich media campaign.  It also provides a number of core functionalites that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so it will work independently of any other JavaScript framework library, i.e. jQuery.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  A list of items the framework supports is below.  
+The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the PCF libraray is to provide our clients with a code base thiat works both inside and outside of our ad serving network, which will substantially reduce the amount of time our company needs to launch a rich media campaign.  It also provides a number of core functionalites that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so it will work independently of any other JavaScript framework library, i.e. jQuery.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  A list of items this framework supports is below, with links to scroll to documented sections.  
 
-* Element ID referencing for namespacing with appropriate fallback
-* Expand
-* Contract
-* Clickthroughs
-* Custom trackers
-* Automatic MRAID detection and handling
-* HTML5 video
-* All geolocation and weather API calls to Phluant's resources
-* HTML5 geolocation prompt with optional IP lookup as a fallback
-* Store locator API call
-* Google Maps
-* Standard AJAX calls
-* Mobile and platform specific detection
-* iOS version detection (namely for iOS 7)
-* [Query string detection](#query-sring-detection)
+* [Element ID referencing](#markdown-header-element-id-referencing)
+* [Initialization](#markdown-header-initialization)
+* [Automatic MRAID detection and handling](#markdown-header-initialization)
+* [Expands](#markdown-header-expands)
+* [Contracts](#markdown-header-contracts)
+* [Clickthroughs](#markdown-header-clickthroughs)
+* [Custom trackers](#markdown-header-custom-trackers)
+* [HTML5 video](#markdown-header-html5-video)
+* [All geolocation and weather API calls to Phluant's resources](#markdown-header-geolocation-weather-api-calls)
+* [HTML5 geolocation prompt with optional IP lookup as a fallback](#markdown-header-geolocation-prompt)
+* [Store locator API call](#markdown-header-store-locator-api-call)
+* [Google Maps](#markdown-header-google-maps)
+* [Standard AJAX calls](#markdown-header-standard-ajax-calls)
+* [Mobile and platform specific detection](#)
+* [iOS version detection (namely for iOS 7)](#markdown-header-ios-version-detection)
+* [Query string detection](#markdown-header-query-sring-detection)
+* [Technical Support](#markdown-header-technical-support)
 
 ---
 
@@ -53,7 +55,7 @@ _This step is strongly recommended, and is compatible when being used with JS li
 
 ### Initialization
 
-This step initializes the framework for expandable ads and interstitial/banner ads that need close functionalty.  The developer will need to ensure an appropriate callback function is designated for contracting/closing the ad.
+This step initializes the framework for expandable ads and interstitial/banner ads that need close functionalty.  The developer will need to ensure an appropriate callback function is designated for contracting/closing the ad.  This step also initializes any MRAID specific functionality if the MRAID framework is detected.
 
 Example:
 
@@ -678,7 +680,10 @@ console.log(query_string);
 
 ---
 
+### Technical Support
 
+Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's issue tracker for general feedback, feature requests, bug reports, tech support questions, etc.  
 
+---
 
-(c)2014 Phluant Mobile, Inc.  All rights reserved
+(c)2014 Phluant Mobile, Inc.  All rights reserved.  This framework library is intended for use by Phluant Mobile clients for designing and developing mobile advertisements intended for eventual use in Phluant's ad serving network.  All other use is strictly prohibited.
