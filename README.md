@@ -668,7 +668,7 @@ console.log(query_string);
 
 ### Technical Support
 
-Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  
+Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  
 
 ---
 
