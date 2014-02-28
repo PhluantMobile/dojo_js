@@ -206,6 +206,7 @@ section2.addEventListener('click', function(){
 This step ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a video container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```pcf.video_close()``` can be utlized.
 
 Additional Notes:
+
 * The video_url spec can be either relative or absolute.
 * Both video_url and container_id specs are required.  All other specs are optional.
 * Default video attributes for displaying controls is true and inline (i.e. webkit-playsinline) are false.  These can be overwirtten.
@@ -248,6 +249,7 @@ Phluant maintains a web based application capable of providing geolocation and w
 #### Geolocation
 
 Geolocation Lookup Methods:
+
 * IP Address (default)
 * Postal Code
 * City/Postal by Geo
@@ -335,6 +337,7 @@ _For a comphrehensive address lookup, please see the Google Maps geocoding funct
 #### Weather
 
 Weather Lookup Methods: 
+
 * IP address (default)
 * Postal code
 * Lat/lng
@@ -429,6 +432,7 @@ The weather data returned can vary based on custom input values, but an example 
 Phluant provides certain clients the ability to pull store location information information for various ads, namely to display the closest number of stores in relation to the user.  If your campaign has been set up with this feature, this API call will work for you.  All lookups are done by AJAX and require the developer to specifiy a callback function to return the data.
 
 Lookup Methods: 
+
 * IP address (default)
 * Lat/lng
 
