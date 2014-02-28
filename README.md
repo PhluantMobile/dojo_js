@@ -534,6 +534,7 @@ pcf.gmaps_geo({
 	'callback': gmapsReturn
 });
 </script>
+```
 
 For more information, please visit the about the [Google Maps Geocoder API page](https://developers.google.com/maps/documentation/javascript/geocoding).
 
