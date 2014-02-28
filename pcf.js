@@ -1,8 +1,8 @@
+/*Phluant Client Framework v0.9 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 pcf = {
 	adIsExpanded: false,
 	closeCallback: null,
 	geocoder: null,
-	gmapsUrl: 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false',
 	iosVersion: null,
 	isMobile: {
 	    Android: function() {
@@ -34,7 +34,7 @@ pcf = {
 	sessionID: null,
 	gId: null,
 	webServiceUrl: 'http://lbs.phluant.com/web_services/',
-	ajax: function(vars, callback){
+	ajax: function(vars){
 		ajaxRequest = new XMLHttpRequest(); 
 		var sendData = '';
 		if(typeof(vars.data) != 'undefined'){
@@ -42,7 +42,7 @@ pcf = {
 				if(sendData != ''){
 					sendData += '&';
 				}
-				sendData += i+'='+vars.data[i];
+				sendData += i+'='+encodeURIComponent(vars.data[i]);
 			}
 		}
 		if(vars.method == 'GET' && sendData != ''){
@@ -58,10 +58,15 @@ pcf = {
 		}
 		ajaxRequest.onreadystatechange = function(){
 			if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
-            	callback(ajaxRequest.responseText);
+				if(typeof(vars.js_object) != 'undefined'){
+					if(vars.js_object){
+						ajaxRequest.responseText = JSON.stringify(ajaxRequest.responseText);
+					}
+				}
+            	vars.callback(ajaxRequest.responseText);
         	}
         	else{
-        		callback(false);
+        		vars.callback(false);
         	}
 		}
     	
@@ -77,7 +82,7 @@ pcf = {
 	},
 	contract: function(){
 		if(this.videoPlaying){
-			this.videoClose();
+			this.video_close();
 		}
 		if(this.isMraid){
 			mraid.close();
@@ -101,48 +106,54 @@ pcf = {
 			this.adIsExpanded = true;
 		}
 	},
-	geolocation: function(vars, callback){
+	geolocation: function(vars){
 		var varsExport = {
 			'url': this.webServiceUrl+'geolocation/export',
 			'method': 'GET',
+			'callback': vars.callback,
+			'js_object': true,
 		};
-		if(typeof(vars) == 'object'){
-			for(var i in vars){
-				varsExport.data[i] = vars[i];
+		if(typeof(vars.data) == 'object'){
+			for(var i in vars.data){
+				varsExport.data[i] = vars.data[i];
 			}
 		}
-		this.ajax(varsExport, callback);
+		this.ajax(varsExport);
 	},
-	geolocation_prompt: function(failover, callback){
+	geolocation_prompt: function(vars){
 		var self = this;
 		navigator.geolocation.getCurrentPosition(function(position){
 			var location = {
 				'lat': position.coords.latitude,
 				'lng': position.coords.longitude
 			}
-            callback(location);
+            vars.callback(location);
         },function(e){
-        	if(failover){
-        		self.geolocation(false, callback);
+        	if(vars.failover){
+        		self.geolocation(vars);
         	}
         });
 	},
-	get_stores: function(vars, callback){
+	get_stores: function(vars){
 		var varsExport = {
 			'url': this.webServiceUrl+'phluant/export',
 			'method': 'GET',
+			'callback': vars.callback,
+			'js_object': true,
 			'data': {
-				'type': 'get_stores',
+				'limit': 3,
+				'dist': 30
 			}
 		};
-		if(typeof(vars.campaign_id) == 'undefined'){
+		if(typeof(vars.data.campaign_id) == 'undefined'){
 			console.log('campaign_id is a required attribute for this function');
 			return false;
 		}
-		for(var i in vars){
-			varsExport.data[i] = vars[i];
+		for(var i in vars.data){
+			varsExport.data[i] = vars.data[i];
 		}
-		this.ajax(varsExport, callback);
+		varsExport.data.type = 'get_stores';
+		this.ajax(varsExport);
 	},
 	gid: function(id){
 		if(this.isPhad){
@@ -153,7 +164,6 @@ pcf = {
 		}
 	},
 	gmaps_draw: function(vars){
-		console.log(vars);
 		var mapZoom = 10;
 		if(typeof(vars.map_zoom) != 'undefined'){
 			mapZoom = vars.map_zoom;
@@ -174,27 +184,37 @@ pcf = {
 	    	}
 	    }
 	    var map = new google.maps.Map(vars.map_id, mapOptions);
-	    for (var i in vars.markers) {
-	        var marker = vars.markers[i];
-	        var myLatLng = new google.maps.LatLng(marker.lat, marker.lng);
-	        var marker = new google.maps.Marker( {
-	            position: myLatLng,
-	            map: map,
-	            title: marker.title,
-	            zIndex: marker.zIndex
-	        } );
-	        if(typeof(marker.clickthru) != 'undefined'){
-	        	google.maps.event.addListener(marker, 'click', function() {
-		            var url = 'http://maps.google.com/?saddr='+vars.lat+','+vars.lng+'&daddr='+marker.lat+','+marker.lng;
-		            if(this.isPhad){
-		            	ph.u.clickthru(url, 'GoogleMaps', marker.clickthru.name, this.sessionID);
-		            }
-		            else{
-		            	console.log(marker.clickthru.name);
-		            	window.open(url, '_blank');
-		            }
-		        });
-	        }
+	    if(typeof(vars.markers) != 'undefined'){
+		    for (var i in vars.markers) {
+		        var marker = vars.markers[i];
+		        var myLatLng = new google.maps.LatLng(marker.lat, marker.lng);
+		        var defaults = {
+		        	position: myLatLng,
+		        	map: map,
+		        };
+		        var ignore = ['lat', 'lng', 'clickthru'];
+		        for(var m in marker){
+		        	if(ignore.indexOf(marker[m]) != -1){
+		        		defaults[m] = marker[m];
+		        	}
+		        }
+		        var newMarker = new google.maps.Marker(defaults);
+		        if(typeof(marker.clickthru) != 'undefined'){
+		        	google.maps.event.addListener(newMarker, 'click', function() {
+			            var url = 'http://maps.google.com/?saddr='+vars.lat+','+vars.lng+'&daddr='+marker.lat+','+marker.lng;
+			            if(typeof(marker.clickthru.url) != 'undefined'){
+			            	url = marker.clickthru.url;
+			            }
+			            if(this.isPhad){
+			            	ph.u.clickthru(url, 'GoogleMaps', marker.clickthru.name, this.sessionID);
+			            }
+			            else{
+			            	console.log(marker.clickthru.name);
+			            	window.open(url, '_blank');
+			            }
+			        });
+		        }
+	    	}
     	}
 	},
 	gmaps_geo: function(vars){
@@ -202,7 +222,7 @@ pcf = {
 			this.geocoder = new google.maps.Geocoder();
 		}
 		var self = this;
-		geocoder.geocode( { 'address': vars.address}, function(results, status) {
+		geocoder.geocode( { 'address': encodeURIComponent(vars.address)}, function(results, status) {
 			if(status == google.maps.GeocoderStatus.OK) {
 				vars.callback(results);
 	         }
@@ -215,10 +235,15 @@ pcf = {
 	         }
 	    });
 	},
-	init: function(callback){
+	init: function(vars){
 		var self = this;
-		self.closeCallback = callback;
-		self.iosVersion = self.iosVersionCheck();
+		this.closeCallback = vars.callback;
+		console.log(this.closeCallback);
+		if(typeof(vars.expanded) != 'undefined'){
+			if(vars.expanded){
+				self.adIsExpanded = true;
+			}
+		}
 		if (typeof(mraid) != "undefined"){
 		    self.isMraid = true;
 		    mraid.setExpandProperties({useCustomClose:true});
@@ -244,7 +269,7 @@ pcf = {
 	    }
 	    return 0;
 	},
-	queryString: function(jsonConvert){
+	query_string: function(jsonConvert){
 		var url = window.location.href;
 		if(url.indexOf('?') != -1){
 			var urlObj = new Object();
@@ -263,17 +288,17 @@ pcf = {
 			return false;
 		}
 	},
-	sessionImport: function(vars){
+	session_import: function(vars){
 		for(var i in vars){
 			this[i] = vars[i];
 		}
 	},
-	track: function(vars){
+	track: function(name){
 		if(this.isPhad){
-			ph.u.track('interaction', 'cint='+vars.name, this.sessionID);
+			ph.u.track('interaction', 'cint='+name, this.sessionID);
 		}
 		else{
-			console.log(vars.name);
+			console.log(name);
 		}
 	},
 	video: function(vars){
@@ -284,6 +309,7 @@ pcf = {
 			this.videoId = this.gid(this.videoId);
 		}
 		var properties = {
+			'aspect_ratio': '16:9',
 			'style': {
 				'width': this.videoId.offsetWidth+'px',
 				'height': this.videoId.offsetHeight+'px',
@@ -301,15 +327,16 @@ pcf = {
 				properties.style[i] = vars.style[i];
 			}
 		}
+		var ar = properties.aspect_ratio.split(':');
 		if(properties.style.width == '0px' && properties.style.height == '0px'){
 			console.log('at least a height or a width for the video element or its parent element must be declared');
 			return false;
 		}
 		if(properties.style.width != '0px' && properties.style.height == '0px'){
-			properties.style.height = properties.style.width.replace('px','')*(9/16)+'px';
+			properties.style.height = properties.style.width.replace('px','')*(ar[1]/ar[0])+'px';
 		}
 		if(properties.style.width == '0px' && properties.style.height != '0px'){
-			properties.style.width = properties.style.height.replace('px','')*(16/9)+'px';
+			properties.style.width = properties.style.height.replace('px','')*(ar[0]/[1])+'px';
 		}
 		if(this.isPhad){
 			ph.v.play(vars.video_url, vars.name, this.campaignID, this.executionID, this.sessionID, this.videoId);
@@ -337,13 +364,13 @@ pcf = {
 			ph_videoElement.play();
 		},500);
 		 ph_videoElement.addEventListener('ended', function(){
-	        self.videoClose();
+	        self.video_close();
 	    });
 	    ph_videoElement.addEventListener('webkitendfullscreen', function(){
-	        self.videoClose();
+	        self.video_close();
 		});
 	},
-	videoClose: function(){
+	video_close: function(){
 		if(this.isPhad){
 			ph.v.remove();
 		}
@@ -354,6 +381,7 @@ pcf = {
 		
 	},
 }
+pcf.iosVersion = pcf.iosVersionCheck();
 if(typeof(ph) == 'object'){
 	pcf.isPhad = true;
 }
