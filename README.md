@@ -16,7 +16,7 @@ The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mob
 * Standard AJAX calls
 * Mobile and platform specific detection
 * iOS version detection (namely for iOS 7)
-* Query string detection
+* [Query string detection](#query-sring-detection)
 
 ---
 
@@ -649,7 +649,7 @@ console.log(pcf.isMobile.any());
 </script>
 ```
 
-video_closeiOS version detection
+### iOS version detection
 
 The framework provides a method to detect what iOS version, if any, is being run.  This is namely for iOS 7, which currently has usability issues and bugs in the Safari browser.  Returns the numerical verision if an iOS version, returns 0 for all other devices.
 
@@ -662,7 +662,7 @@ console.log(pcf.iosVersion);
 ```
 
 
-video_closeQuery String Detection
+### Query String Detection
 
 The framework provides a function to detect and return any query string keys and values as a JavaScript object, but specifying JSON is optional.  It works when the URL has a standard query string format such as ?foo=bar&getmy=data.
 
