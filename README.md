@@ -128,7 +128,7 @@ Example of traditional hyperlink using the element ID as the reporting name:
 <a id="clickthrough2" href="http://othersite.com">Clickthrough 2</a>
 <script>
 var links = document.getElementsByTagName("a");
-for (var i = 0; i < links.length ; i++){
+for (var i=0; i<links.length; i++){
     links[i].addEventListener("click", function (a){ 
     	a.preventDefault();
     	pcf.clickthru({
@@ -504,6 +504,7 @@ pcf.geolocation_prompt({
 })
 
 </script>
+```
 
 ---
 
