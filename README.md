@@ -285,24 +285,6 @@ pcf.geolocation({
 </script>
 ```
 
-Postal Code Example:
-
-```
-<script>
-function geoReturn(data){
-	console.log(data);
-}
-
-pcf.geolocation({
-	'callback': geoReturn,
-	'data': {
-		'type': 'postal_code',
-		'value': '98033'
-	}
-});
-</script>
-```
-
 City/Postal by Geo Example:
 
 ```
