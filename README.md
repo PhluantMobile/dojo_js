@@ -10,7 +10,7 @@ The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mob
 * [Clickthroughs](#clickthroughs)
 * [Custom trackers](#custom-trackers)
 * [HTML5 video](#html5-video)
-* [All geolocation and weather API calls to Phluant's resources](#geolocation-weather-api-calls)
+* [All geolocation and weather API calls to Phluant's resources](#ggeolocationweather-api-calls)
 * [HTML5 geolocation prompt with optional IP lookup as a fallback](#geolocation-prompt)
 * [Store locator API call](#store-locator-api-call)
 * [Google Maps](#google-maps)
@@ -668,7 +668,7 @@ console.log(query_string);
 
 ### Technical Support
 
-Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's issue tracker for general feedback, feature requests, bug reports, tech support questions, etc.  
+Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](/issues) for general feedback, feature requests, bug reports, tech support questions, etc.  
 
 ---
 
