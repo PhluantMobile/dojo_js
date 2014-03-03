@@ -1,6 +1,6 @@
 # Phluant Client Framework Library
 
-The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the PCF libraray is to provide our clients with a code base thiat works both inside and outside of our ad serving network, which will substantially reduce the amount of time our company needs to launch a rich media campaign.  It also provides a number of core functionalites that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so it will work independently of any other JavaScript framework library, i.e. jQuery.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  A list of items this framework supports is below, with links to scroll to documented sections.  
+The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the framework is to provide our clients with a code base thiat works both inside and outside of our ad serving network, which will substantially reduce the amount of time needed to launch a rich media campaign.  It also provides a number of core functionalites that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so its core functionalities will work independently of jQuery or any other JavaScript framework library.  Some functionalities may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  A list of items this framework supports is below, with links to scroll to documented sections.  
 
 * [Element ID referencing](#element-id-referencing)
 * [Initialization](#initialization)
@@ -30,7 +30,7 @@ Place a JavaScript tag reference before any campaign specific code.  You may do 
 <script src="http://mdn4.phluantmobile.net/jslib/pcf/pcf.min.js"></script>
 ```
 
-All coding examples used in this documentaiton can utilize JS library equivelants (i.e. jQuery) unless otherwise specified.
+All coding examples used in this documentaiton can utilize jQuery or other JavaScript framework library equivelants unless otherwise indicated.
 
 ---
 
@@ -49,7 +49,7 @@ var close_btn = pcf.gid('close_btn');
 </script>
 ```
 
-_This step is strongly recommended, and is compatible when being used with JS libraries such as jQuery._
+_This step is strongly recommended, and is compatible when being used with jQuery or other JavaScript framework libraries._
 
 ---
 

@@ -32,7 +32,6 @@ pcf = {
 	executionID: null,
 	campaignID: null,
 	sessionID: null,
-	gId: null,
 	webServiceUrl: 'http://lbs.phluant.com/web_services/',
 	ajax: function(vars){
 		ajaxRequest = new XMLHttpRequest(); 
@@ -156,12 +155,7 @@ pcf = {
 		this.ajax(varsExport);
 	},
 	gid: function(id){
-		if(this.isPhad){
-			return this.gId(id);
-		}
-		else{
-			return document.getElementById(id);
-		}
+		return document.getElementById(id);
 	},
 	gmaps_draw: function(vars){
 		var mapZoom = 10;
@@ -238,7 +232,6 @@ pcf = {
 	init: function(vars){
 		var self = this;
 		this.closeCallback = vars.callback;
-		console.log(this.closeCallback);
 		if(typeof(vars.expanded) != 'undefined'){
 			if(vars.expanded){
 				self.adIsExpanded = true;
@@ -385,4 +378,3 @@ pcf.iosVersion = pcf.iosVersionCheck();
 if(typeof(ph) == 'object'){
 	pcf.isPhad = true;
 }
-console.log(pcf.isPhad);
