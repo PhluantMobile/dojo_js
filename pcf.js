@@ -47,6 +47,10 @@ pcf = {
 		if(vars.method == 'GET' && sendData != ''){
 			vars.url += '?'+sendData;
 		}
+		var timeout = 10000;
+		if(typeof(vars.timeout) == 'number'){
+			timeout = vars.timeout;
+		}
 		ajaxRequest.open(vars.method, vars.url, true);
 		if(vars.method == 'POST'){
 			ajaxRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -55,17 +59,33 @@ pcf = {
 		else{
 			ajaxRequest.send();
 		}
+		var ajaxTimeout = setTimeout(function(){
+			ajaxRequest.abort();
+			if(typeof(vars.callback) != 'undefined'){
+				vars.callback({
+					'status': 'timeout',
+				});
+			}
+		},timeout);
 		ajaxRequest.onreadystatechange = function(){
+			clearTimeout(ajaxTimeout);
 			if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
 				if(typeof(vars.js_object) != 'undefined'){
 					if(vars.js_object){
 						ajaxRequest.responseText = JSON.stringify(ajaxRequest.responseText);
 					}
 				}
-            	vars.callback(ajaxRequest.responseText);
+				if(typeof(vars.callback) != 'undefined'){
+					vars.callback(ajaxRequest.responseText);
+				}
         	}
         	else{
-        		vars.callback(false);
+        		if(typeof(vars.callback) != 'undefined'){
+	        		vars.callback({
+	        			'status': 'error',
+	        			'request_info': ajaxRequest
+	        		});
+	        	}
         	}
 		}
     	
@@ -106,6 +126,16 @@ pcf = {
 		}
 		if(this.isMraid){
 			this.adIsExpanded = true;
+		}
+	},
+	image_tracker: function(url){
+		if(this.isPhad){
+			ph.u.addImage(url);
+		}
+		else{
+			var img = document.createElement("img");
+			img.src = url;
+			document.getElementsByTagName('body')[0].appendChild(img);
 		}
 	},
 	geolocation: function(vars){
@@ -234,7 +264,9 @@ pcf = {
 	},
 	init: function(vars){
 		var self = this;
-		this.closeCallback = vars.callback;
+		if(typeof(vars.callback) != 'undefined'){
+			this.closeCallback = vars.callback;
+		}
 		if(typeof(vars.expanded) != 'undefined'){
 			if(vars.expanded){
 				self.adIsExpanded = true;
@@ -245,7 +277,9 @@ pcf = {
 		    mraid.setExpandProperties({useCustomClose:true});
 		    mraid.addEventListener('stateChange', function(){
 		        if(self.adIsExpanded){
-		            self.closeCallback();
+		        	if(typeof(self.closeCallback) != 'null'){
+		        		self.closeCallback();
+		        	}
 		            self.adIsExpanded = false;
 		        }
 		    });
