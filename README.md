@@ -654,7 +654,7 @@ Example:
 
  ---
 
- ### Image tracker
+### Image tracker
 
  This functin provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-calls) function.
 
