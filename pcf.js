@@ -70,6 +70,9 @@ pcf = {
 		}
     	
 	},
+	capitalize: function(str){
+		return str.charAt(0).toUpperCase()+str.slice(1);
+	},
 	clickthru: function(vars){
 		if(this.isPhad){
 			ph.u.clickthru(vars.url, vars.name, this.sessionID);
