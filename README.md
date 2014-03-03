@@ -38,7 +38,7 @@ Place the JavaScript tag referencing the frameowrk before any campaign specific 
 
 All coding examples used in this documentaiton can utilize jQuery or other JavaScript framework library equivalents unless otherwise indicated.
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -59,7 +59,7 @@ var close_btn = pcf.gid('close_btn');
 
 _Required for any campaign that will have multiple ad instances served, and is recommended in all other cases.  It's compatible when being used with jQuery or other JavaScript framework libraries._
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -86,7 +86,7 @@ pcf.init({
 
 _Required for all expandable ads, interstitial/banner ads that need close funcitonality, and any ad that will run in MRAID._
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -111,7 +111,7 @@ expand_btn.addEventListener('click', function(){
 
 _Required for all expandable ads._
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -131,7 +131,7 @@ contract_btn.addEventListener('click', function(){
 
 _Requried for all expandable ads as well as interstitial/banner ads that require close functionality._
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -174,7 +174,7 @@ clickthrough.addEventListener('click', function(){
 ```
 _Required for all clickthroughs that are to be tracked, recommended in all other cases._
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -216,7 +216,7 @@ section2.addEventListener('click', function(){
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -258,7 +258,7 @@ video_container.addEventListener('click', function(){
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -429,7 +429,7 @@ The weather data returned can vary based on custom input values.  The start_valu
 * data.results.data.wind_dir:  An array of the wind directions at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
 * data.results.data.wind_speed:  An array of the wind speed at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -497,7 +497,7 @@ pcf.get_stores({
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -607,7 +607,7 @@ pcf.gmaps_draw(mapOptions);
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -650,7 +650,7 @@ Example:
  </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
  ---
 
@@ -666,7 +666,7 @@ pcf.image_tracker('http://somesite.com/1x1_image_gif');
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
  ---
 
@@ -687,7 +687,7 @@ console.log(pcf.isMobile.any());
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -703,7 +703,7 @@ console.log(pcf.iosVersion);
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -720,7 +720,7 @@ var query_string = pcf.query_string();
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -735,7 +735,7 @@ var name = pcf.capitalize('jordan');
 </script>
 ```
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
@@ -743,7 +743,7 @@ var name = pcf.capitalize('jordan');
 
 Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  
 
-[top]
+[top](#phluant-client-framework-library)
 
 ---
 
