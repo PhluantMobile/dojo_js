@@ -719,6 +719,7 @@ var name = pcf.capitalize('jordan');
 ```
 
 Scroll to [top](#phluant-client-framework-library)
+
 ---
 
 ### Technical Support
