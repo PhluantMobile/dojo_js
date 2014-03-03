@@ -18,7 +18,7 @@ The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mob
 * [Google Maps](#google-maps)
 	* [Geocoding](#geocoding)
 	* [Map Draw](#map-draw)
-* [Standard AJAX calls](#standard-ajax-calls)
+* [Standard AJAX Requests](#standard-ajax-requests)
 * [Image Tracker](#image-tracker)
 * [Mobile and platform specific detection](#)
 * [iOS version detection (namely for iOS 7)](#ios-version-detection)
@@ -526,7 +526,7 @@ pcf.geolocation_prompt({
 
 ### Google Maps
 
-The function gives a simplified method to utilize the Google Maps JavaScript API.  At present, both the geocoding and map drawing functions are supported.  Both features require the Google Maps JavaScript reference placed before the PCF reference, be it in the head or inline, and also require a callback function.  Example Google Maps JavaScript reference:
+The following functions give a simplified method to utilize the Google Maps JavaScript API.  At present, both the geocoding and map drawing functions are supported.  Both features require the Google Maps JavaScript reference placed before the PCF reference, be it in the head or inline, and also require a callback function.  Example Google Maps JavaScript reference:
 
 ```
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
@@ -611,9 +611,9 @@ pcf.gmaps_draw(mapOptions);
 
 ---
 
-### Standard AJAX Calls
+### Standard AJAX Requests
 
-The framework provides a function for standard AJAX calls.  Both GET and POST requests are supported.  If the expected return data is in JSON format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data.  Unless explicitly specified in the campaign contract, Phluant is not responsible for setting up an AJAX source for proper accessibility, i.e. cross-domain access.
+This function allows for AJAX requests.  Both GET and POST requests are supported.  If the expected return data is in JSON format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data.  Unless explicitly specified in a campaign contract, we not responsible for ensuring cross-domain access or any other accessiblity issue concerning a non-Phluant AJAX source.
 
 Required specs:
 
@@ -656,7 +656,7 @@ Example:
 
 ### Image tracker
 
- This functin provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-calls) function.
+ This functin provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-requests) function.
 
 Example:
 
@@ -709,7 +709,7 @@ console.log(pcf.iosVersion);
 
 ### Query String Detection
 
-The framework provides a function to detect and return any query string keys and values as a JavaScript object, but specifying JSON is optional.  It works when the URL has a standard query string format.
+This function detects and returns any query string keys and values as a JavaScript object.  Can be specified as JSON if desired.  It works when the URL has a standard query string format.  Returns false if no query string is detected.
 
 Example URL:  http://somesite.com/index.html?foo=bar&getmy=data.
 
@@ -717,6 +717,8 @@ Example JavaScript:
 ```
 <script>
 var query_string = pcf.query_string();
+//If JSON format is desired
+var query_string_json = pcf.query_string(true);
 </script>
 ```
 
@@ -726,7 +728,7 @@ var query_string = pcf.query_string();
 
 ### Word Capitalization
 
-The framework provides a function to capitalize a specified word.
+This function returns a capitalized version of a specified word.
 
 Example:
 ```
