@@ -254,10 +254,27 @@ pcf = {
 				vars.callback(results);
 	         }
 	         else{
-	         	if(typeof(vars.failover) != 'undefined'){
+	         	if(typeof(vars.failover) == 'boolean'){
 	         		if(vars.failover){
-	         			self.geolocation(false, vars.callback);
+	         			var geoVars = {};
+	         			geoVars.callback = vars.callback;
+	         			if(typeof(vars.failover_callback) != 'undefined'){
+	         				geoVars.callback = vars.failover_callback;
+	         			}
+	         			if(this.valid_zip(address)){
+							geoVars.data.type =  'postal_code';
+						}
+						if(this.valid_geo(address)){
+							geoVars.data.type =  'city_postal_by_geo';
+						}
+						if(typeof(geoVars.data.type) != 'undefined'){
+							geoVars.data.value = vars.address;
+						}
+	         			self.geolocation(geoVars);
 	         		}
+	         	}
+	         	else{
+	         		vars.callback(false);
 	         	}
 	         }
 	    });
@@ -331,6 +348,35 @@ pcf = {
 			console.log(name);
 		}
 	},
+	valid_email: function(email){ 
+        var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return filter.test(email);
+    },
+	valid_geo: function(geoTest){
+		passed = true;
+		geoTest = geoTest.split(',');
+		if(typeof(geoTest) == 'object'){
+			for(var i=0; i<geoTest.length; i++){
+				if(isNaN(geoTest[i])){
+					passed = false;
+					break;
+				}
+			}
+		}
+		else{
+			passed = false;
+		}
+		return passed;
+	},
+	valid_phone: function(phone_num){
+	    if(phone_num){
+	    	phone_num = phone_num.replace(/[^0-9]/g, '');
+			return /^\d{10}/.test(zipTest);
+	    };
+	},
+	valid_zip: function(zip){
+       return /^\d{5}(-\d{4})?$/.test(zip);
+    },
 	video: function(vars){
 		var self = this;
 		this.videoPlaying = true;

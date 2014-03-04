@@ -24,6 +24,9 @@ The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mob
 * [iOS version detection (namely for iOS 7)](#ios-version-detection)
 * [Query string detection](#query-sring-detection)
 * [String Capitalization](#string-capitalization)
+* [Email Validation](#email-validation)
+* [Phone Number Validation](#phone-number-validation)
+* [Zip Code Validation](#zip-code-validation)
 * [Technical Support](#technical-support)
 
 ---
@@ -503,11 +506,22 @@ pcf.get_stores({
 
 ### Geolocation Prompt
 
-The funciton provides a means to prompt the user for their geocoordinates.  A callback function must be included to receive the results, which are returned as a JavaScript object.  The developer can optionally specify to use the [Geolocation IP lookup](#geolocation) as a failover.
+The funciton provides a means to prompt the user for their geocoordinates.  A callback function must be included to receive the results, which are returned as a JavaScript object.  The developer can optionally specify to use the [Geolocation IP lookup](#geolocation) as a failover and specify a failover callback.
+
+Required Specs:
+* callback - The callback founction.
+
+Optional Specs:
+* failover - Set to true for the system to fail over to the Geolocation IP lookup.
+* failover_callback - The failover callback function.  If this is not set and failover is set to true, the data will be returned to the original callback.
 
 Example:
 ```
 <script>
+
+function geoPromptReturn(data){
+	console.log(data);
+}
 
 function geoReturn(data){
 	console.log(data);
@@ -515,18 +529,21 @@ function geoReturn(data){
 
 //Object attributes are only necessary if the failover feature is desired.
 pcf.geolocation_prompt({
-	'callback': geoReturn,
+	'callback': geoPromptReturn,
 	'failover': true,
-})
+	'failover_callback': geoReturn
+});
 
 </script>
 ```
+
+[top](#phluant-client-framework-library)
 
 ---
 
 ### Google Maps
 
-The following functions give a simplified method to utilize the Google Maps JavaScript API.  At present, both the geocoding and map drawing functions are supported.  Both features require the Google Maps JavaScript reference placed before the PCF reference, be it in the head or inline, and also require a callback function.  Example Google Maps JavaScript reference:
+The following functions give a simplified method to utilize the Google Maps JavaScript API.  At present, both the geocoding and map drawing functions are supported.  Both features require the Google Maps JavaScript reference placed before the PCF reference, be it in the head or inline.  A callback function is also required. Example Google Maps JavaScript reference:
 
 ```
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
@@ -534,7 +551,15 @@ The following functions give a simplified method to utilize the Google Maps Java
 
 #### Geocoding
 
-Returns Google Maps API information on a location.  May be a full or partial address, city/state, postal code, lat/lng values, etc.
+Returns Google Maps API information on a location.  May be a full or partial address, city/state, postal code, lat/lng values, etc. Specifying Phluant's [Geolocation](#geolocation) services as a failover is optional, and the system will detect to use the IP, Postal Code, or Lat/Lng lookup based on address format.  If the failover is not specified and Google doesn't return any data, a false boolean will be returned to the callback.
+
+Required Specs:
+* address - Full or partial address, city/state, postal code, lat/lng values, etc.
+* callback - The callback funciton.
+
+Optional Specs:
+* failover - Specify true or false.  The system will determine which method to use based on the address qualities.
+* failover_callback - If a different callback from the regular failover is desired.  Be aware that if this value isn't specified and failover is set to true, the failover data will be returned to the regular callback function.
 
 Example:
 
@@ -545,9 +570,15 @@ function gmapsReturn(data){
 	console.log(data);
 }
 
+function geoReturn(data){
+	console.log(data);
+}
+
 pcf.gmaps_geo({
 	'address': '98033',
-	'callback': gmapsReturn
+	'callback': gmapsReturn,
+	'failover': true,
+	'failover_callback': geoReturn
 });
 </script>
 ```
@@ -575,7 +606,7 @@ Optional specs:
 	* markers[i].clickthru - an object containing relevant information for any marker to be a clickthrough.  Default is a Google Maps hyperlink using the original lat/lng values as the start point and the lat/lng values as the end point
 		* markers[i].clickthru.name - the name of the clickthru, used for reporting.  Essentially the same functionality as a standard clickthru.
 		* markers[i].clickthru.url - An optional URL value that will override the default Google Maps link.
-	* _The Map Draw function supports all of the optional marker specifications.  For more detained information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers)._
+	* _The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers)._
 
 Example:
 
@@ -719,6 +750,7 @@ Example JavaScript:
 var query_string = pcf.query_string();
 //If JSON format is desired
 var query_string_json = pcf.query_string(true);
+console.log(query_string);
 </script>
 ```
 
@@ -733,7 +765,52 @@ This function returns a capitalized version of a specified word.
 Example:
 ```
 <script>
-var name = pcf.capitalize('jordan');
+console.log(pcf.capitalize('jordan'));
+</script>
+```
+
+[top](#phluant-client-framework-library)
+
+---
+
+### Email Validation
+
+This function returns a regex result for a valid email foramt.
+
+Example:
+```
+<script>
+console.log(pcf.valid_email('somebody@somesite.com'));
+</script>
+```
+
+[top](#phluant-client-framework-library)
+
+---
+
+### Phone Number Validation
+
+This function returns a regex result for a valid North American phone number.  It will automatically strip out any non-numeric characters.
+
+Example:
+```
+<script>
+console.log(pcf.valid_phone('555-555-5555'));
+</script>
+```
+
+[top](#phluant-client-framework-library)
+
+---
+
+### Zip Code Validation
+
+This function returns a regex result for a valid US zip code, with both 5 digit and hyphenated 9 digit formats supported.
+
+Example:
+```
+<script>
+console.log(pcf.valid_zip('98034'));
 </script>
 ```
 
