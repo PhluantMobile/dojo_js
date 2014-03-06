@@ -26,6 +26,7 @@ pcf = {
 	},
 	isMraid: false,
 	isPhad: false,
+	phadConsoleLog: false,
 	videoPlaying: false,
 	videoId: null,
 	hashtag: null,
@@ -95,6 +96,9 @@ pcf = {
 	},
 	clickthru: function(vars){
 		if(this.isPhad){
+			if(this.phadConsoleLog){
+				ph.u.log(vars.name);
+			}
 			ph.u.clickthru(vars.url, vars.name, this.sessionID);
 		}
 		else{
@@ -111,6 +115,9 @@ pcf = {
 		}
 		if(this.isPhad){
 			ph.t.close("MainPanel", this.sessionID);
+			if(this.phadConsoleLog){
+				ph.u.log('contracting');
+			}
 		}
 		else{
 			console.log('contracting');
@@ -118,11 +125,15 @@ pcf = {
 		this.closeCallback();
 	},
 	expand: function(vars){
+		var logMsg = 'expanding to '+vars.width+'px width, '+vars.height+'px height.';
 		if(this.isPhad){
 			ph.t.expand('MainPanel', this.sessionID, false, {'width' : vars.width, 'height' : vars.height});
+			if(this.phadConsoleLog){
+				ph.u.log(logMsg);
+			}
 		}
 		else{
-			console.log('expanding to '+vars.width+'px width, '+vars.height+'px height.');
+			console.log(logMsg);
 		}
 		if(this.isMraid){
 			this.adIsExpanded = true;
@@ -233,7 +244,10 @@ pcf = {
 			            	url = marker.clickthru.url;
 			            }
 			            if(this.isPhad){
-			            	ph.u.clickthru(url, 'GoogleMaps', marker.clickthru.name, this.sessionID);
+			            	if(this.phadConsoleLog){
+			            		ph.u.log(marker.clickthru.name);
+			            	}
+			            	ph.u.clickthru(url, marker.clickthru.name, this.sessionID);
 			            }
 			            else{
 			            	console.log(marker.clickthru.name);
@@ -343,6 +357,9 @@ pcf = {
 	track: function(name){
 		if(this.isPhad){
 			ph.u.track('interaction', 'cint='+name, this.sessionID);
+			if(this.phadConsoleLog){
+				ph.u.log(name);
+			}
 		}
 		else{
 			console.log(name);
