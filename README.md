@@ -644,7 +644,7 @@ pcf.gmaps_draw(mapOptions);
 
 ### Standard AJAX Requests
 
-This function allows for AJAX requests.  Both GET and POST requests are supported.  If the expected return data is in JSON format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data.  Unless explicitly specified in a campaign contract, we not responsible for ensuring cross-domain access or any other accessiblity issue concerning a non-Phluant AJAX source.
+This function allows for AJAX requests.  Both GET and POST requests are supported.  If the expected return data is in JSON format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data.  Unless explicitly specified in a campaign contract, we are not responsible for ensuring cross-domain access or any other accessiblity issue concerning a non-Phluant AJAX source.
 
 Required specs:
 
