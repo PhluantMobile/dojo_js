@@ -1,6 +1,6 @@
-# Phluant Client Framework Library
+# Dojo Framework Library
 
-The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the framework is to provide our clients with a code base thiat works both inside and outside of our ad serving network, which will substantially reduce the amount of time needed to launch a rich media campaign.  It also provides a number of core features that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so all core features will work independently of jQuery or any other JavaScript framework library.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  The feature list is below.  
+The Dojo Framework (dojo) Libaray is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the framework is to provide our clients with a code base thiat works both inside and outside of our ad serving network, which will substantially reduce the amount of time needed to launch a rich media campaign.  It also provides a number of core features that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so all core features will work independently of jQuery or any other JavaScript framework library.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  The feature list is below.  
 
 * [Element ID referencing](#element-id-referencing)
 * [Initialization](#initialization)
@@ -33,15 +33,15 @@ The Phluant Client Framework (PCF) Libaray is a framework for use by Phluant Mob
 
 ## How To Use
 
-Place the JavaScript tag referencing the frameowrk before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work.  For your convenience, we have a copy of the code on our CDN server you may use at http://mdn4.phluantmobile.net/jslib/pcf/.  Example tag:
+Place the JavaScript tag referencing the frameowrk before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work.  For your convenience, we have a copy of the code on our CDN server you may use at http://mdn4.phluantmobile.net/jslib/dojo.js/.  Example tag:
 
 ```
-<script src="http://mdn4.phluantmobile.net/jslib/pcf/pcf.min.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo.js/dojo.min.js"></script>
 ```
 
 All coding examples used in this documentaiton can utilize jQuery or other JavaScript framework library equivalents unless otherwise indicated.
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -53,16 +53,16 @@ Example:
 
 ```
 <script>
-var contract_div = pcf.gid('contract_div');
-var expand_div = pcf.gid('expand_div');
-var expand_btn = pcf.gid('expand_btn');
-var close_btn = pcf.gid('close_btn');
+var contract_div = dojo.gid('contract_div');
+var expand_div = dojo.gid('expand_div');
+var expand_btn = dojo.gid('expand_btn');
+var close_btn = dojo.gid('close_btn');
 </script>
 ```
 
 _Required for any campaign that will have multiple ad instances served, and is recommended in all other cases.  It's compatible when being used with jQuery or other JavaScript framework libraries._
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -80,7 +80,7 @@ function contractAd(){
 }
 
 //Including the expand attribute is optional for expandable ads starting out in the contracted state.  For interstitial/banner ads, set the attribute to true.  Including the callback attribute is optional for interstitial and banner ads not requiring close functionality.
-pcf.init({
+dojo.init({
 	'callback': contractAd,
 	'expanded': false,
 });
@@ -89,7 +89,7 @@ pcf.init({
 
 _Required for all expandable ads, interstitial/banner ads that need close funcitonality, and any ad that will run in MRAID._
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -104,7 +104,7 @@ Example:
 expand_btn.addEventListener('click', function(){
 	expand_div.style.display = 'block';
 	contract_div.style.display = 'none';
-	pcf.expand({
+	dojo.expand({
 		'width': 320,
 		'height': 416
 	});
@@ -114,7 +114,7 @@ expand_btn.addEventListener('click', function(){
 
 _Required for all expandable ads._
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -127,14 +127,14 @@ Example:
 ```
 <script>
 contract_btn.addEventListener('click', function(){
-	pcf.contract();
+	dojo.contract();
 });
 </script>
 ```
 
 _Requried for all expandable ads as well as interstitial/banner ads that require close functionality._
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -152,7 +152,7 @@ var links = document.getElementsByTagName("a");
 for (var i=0; i<links.length; i++){
     links[i].addEventListener("click", function (a){ 
     	a.preventDefault();
-    	pcf.clickthru({
+    	dojo.clickthru({
     		'url': links[i].href,
     		'name': links[i].id
     	});
@@ -166,9 +166,9 @@ Example of using an element as a 'hotspot':
 ```
 <div id="clickthrough"></div>
 <script>
-var clickthrough = pcf.gid('clickthrough');
+var clickthrough = dojo.gid('clickthrough');
 clickthrough.addEventListener('click', function(){
-	pcf.clickthru({
+	dojo.clickthru({
 		'url': 'http://somesite.com',
 		'name': 'clickthrough',
 	});
@@ -177,7 +177,7 @@ clickthrough.addEventListener('click', function(){
 ```
 _Required for all clickthroughs that are to be tracked, recommended in all other cases._
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -200,32 +200,32 @@ Example:
 </div>
 
 <script>
-var section1 = pcf.gid('section1');
-var section2 = pcf.gid('section2');
-var element1 = pcf.gid('element1');
-var element2 = pcf.gid('element2');
+var section1 = dojo.gid('section1');
+var section2 = dojo.gid('section2');
+var element1 = dojo.gid('element1');
+var element2 = dojo.gid('element2');
 
 section1.addEventListener('click', function(){
 	element1.style.display = 'block';
 	element2.style.display = 'none';
-	pcf.track('element1Display');
+	dojo.track('element1Display');
 });
 
 section2.addEventListener('click', function(){
 	element2.style.display = 'block';
 	element1.style.display = 'none';
-	pcf.track('element2Display');
+	dojo.track('element2Display');
 });
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
 ### HTML5 Video
 
-This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a video container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```pcf.video_close()``` can be utlized.
+This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a video container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utlized.
 
 Additional Notes:
 
@@ -233,7 +233,7 @@ Additional Notes:
 * Both video_url and container_id specs are required.  All other specs are optional.
 * Default video attributes for displaying controls is true and inline (i.e. webkit-playsinline) are false.  These can be overwirtten.
 * The video tag will take on the height and width of the parent container by, so be sure these are set properly!  The default z-index is 5000.  These values can be overwritten, along with any other styling attributes inserted as needed.
-* Be sure to utilize the ```pcf.videoPlaying``` boolean if using a click function call, as this will ensure the video isn't called multiple times.
+* Be sure to utilize the ```dojo.videoPlaying``` boolean if using a click function call, as this will ensure the video isn't called multiple times.
 * The aspect_ratio default spec is 16:9, which is used if either the height or width can't be determined.  A custom aspect ration can be entered.
 
 Example:
@@ -241,10 +241,10 @@ Example:
 ```
 <div id="video_container"></div>
 <script>
-var video_container = pcf.gid('video_container');
+var video_container = dojo.gid('video_container');
 video_container.addEventListener('click', function(){
-	if(!pcf.videoPlaying){
-		pcf.video({
+	if(!dojo.videoPlaying){
+		dojo.video({
 			'video_url': 'videos/somevideo.mp4',
 			'container_id': video_container,
 			'aspect_ratio': '16:9',
@@ -261,7 +261,7 @@ video_container.addEventListener('click', function(){
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -285,7 +285,7 @@ function geoReturn(data){
 	console.log(data);
 }
 
-pcf.geolocation({
+dojo.geolocation({
 	'callback': geoReturn,
 });
 </script>
@@ -299,7 +299,7 @@ function geoReturn(data){
 	console.log(data);
 }
 
-pcf.geolocation({
+dojo.geolocation({
 	'callback': geoReturn,
 	'data': {
 		'type': 'postal_code',
@@ -317,7 +317,7 @@ function geoReturn(data){
 	console.log(data);
 }
 
-pcf.geolocation({
+dojo.geolocation({
 	'callback': geoReturn,
 	'data': {
 		'type': 'city_postal_by_geo',
@@ -356,7 +356,7 @@ function weatherReturn(data){
 }
 
 //The data.end spec defines the range of the weather data returned in hours or days, to a maximum of 14 days.  If the default of 1 day is desired, this step can be omitted.
-pcf.geolocation({
+dojo.geolocation({
 	'callback': geoReturn,
 	'data': {
 		'type': 'weather',
@@ -375,7 +375,7 @@ function weatherReturn(data){
 }
 
 //The data.end spec defines the range of the weather data returned in hours or days, to a maximum of 14 days.  If the default of 1 day is desired, this step can be omitted.  The subtype spec must be specified as postal_code.
-pcf.geolocation({
+dojo.geolocation({
 	'callback': weatherReturn,
 	'data': {
 		'type': 'weather',
@@ -396,7 +396,7 @@ function weatherReturn(data){
 }
 
 //The data.end spec defines the range of the weather data returned in hours or days, to a maximum of 14 days.  If the default of 1 day is desired, this step can be omitted.  The subtype spec must be specified as geo, and value is in lat,lng format.
-pcf.geolocation({
+dojo.geolocation({
 	'callback': weatherReturn,
 	'data': {
 		'type': 'weather',
@@ -432,7 +432,7 @@ The weather data returned can vary based on custom input values.  The start_valu
 * data.results.data.wind_dir:  An array of the wind directions at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
 * data.results.data.wind_speed:  An array of the wind speed at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -467,7 +467,7 @@ function storeReturn(data){
 }
 
 //Distance and limit are shown as an example and can be omitted if satisfied with default values
-pcf.get_stores({
+dojo.get_stores({
 	'callback': storeReturn,
 	'data': {
 		'campaign_id': 9999,
@@ -487,7 +487,7 @@ function storeReturn(data){
 }
 
 //Distance and limit are shown as an example and can be omitted if satisfied with default values.  Subtype and value must be specified for a geolocaiton lookup.
-pcf.get_stores({
+dojo.get_stores({
 	'callback': storeReturn,
 	'data': {
 		'campaign_id': 9999,
@@ -500,7 +500,7 @@ pcf.get_stores({
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -528,7 +528,7 @@ function geoReturn(data){
 }
 
 //Object attributes are only necessary if the failover feature is desired.
-pcf.geolocation_prompt({
+dojo.geolocation_prompt({
 	'callback': geoPromptReturn,
 	'failover': true,
 	'failover_callback': geoReturn
@@ -537,7 +537,7 @@ pcf.geolocation_prompt({
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -574,7 +574,7 @@ function geoReturn(data){
 	console.log(data);
 }
 
-pcf.gmaps_geo({
+dojo.gmaps_geo({
 	'address': '98033',
 	'callback': gmapsReturn,
 	'failover': true,
@@ -613,7 +613,7 @@ Example:
 ```
 <div id="google_map"></div>
 <script>
-var google_map = pcf.gid('google_map');
+var google_map = dojo.gid('google_map');
 var mapOptions = {
 	'lat': 47.676308399999996,
 	'lng': -122.20762579999999,
@@ -634,11 +634,11 @@ for(var i in data.results){
 		}
 	});
 }
-pcf.gmaps_draw(mapOptions);
+dojo.gmaps_draw(mapOptions);
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -667,7 +667,7 @@ Example:
  	console.log(data);
  }
 
- pcf.ajax({
+ dojo.ajax({
  	'url': 'http://somesite.com/get/some/data',
  	'callback': ajaxReturn,
  	'json_return': 'true',
@@ -681,7 +681,7 @@ Example:
  </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
  ---
 
@@ -693,11 +693,11 @@ Example:
 
 ```
 <script>
-pcf.image_tracker('http://somesite.com/1x1_image_gif');
+dojo.image_tracker('http://somesite.com/1x1_image_gif');
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
  ---
 
@@ -709,16 +709,16 @@ Example:
 
 ```
 <script>
-console.log(pcf.isMobile.Android());
-console.log(pcf.isMobile.Blackberry());
-console.log(pcf.isMobile.iOS());
-console.log(pcf.isMobile.Opera());
-console.log(pcf.isMobile.Windows());
-console.log(pcf.isMobile.any());
+console.log(dojo.isMobile.Android());
+console.log(dojo.isMobile.Blackberry());
+console.log(dojo.isMobile.iOS());
+console.log(dojo.isMobile.Opera());
+console.log(dojo.isMobile.Windows());
+console.log(dojo.isMobile.any());
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -730,11 +730,11 @@ Example:
 
 ```
 <script>
-console.log(pcf.iosVersion);
+console.log(dojo.iosVersion);
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -747,14 +747,14 @@ Example URL:  http://somesite.com/index.html?foo=bar&getmy=data.
 Example JavaScript:
 ```
 <script>
-var query_string = pcf.query_string();
+var query_string = dojo.query_string();
 //If JSON format is desired
-var query_string_json = pcf.query_string(true);
+var query_string_json = dojo.query_string(true);
 console.log(query_string);
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -765,11 +765,11 @@ This function returns a capitalized version of a specified word.
 Example:
 ```
 <script>
-console.log(pcf.capitalize('jordan'));
+console.log(dojo.capitalize('jordan'));
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -780,11 +780,11 @@ This function returns a regex result for a valid email foramt.
 Example:
 ```
 <script>
-console.log(pcf.valid_email('somebody@somesite.com'));
+console.log(dojo.valid_email('somebody@somesite.com'));
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -795,11 +795,11 @@ This function returns a regex result for a valid North American phone number.  I
 Example:
 ```
 <script>
-console.log(pcf.valid_phone('555-555-5555'));
+console.log(dojo.valid_phone('555-555-5555'));
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -810,11 +810,11 @@ This function returns a regex result for a valid US zip code, with both 5 digit 
 Example:
 ```
 <script>
-console.log(pcf.valid_zip('98034'));
+console.log(dojo.valid_zip('98034'));
 </script>
 ```
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
@@ -822,7 +822,7 @@ console.log(pcf.valid_zip('98034'));
 
 Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  
 
-[top](#phluant-client-framework-library)
+[top](#dojo-framework-library)
 
 ---
 
