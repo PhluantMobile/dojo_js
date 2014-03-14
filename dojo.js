@@ -134,11 +134,7 @@ dojo = {
 			this.adIsExpanded = true;
 		}
 	},
-	image_tracker: function(url){
-		var img = document.createElement("img");
-		img.src = url;
-		document.getElementsByTagName('body')[0].appendChild(img);
-	},
+	
 	geolocation: function(vars){
 		var varsExport = {
 			'url': this.webServiceUrl+'geolocation/export',
@@ -277,6 +273,13 @@ dojo = {
 	         	}
 	         }
 	    });
+	},
+	image_tracker: function(url){
+		var img = document.createElement("img");
+		img.src = url;
+		img.height = '1px';
+		img.width = '1px';
+		document.getElementsByTagName('body')[0].appendChild(img);
 	},
 	init: function(vars){
 		var self = this;
@@ -476,3 +479,9 @@ dojo = {
 	},
 }
 dojo.iosVersion = dojo.iosVersionCheck();
+var metas = document.getElementsByTagName('meta');
+for(var i=0; i<metas.length; i++){
+	if (metas[i].getAttribute("name") == "apple-mobile-web-app-status-bar-style"){ 
+        dojo.isDojo = true;
+    } 
+} 
