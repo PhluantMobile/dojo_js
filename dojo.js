@@ -161,6 +161,9 @@ dojo = {
         	if(vars.failover){
         		self.geolocation(vars);
         	}
+        	else{
+        		vars.callback(false);
+        	}
         });
 	},
 	get_stores: function(vars){
