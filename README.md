@@ -10,7 +10,7 @@ The Dojo Framework (dojo) Libaray is a framework for use by Phluant Mobile's cli
 * [Clickthroughs](#clickthroughs)
 * [Custom trackers](#custom-trackers)
 * [HTML5 video](#html5-video)
-* [All geolocation and weather API calls to Phluant's resources](#ggeolocationweather-api-calls)
+* [All geolocation and weather API calls to Phluant's resources](#geolocationweather-api-calls)
 	* [Geolocation](#geolocation)
 	* [Weather](#weather)
 * [HTML5 geolocation prompt with optional IP lookup as a fallback](#geolocation-prompt)
@@ -506,10 +506,10 @@ dojo.get_stores({
 
 ### Geolocation Prompt
 
-The funciton provides a means to prompt the user for their geocoordinates.  A callback function must be included to receive the results, which are returned as a JavaScript object.  The developer can optionally specify to use the [Geolocation IP lookup](#geolocation) as a failover and specify a failover callback.
+The funciton provides a means to prompt the user for their geocoordinates.  A callback function must be included to receive the results, which are returned as a JavaScript object if the user approves, or a false boolean if the user declines.  The developer can optionally specify to use the [Geolocation IP lookup](#geolocation) as a failover and specify a failover callback.
 
 Required Specs:
-* callback - The callback founction.
+* callback - The callback function.
 
 Optional Specs:
 * failover - Set to true for the system to fail over to the Geolocation IP lookup.
@@ -522,15 +522,10 @@ function geoPromptReturn(data){
 	console.log(data);
 }
 
-function geoReturn(data){
-	console.log(data);
-}
-
 //Object attributes are only necessary if the failover feature is desired.
 dojo.geolocation_prompt({
 	'callback': geoPromptReturn,
 	'failover': true,
-	'failover_callback': geoReturn
 });
 
 </script>
