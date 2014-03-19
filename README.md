@@ -513,7 +513,6 @@ Required Specs:
 
 Optional Specs:
 * failover - Set to true for the system to fail over to the Geolocation IP lookup.
-* failover_callback - The failover callback function.  If this is not set and failover is set to true, the data will be returned to the original callback.
 
 Example:
 ```
@@ -558,7 +557,7 @@ Required Specs:
 * callback - The callback funciton.
 
 Optional Specs:
-* failover - Specify true or false.  The system will determine which method to use based on the address qualities.
+* failover - Default is false.  The system will determine which method to use based on the address qualities.
 * failover_callback - If a different callback from the regular failover is desired.  Be aware that if this value isn't specified and failover is set to true, the failover data will be returned to the regular callback function.
 
 Example:

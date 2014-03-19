@@ -72,12 +72,13 @@ dojo = {
 			clearTimeout(ajaxTimeout);
 			if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
 				if(typeof(vars.js_object) != 'undefined'){
+					var resp = ajaxRequest.responseText;
 					if(vars.js_object){
-						ajaxRequest.responseText = JSON.stringify(ajaxRequest.responseText);
+						resp = JSON.parse(resp);
 					}
 				}
 				if(typeof(vars.callback) != 'undefined'){
-					vars.callback(ajaxRequest.responseText);
+					vars.callback(resp);
 				}
         	}
         	else{
@@ -89,7 +90,6 @@ dojo = {
 	        	}
         	}
 		}
-    	
 	},
 	capitalize: function(str){
 		return str.charAt(0).toUpperCase()+str.slice(1);
@@ -197,7 +197,7 @@ dojo = {
 		}
 		var mapOptions = {
 	        zoom: mapZoom,
-	        center: new google.maps.LatLng(vars.lat, vars.lng),
+	        center: new google.maps.LatLng(vars.center_lat, vars.center_lng),
 	        disableDefaultUI: true,
 	        mapTypeId: google.maps.MapTypeId.ROADMAP
 	    };
@@ -225,16 +225,19 @@ dojo = {
 		        		defaults[m] = marker[m];
 		        	}
 		        }
-		        var newMarker = new google.maps.Marker(defaults);
+		         var newMarker = new google.maps.Marker(defaults);
 		        if(typeof(marker.clickthru) != 'undefined'){
+		        	if(typeof(marker.clickthru.url) != 'undefined'){
+		        		newMarker.clickthru = marker.clickthru.url;
+		        	}
 		        	google.maps.event.addListener(newMarker, 'click', function() {
-			            var url = 'http://maps.google.com/?saddr='+vars.lat+','+vars.lng+'&daddr='+marker.lat+','+marker.lng;
-			            if(typeof(marker.clickthru.url) != 'undefined'){
-			            	url = marker.clickthru.url;
+			            var url = 'http://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A;
+			            if(typeof(this.clickthru) != 'undefined'){
+			            	url = this.clickthru;
 			            }
-		            	self.dojo_track({
+		            	dojo.dojo_track({
 							'type': 'click',
-							'key': marker.clickthru.name,
+							'key': this.clickthru.name,
 						});
 			            window.open(url, '_blank');
 			        });
@@ -247,7 +250,7 @@ dojo = {
 			this.geocoder = new google.maps.Geocoder();
 		}
 		var self = this;
-		geocoder.geocode( { 'address': encodeURIComponent(vars.address)}, function(results, status) {
+		this.geocoder.geocode( { 'address': encodeURIComponent(vars.address)}, function(results, status) {
 			if(status == google.maps.GeocoderStatus.OK) {
 				vars.callback(results);
 	         }
