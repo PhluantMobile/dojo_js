@@ -416,9 +416,13 @@ dojo = {
 				'controls': true,
 			}	
 		};
-		if(typeof(vars.style) != 'undefined'){
-			for(var i in vars.style){
-				properties.style[i] = vars.style[i];
+		var checkFor = ['style', 'attributes'];
+		for(var i=0; i<checkFor.length; i++){
+			var attr = checkFor[i];
+			if(typeof(vars[attr]) != 'undefined'){
+				for(var v in vars[attr]){
+					properties[attr][v] = vars[attr][v];
+				}
 			}
 		}
 		var ar = properties.aspect_ratio.split(':');
@@ -436,9 +440,6 @@ dojo = {
 		this.videoId.innerHTML = videoHtml;
 		dojo_videoElement = this.videoId.getElementsByTagName('video')[0];
 		for(var i in properties.attributes){
-			if(typeof(vars.attributes[i]) != 'undefined'){
-				properties.attributes[i] = vars.attributes[i];
-			}
 			dojo_videoElement.setAttribute(i, properties.attributes[i]);
 		}
 		for(var i in properties.style){
@@ -454,7 +455,6 @@ dojo = {
 		dojo_videoElement.addEventListener('loadedmetadata', function() {
 			var duration = dojo_videoElement.duration;
     		self.videoInt = setInterval(function(){
-    			//var currentTime = self.roundIt(dojo_videoElement.currentTime, 2);
     			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
     			for(var q in quartiles){
     				if(check == q && !quartiles[q]){

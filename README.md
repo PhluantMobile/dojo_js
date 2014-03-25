@@ -227,14 +227,23 @@ section2.addEventListener('click', function(){
 
 This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a video container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utlized.
 
+Required Attributes:
+
+* video_url: The URL for the video source.  Can be relative (same server) or absolute (remote server).
+* container_id: The DOM element ID for the video centainer.
+
+Optional Attributes:
+
+* style.xx: Any native JavaScript styling attribute can be utilized.
+* attributes.webkit-playsinline: Default is false.  Must be a boolean.  Some devices may not support inline video in certain environments.
+* attributes.controls: Default is true.  Most be a boolean.
+* attributes.xx: Any HTML5 standard attribute is supported.
+* aspect_ratio: Default is 16:9 and used if height or width of parent element can't be determined.  Can be overwritten.
+
 Additional Notes:
 
-* The video_url spec can be either relative (same server) or absolute (remote server).
-* Both video_url and container_id specs are required.  All other specs are optional.
-* Default video attributes for displaying controls is true and inline (i.e. webkit-playsinline) are false.  These can be overwirtten.
-* The video tag will take on the height and width of the parent container by, so be sure these are set properly!  The default z-index is 5000.  These values can be overwritten, along with any other styling attributes inserted as needed.
+* The video tag will take on the height and width of the parent container by default, so be sure these are set properly!  The default z-index is 5000.  These values can be overwritten, along with any other styling attributes inserted as needed.
 * Be sure to utilize the ```dojo.videoPlaying``` boolean if using a click function call, as this will ensure the video isn't called multiple times.
-* The aspect_ratio default spec is 16:9, which is used if either the height or width can't be determined.  A custom aspect ration can be entered.
 
 Example:
 
