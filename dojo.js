@@ -416,6 +416,35 @@ dojo = {
 			this[i] = vars[i];
 		}
 	},
+	shoplocal: function(vars){
+		var varsExport = {
+			'url': this.webServiceUrl+'phluant/export',
+			'method': 'GET',
+			'callback': vars.callback,
+			'js_object': true,
+			'data': {
+				'call_type': 'store',
+				'store_limit': 1,
+				'cat_limit': 10
+			}
+		};
+		for(var i in vars.data){
+			varsExport.data[i] = vars.data[i];
+		}
+		var req = ['company', 'campaign_id'];
+		for(var i=0; i<req.length; i++){
+			if(typeof(varsExport.data[i]) == 'undefined'){
+				console.log(req[i]+' is a required attribute for the shoplocal function.');
+				return false;
+			}
+		}
+		if(varsExport.data.call_type.indexOf('category') != -1 && typeof(varsExport.data.category_tree_id) == 'undefined'){
+			console.log('category_tree_id must be defined for a shoplocal category lookup.');
+			return false;
+		}
+		varsExport.data.type = 'shoplocal';
+		this.ajax(varsExport);
+	},
 	track: function(name){
 		this.dojo_track({
 			'type': 'interaction',

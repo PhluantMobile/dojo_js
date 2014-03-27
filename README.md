@@ -530,6 +530,111 @@ dojo.get_stores({
 
 ---
 
+### Shoplocal API Call
+
+Becuase Phluant has an established relationship with Shoplocal, we are already set up to aggregate Shoplocal data to our ads. Any Phluant client with an established Shoplocal campaign can utilize this function to call in relevant Shoplocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specifiy a callback function to return the data.
+
+Lookup Methods: 
+
+* IP address (default)
+* Lat/lng
+* Postal Code
+
+Required Specs:
+
+* callback - the callback function.
+* data.campaign_id - the campaign ID assigned by Shoplocal.  This is NOT the same campaign ID assigned by Phluant.
+* data.company - the company name assigned by Shoplocal.
+
+
+Optional Specs:
+
+* data.store_limit - The limit on the number of stores.  Default is 1.
+* data.cat_limit - The limit on the number of items per category.  Default is 10.
+* data.subtype - Specify as geo or postal_code if desired.
+* data.value - Set to applicable value if data.suptype is geo or postal_code.
+* data.call_type - default is store.  Can be set to category, or store,category to look up both types.
+* data.category_tree_id - The item categories.  Only required if the call_type inclues category.  Separate multiple categories with a comma.
+
+Shoplocal by IP Example:
+
+```
+<script>
+function shoplocalReturn(data){
+	console.log(data);
+}
+
+//Optional values are shown as an example and can be omitted if satisfied with defaults.
+dojo.shoplocal({
+	'callback': storeReturn,
+	'data': {
+		'campaign_id': 'abc123def456',
+		'company': 'ABC, Inc.',
+		'store_limit': 3,
+		'cat_limit': 5,
+		'call_type': 'store,category',
+		'category_tree_id': 'houseware,clothing,sports'
+	}
+});
+</script>
+```
+
+Shoplocal by Geo Example:
+
+```
+<script>
+function storeReturn(data){
+	console.log(data);
+}
+
+//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocaiton lookup.
+dojo.shoplocal({
+	'callback': storeReturn,
+	'data': {
+		'campaign_id': 'abc123def456',
+		'company': 'ABC, Inc.',
+		'store_limit': 3,
+		'cat_limit': 5,
+		'call_type': 'store,category',
+		'category_tree_id': 'houseware,clothing,sports',
+		'subtype': 'geo',
+		'value': 'value': '47.676308399999996,-122.20762579999999'
+	}
+});
+</script>
+```
+
+Shoplocal by Postal Code Example:
+
+```
+<script>
+function storeReturn(data){
+	console.log(data);
+}
+
+//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocaiton lookup.
+dojo.shoplocal({
+	'callback': storeReturn,
+	'data': {
+		'campaign_id': 'abc123def456',
+		'company': 'ABC, Inc.',
+		'store_limit': 3,
+		'cat_limit': 5,
+		'call_type': 'store,category',
+		'category_tree_id': 'houseware,clothing,sports',
+		'subtype': 'postal_code',
+		'value': 'value': '98033'
+	}
+});
+</script>
+```
+
+*Because Shoplocal return data can vary and this library is still in beta, we will be adding a return data sample at a later date.*.
+
+[top](#dojo-framework-library)
+
+---
+
 ### Geolocation Prompt
 
 The funciton provides a means to prompt the user for their geocoordinates.  A callback function must be included to receive the results, which are returned as a JavaScript object if the user approves, or a false boolean if the user declines.  The developer can optionally specify to use the [Geolocation IP lookup](#geolocation) as a failover and specify a failover callback.
@@ -614,19 +719,21 @@ Uses relevant data to draw out a Google Map in a specified element.
 Required specs:
 
 * map_id - the element ID for the map.
-* lat - the latitude for the map's central location.
-* lng - the longitude for the map's central location.
+* center_lat - the latitude for the map's central location.
+* center_lng - the longitude for the map's central location.
 
 Optional specs:
 
 * map_zoom - the zoom level of the map.  Default is 10.
 * markers - an object containing relevant information for any desired markers.
+* user_lat - the latitude for the user's location.  Required for the default Google Maps clickthrough.
+* user_lat - the longitude for the user's location.  Required for the default Google Maps clickthrough.
 	* markers[i].lat - the latitude of the desired marker.  Required for marker to be set.
 	* markers[i].lng - the longitude of the desired marker.  Required for marker to be set.
 	* markers[i].clickthru - an object containing relevant information for any marker to be a clickthrough.  Default is a Google Maps hyperlink using the original lat/lng values as the start point and the lat/lng values as the end point
 		* markers[i].clickthru.name - the name of the clickthru, used for reporting.  Essentially the same functionality as a standard clickthru.
 		* markers[i].clickthru.url - An optional URL value that will override the default Google Maps link.
-	* _The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers)._
+	* The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers)._
 
 Example:
 
