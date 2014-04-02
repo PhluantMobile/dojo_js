@@ -15,6 +15,7 @@ The Dojo Framework (dojo) Libaray is a framework for use by Phluant Mobile's cli
 	* [Weather](#weather)
 * [HTML5 geolocation prompt with optional IP lookup as a fallback](#geolocation-prompt)
 * [Store locator API call](#store-locator-api-call)
+* [Shoplocal API call](#shoplocal-api-call)
 * [Google Maps](#google-maps)
 	* [Geocoding](#geocoding)
 	* [Map Draw](#map-draw)
@@ -301,7 +302,7 @@ Phluant maintains a web based application capable of providing geolocation and w
 Geolocation Lookup Methods:
 
 * IP Address (default)
-* Postal Code
+* Postal Code (US and Canadian only)
 * City/Postal by Geo
 
 IP Address code example:
