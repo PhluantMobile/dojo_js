@@ -685,6 +685,7 @@ Required Specs:
 
 Optional Specs:
 * failover - Default is false.  The system will determine which method to use based on the address qualities.
+* loc_type - Default is address.  If set to geo, the library will do a reverse geocode so long as the address is set as lat,lng.  Google limits the number of reverse geocodes to 5 per page onload event, so use sparingly.
 * failover_callback - If a different callback from the regular failover is desired.  Be aware that if this value isn't specified and failover is set to true, the failover data will be returned to the regular callback function.
 
 Example:

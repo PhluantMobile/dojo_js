@@ -405,7 +405,7 @@ dojo = {
 	mraid_change: function(){
 		var self  = this;
 		if (mraid.isViewable()) {
-        	mraidResize(currW, currH);
+        	mraidResize(window.innerWidth, window.innerHeight);
         	setTimeout(function(){self.adInit();},125);
     	}
 	},
