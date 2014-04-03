@@ -395,18 +395,14 @@ dojo = {
 	    return 0;
 	},
 	mraid_ready: function(){
-		if(mraid.isViewable){
-			this.mraid_change();
-		}
-		else{
-			mraid.addEventListener('viewableChange', this.mraid_change);
-		}
+		if(mraid.isViewable()) this.mraid_view_change();
+		else mraid.addEventListener('viewableChange', this.mraid_view_change);
 	},
-	mraid_change: function(){
-		var self  = this;
-		if (mraid.isViewable()) {
-        	setTimeout(function(){self.adInit();},125);
-    	}
+	mraid_view_change: function(){
+		if(mraid.isViewable()) { /*TODO: don't check isViewable again*/
+			this.track('viewableChange');
+			this.adInit();
+		}
 	},
 	query_string: function(jsonConvert){
 		var url = window.location.href;
