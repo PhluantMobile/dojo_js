@@ -443,21 +443,23 @@ dojo = {
 			'js_object': true,
 			'data': {
 				'call_type': 'store',
-				'store_limit': 1,
-				'cat_limit': 10
 			}
 		};
 		for(var i in vars.data){
 			varsExport.data[i] = vars.data[i];
 		}
-		var req = ['company', 'campaign_id'];
+		var req = ['company', 'campaignid'];
 		for(var i=0; i<req.length; i++){
-			if(typeof(varsExport.data[i]) == 'undefined'){
+			if(typeof(varsExport.data[req[i]]) == 'undefined'){
 				console.log(req[i]+' is a required attribute for the shoplocal function.');
 				return false;
 			}
 		}
-		if(varsExport.data.call_type.indexOf('category') != -1 && typeof(varsExport.data.category_tree_id) == 'undefined'){
+		if(varsExport.data.subtype == 'postal_code' && !this.valid_zip(varsExport.data.value)){
+			console.log('invalid postal code format :'.varsExport.data.value);
+			return false;
+		}
+		if(varsExport.data.call_type.indexOf('retailertag') != -1 && typeof(varsExport.data.retailertagids) == 'undefined'){
 			console.log('category_tree_id must be defined for a shoplocal category lookup.');
 			return false;
 		}

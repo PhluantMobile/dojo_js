@@ -533,7 +533,7 @@ dojo.get_stores({
 
 ### Shoplocal API Call
 
-Becuase Phluant has an established relationship with Shoplocal, we are already set up to aggregate Shoplocal data to our ads. Any Phluant client with an established Shoplocal campaign can utilize this function to call in relevant Shoplocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specifiy a callback function to return the data.
+Becuase Phluant has an established relationship with Shoplocal, we are already set up to aggregate Shoplocal data to our ads. Any Phluant client with an established Shoplocal campaign can utilize this function to call in relevant Shoplocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specifiy a callback function to return the data.  All data is returned in JavaScript object format.
 
 Lookup Methods: 
 
@@ -544,18 +544,23 @@ Lookup Methods:
 Required Specs:
 
 * callback - the callback function.
-* data.campaign_id - the campaign ID assigned by Shoplocal.  This is NOT the same campaign ID assigned by Phluant.
+* data.campaignid - the campaign ID assigned by Shoplocal.  This is NOT the same campaign ID assigned by Phluant.
 * data.company - the company name assigned by Shoplocal.
 
 
 Optional Specs:
 
-* data.store_limit - The limit on the number of stores.  Default is 1.
-* data.cat_limit - The limit on the number of items per category.  Default is 10.
-* data.subtype - Specify as geo or postal_code if desired.
+* data.subtype - For obtaining the user's location if an IP based lookup isn't desired.  Specify as geo or postal_code if desired.
 * data.value - Set to applicable value if data.suptype is geo or postal_code.
-* data.call_type - default is store.  Can be set to category, or store,category to look up both types.
-* data.category_tree_id - The item categories.  Only required if the call_type inclues category.  Separate multiple categories with a comma.
+* data.call_type - default is store.  While any number of different categories can potentially work, only retailertag has been fully tested with our system.  Separate multipe call types with a comma.  This spec will override the default.
+* data.<category>ids - Used in conjunction with retailertag or any other category, and is requited if the related category is set.  Separate multipe category id's with a comma.
+* data.storeid - Used to look up categories from a specified store.  Please be aware that this value isn't necessary if the stores are being looked up along with a category, as the first store in the query result will override this value.
+* listingcount - Default is 50.
+* listingimagewidth - Default is 90.
+* resultset - Default is full.
+* sortby - Default is 6.
+* data.pd - Used for some ShopLocal campaigns to override any date restrictions for development puropses.  This is a value assigned by ShopLocal.
+* data.name_flag - If set, the system will watch out for any store name containing this value and remove it from the results.
 
 Shoplocal by IP Example:
 
@@ -569,12 +574,10 @@ function shoplocalReturn(data){
 dojo.shoplocal({
 	'callback': storeReturn,
 	'data': {
-		'campaign_id': 'abc123def456',
+		'campaignid': 'abc123def456',
 		'company': 'ABC, Inc.',
-		'store_limit': 3,
-		'cat_limit': 5,
-		'call_type': 'store,category',
-		'category_tree_id': 'houseware,clothing,sports'
+		'call_type': 'store,retailertag',
+		'retailertagids': '2334'
 	}
 });
 </script>
@@ -592,12 +595,10 @@ function storeReturn(data){
 dojo.shoplocal({
 	'callback': storeReturn,
 	'data': {
-		'campaign_id': 'abc123def456',
+		'campaignid': 'abc123def456',
 		'company': 'ABC, Inc.',
-		'store_limit': 3,
-		'cat_limit': 5,
-		'call_type': 'store,category',
-		'category_tree_id': 'houseware,clothing,sports',
+		'call_type': 'store,retailertag',
+		'retailertagids': '2334',
 		'subtype': 'geo',
 		'value': 'value': '47.676308399999996,-122.20762579999999'
 	}
@@ -617,12 +618,10 @@ function storeReturn(data){
 dojo.shoplocal({
 	'callback': storeReturn,
 	'data': {
-		'campaign_id': 'abc123def456',
+		'campaignid': 'abc123def456',
 		'company': 'ABC, Inc.',
-		'store_limit': 3,
-		'cat_limit': 5,
-		'call_type': 'store,category',
-		'category_tree_id': 'houseware,clothing,sports',
+		'call_type': 'store,retailertag',
+		'retailertagids': '2334'
 		'subtype': 'postal_code',
 		'value': 'value': '98033'
 	}
@@ -630,7 +629,11 @@ dojo.shoplocal({
 </script>
 ```
 
-*Because Shoplocal return data can vary and this library is still in beta, we will be adding a return data sample at a later date.*.
+* The bulk of all store related data can be found in data.stores.results.collection.data.  Multiple locations may exist.
+* The bulk of all category data, using retailertag as an example, can be found in data.retailertag.xxxx.results.collection[0][0].
+* If an IP address or geolocation was used to calculate the user's address, the results will be returned.  The data can be found in data.user_info.results.
+
+*Because Shoplocal return data can vary and this library is still in beta, we working on expanding the return data samples.*
 
 [top](#dojo-framework-library)
 
