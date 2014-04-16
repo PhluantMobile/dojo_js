@@ -57,7 +57,7 @@ dojo = {
 	webServiceUrl: 'http://lbs.phluant.com/web_services/',
 	dojoUrl: 'http://staging.dojo.phluant.com/',
 	ajax: function(vars){
-		ajaxRequest = new XMLHttpRequest(); 
+		ajaxRequest = new XMLHttpRequest();
 		var sendData = '';
 		if(typeof(vars.data) != 'undefined'){
 				for(var i in vars.data){
@@ -144,13 +144,13 @@ dojo = {
 			var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+vars.type+'&key='+vars.key+'&time='+new Date().getTime();
 			this.image_tracker(url);
 		}
-		
+
 	},
 	expand: function(vars){
 		//var logMsg = 'expanding to '+vars.width+'px width, '+vars.height+'px height.';
 		this.dojo_track({
 			'type': 'interaction',
-			'key': 'expand',	
+			'key': 'expand',
 		});
 		if(this.isMraid){
 			this.adIsExpanded = true;
@@ -247,14 +247,15 @@ dojo = {
 		        }
 		         var newMarker = new google.maps.Marker(defaults);
 		        if(typeof(marker.clickthru) != 'undefined'){
-		        	if(typeof(marker.clickthru.url) != 'undefined'){
-		        		newMarker.clickthru = marker.clickthru.url;
-		        	}
+		        	newMarker.clickthru = marker.clickthru;
 		        	google.maps.event.addListener(newMarker, 'click', function() {
 			            var url = 'http://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A;
-			            if(typeof(this.clickthru) != 'undefined'){
-			            	url = this.clickthru;
+			            if(typeof(this.clickthru.url) != 'undefined'){
+			            	url = this.clickthru.url;
 			            }
+									if(typeof(this.clickthru.callback) == 'function'){
+										this.clickthru.callback();
+									}
 		            	dojo.dojo_track({
 							'type': 'click',
 							'key': this.clickthru.name,
@@ -286,7 +287,7 @@ dojo = {
 				console.log('Must be a valid lat/lng set for reverse geocoding');
 				return false;
 			}
-			
+
 		}
 		else{
 			console.log(vars.address);
@@ -347,6 +348,7 @@ dojo = {
 			}
 		}
 		if(typeof(mraid) != "undefined"){
+			/*
 			if(this.adInit == null){
 				console.log('An initialization function must be set for MRAID to work properly.');
 				return false;
@@ -355,6 +357,7 @@ dojo = {
 				console.log('A close function must be set for MRAID to work properly.');
 				return false;
 			}
+			*/
 		    this.isMraid = true;
 		    mraid.setExpandProperties({useCustomClose:true});
 		    mraid.addEventListener('stateChange', function(){
@@ -400,8 +403,12 @@ dojo = {
 	},
 	mraid_view_change: function(){
 		if(mraid.isViewable()) { /*TODO: don't check isViewable again*/
+			if (!this.winLoaded) { /*Mraid doesn't fire the load event,*/
+				winLoaded = true;  /*so we have to do it manually*/
+				window.dispatchEvent(new Event('load'));
+			}
 			this.track('viewableChange');
-			this.adInit();
+			setTimeout(this.adInit.bind(this)); /*delay init until load callbacks fired*/
 		}
 	},
 	query_string: function(jsonConvert){
@@ -472,7 +479,7 @@ dojo = {
 			'key': name,
 		});
 	},
-	valid_email: function(email){ 
+	valid_email: function(email){
         var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         return filter.test(email);
     },
@@ -549,8 +556,12 @@ dojo = {
 			dojo_videoElement.style[i] = this.video_properties.style[i];
 		}
 		dojo_videoElement.addEventListener('play', function(){
+			self.dojo_track({
+				'type': 'video',
+				'key': 'play'
+			});
 			if(self.video_properties.full_screen){
-				self.video_full_screen(elem);
+				self.video_full_screen(dojo_videoElement);
 			}
 			if(typeof(self.video_properties.play_callback )== 'function'){
 				self.video_properties.play_callback();
@@ -581,13 +592,9 @@ dojo = {
     			}
     		},100);
 		});
-		if(this.video_properties.attributes.autoplay){
+		if(this.video_properties.attributes.autoplay === true){
 			setTimeout(function(){
 				dojo_videoElement.play();
-				self.dojo_track({
-					'type': 'video',
-					'key': 'play'
-				});
 			},500);
 		}
 		if(!this.video_properties.full_screen){
@@ -625,7 +632,7 @@ dojo = {
 		else if(elem.mozRequestFullScreen) {
 		    elem.mozRequestFullScreen();
 		    endEvent = 'mozendfullscreen';
-		} 
+		}
 		else if(elem.webkitRequestFullscreen) {
 			elem.webkitRequestFullscreen();
 			endEvent = 'webkitendfullscreen';
@@ -642,7 +649,7 @@ dojo = {
 dojo.iosVersion = dojo.iosVersionCheck();
 var metas = document.getElementsByTagName('meta');
 for(var i=0; i<metas.length; i++){
-	if (metas[i].getAttribute("name") == "apple-mobile-web-app-status-bar-style"){ 
+	if (metas[i].getAttribute("name") == "apple-mobile-web-app-status-bar-style"){
         dojo.isDojo = true;
-    } 
-} 
+    }
+}
