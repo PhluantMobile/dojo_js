@@ -37,7 +37,7 @@ The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's cli
 Place the JavaScript tag referencing the framework before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work.  For your convenience, we have a copy of the code on our CDN server you may use at http://mdn4.phluantmobile.net/jslib/dojo.js/.  Example tag:
 
 ```
-<script src="http://mdn4.phluantmobile.net/jslib/dojo.js/dojo.min.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo_js/dojo.min.js"></script>
 ```
 
 All coding examples used in this documentation can utilize jQuery or other JavaScript framework library equivalents unless otherwise indicated.
@@ -614,7 +614,7 @@ function storeReturn(data){
 	console.log(data);
 }
 
-//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocaiton lookup.
+//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocation lookup.
 dojo.shoplocal({
 	'callback': storeReturn,
 	'data': {
@@ -754,7 +754,7 @@ var mapOptions = {
 	'map_zoom': 10,
 	'markers': [],
 }
-//Pretend the data variable is an object that contains store infromation.
+//Pretend the data variable is an object that contains store information.
 for(var i in data.results){
 	var numAdd = eval(i+1);
 	mapOptions.markers.push({
@@ -953,7 +953,7 @@ console.log(dojo.valid_zip('98034'));
 
 ### Technical Support
 
-Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  See a bug and know how to fix it, or know how to make this repository better?  Please feel free to fork this repository and submit a merge request.
+Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  See a bug and know how to fix it, or know how to make this repository better?  Please feel free to fork this repository, make necessary modifications, and submit a merge request.
 
 [top](#dojo-framework-library)
 
