@@ -777,7 +777,7 @@ dojo.gmaps_draw(mapOptions);
 
 ### Standard AJAX Requests
 
-This function allows for AJAX requests.  Both GET and POST requests are supported.  If the expected return data is in JSON format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data.  Unless explicitly specified in a campaign contract, we are not responsible for ensuring cross-domain access or any other accessibility issue concerning a non-Phluant AJAX source.
+This function allows for AJAX requests.  Both GET and POST requests are supported.  Using Yahoo Query Language (YQL) is also supported for enhanced CORS capabilities.  If the expected return data is in JSON format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data. Unless explicitly specified in a campaign contract, Phluant is not responsible for ensuring cross-domain access or any other accessibility issue concerning a non-Phluant AJAX source.  YQL may not resolve all cross-domain access issues.
 
 Required specs:
 
@@ -786,6 +786,8 @@ Required specs:
 Optional specs:
 
 * callback - The callback function for the data.
+* yql - Default is false.  Set to either true, or list as an object to specify the format.
+	* yql.format - Default is json if yql is utilized.  Can be changed to xml or any other YQL supported format.
 * data - An object of any GET/POST key/value pairs needed to complete the request.
 * method - Can be either GET or POST.  Default is GET.
 * js_object - Can be set to true or false.  Should only be set if the expected return data is JSON.
@@ -802,6 +804,9 @@ Example:
 
  dojo.ajax({
  	'url': 'http://somesite.com/get/some/data',
+	 'yql': {
+			'format': 'xml',
+		},
  	'callback': ajaxReturn,
  	'json_return': 'true',
  	'method': 'GET',

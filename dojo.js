@@ -59,20 +59,32 @@ dojo = {
 	ajax: function(vars){
 		ajaxRequest = new XMLHttpRequest();
 		var sendData = '';
+		var yql = false;
+		if(typeof(vars.yql) != 'undefined'){
+			yql = true;
+		}
 		if(typeof(vars.data) != 'undefined'){
-				for(var i in vars.data){
-				if(sendData != ''){
-					sendData += '&';
-				}
-				sendData += i+'='+encodeURIComponent(vars.data[i]);
+			for(var i in vars.data){
+				sendData += ((sendData != '')?'&':'')+i+'='+encodeURIComponent(vars.data[i]);
 			}
 		}
-		if(vars.method != 'POST' && sendData != ''){
-			vars.url += '?'+sendData;
+		if((vars.method != 'POST' || yql) && sendData != ''){
+			vars.url += ((vars.url.indexOf('?') != -1)?'&':'?')+sendData;
 		}
 		var timeout = 10000;
 		if(typeof(vars.timeout) == 'number'){
 			timeout = vars.timeout;
+		}
+		if(yql){
+			var format = ((typeof(vars.yql.format) == 'string')? vars.yql.format : 'json');
+			var yql = 'format='+format+'&q='+encodeURIComponent('select * from '+format+' where url="' +vars.url+ '"');
+			vars.url = 'http://query.yahooapis.com/v1/public/yql';
+			if(vars.method != 'POST'){
+				vars.url += '?'+yql;
+			}
+			else{
+				sendData = yql;
+			}
 		}
 		ajaxRequest.open(vars.method, vars.url, true);
 		if(vars.method == 'POST'){
@@ -93,8 +105,14 @@ dojo = {
 		ajaxRequest.onreadystatechange = function(){
 			clearTimeout(ajaxTimeout);
 			if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
+				var resp = ajaxRequest.responseText;
+				if(yql){
+					resp = {
+						'status': 'success',
+						'results': resp,
+					};
+				}
 				if(typeof(vars.js_object) != 'undefined'){
-					var resp = ajaxRequest.responseText;
 					if(vars.js_object){
 						resp = JSON.parse(resp);
 					}
@@ -102,15 +120,15 @@ dojo = {
 				if(typeof(vars.callback) != 'undefined'){
 					vars.callback(resp);
 				}
-        	}
-        	else{
-        		if(typeof(vars.callback) != 'undefined'){
-	        		vars.callback({
-	        			'status': 'error',
-	        			'request_info': ajaxRequest
-	        		});
-	        	}
-        	}
+			}
+			else{
+				if(typeof(vars.callback) != 'undefined'){
+					vars.callback({
+						'status': 'error',
+						'request_info': ajaxRequest
+					});
+				}
+			}
 		}
 	},
 	capitalize: function(str){
