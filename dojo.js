@@ -293,7 +293,7 @@ dojo = {
 			this.geocoder = new google.maps.Geocoder();
 		}
 		var self = this;
-		if(locType == 'geo' || 'latLng'){
+		if(locType == 'geo' || locType == 'latLng'){
 			if(this.valid_geo(vars.address)){
 				var geo = vars.address.split(',');
 				var latLng = new google.maps.LatLng(geo[0], geo[1]);
@@ -306,12 +306,8 @@ dojo = {
 				return false;
 			}
 
-		}
-		else{
-			console.log(vars.address);
+		}		else{
 			this.geocoder.geocode( { 'address' : encodeURIComponent(vars.address)}, function(results, status) {
-				console.log(results);
-				console.log(status);
 				self.gmaps_return(results, status, vars);
 		    });
 		}
