@@ -471,6 +471,7 @@ Lookup Methods:
 
 * IP address (default)
 * Lat/lng
+* Postal Code
 
 Required Specs:
 
@@ -482,8 +483,8 @@ Optional Specs:
 
 * data.limit - the limit on the number of stores.  Default is 3.
 * data.dist - the limit on the maximum radius distance in miles.  Default is 30.
-* data.value - if using a lat/lng lookup, set as lat,lng.
-* data.subtype - specify as geo if using lat/lng values.
+* data.subtype - specify as geo or postal_code.
+* data.value - if subtype is declared, use this spec to declare the value.
 
 Store Location by IP Example:
 
@@ -527,6 +528,28 @@ dojo.get_stores({
 </script>
 ```
 
+Store Location by Postal Code Example:
+
+```
+<script>
+function storeReturn(data){
+	console.log(data);
+}
+
+//Distance and limit are shown as an example and can be omitted if satisfied with default values.  Subtype and value must be specified for a geolocation lookup.
+dojo.get_stores({
+	'callback': storeReturn,
+	'data': {
+		'campaign_id': 9999,
+		'limit': 3,
+		'dist': 30,
+		'subtype': 'postal_code',
+		'value': '98033'
+	}
+});
+</script>
+```
+
 [top](#dojo-framework-library)
 
 ---
@@ -553,7 +576,7 @@ Optional Specs:
 * data.subtype - For obtaining the user's location if an IP based lookup isn't desired.  Specify as geo or postal_code if desired.
 * data.value - Set to applicable value if data.suptype is geo or postal_code.
 * data.call_type - default is store.  While any number of different categories can potentially work, only retailertag has been fully tested with our system.  Separate multiple call types with a comma.  This spec will override the default.
-* data.<category>ids - Used in conjunction with retailertag or any other category, and is requited if the related category is set.  Separate multiple category id's with a comma.
+* data.<category>ids - Used in conjunction with retailertag or any other category, and is required if the related category is set.  Separate multiple category id's with a comma.
 * data.storeid - Used to look up categories from a specified store.  Please be aware that this value isn't necessary if the stores are being looked up along with a category, as the first store in the query result will override this value.
 * listingcount - Default is 50.
 * listingimagewidth - Default is 90.
@@ -739,7 +762,7 @@ Optional specs:
 		* markers[i].clickthru.name - the name of the clickthrough, used for reporting.  Essentially the same functionality as a standard clickthrough.
 		* markers[i].clickthru.url - An optional URL value that will override the default Google Maps link.
 		* markers[i].clickthru.callback - An optional callback function that will call up custom code before the clickthrough is run.
-	* The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers)._
+	* The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers).
 
 Example:
 
@@ -958,7 +981,7 @@ console.log(dojo.valid_zip('98034'));
 
 ### Technical Support
 
-Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  See a bug and know how to fix it, or know how to make this repository better?  Please feel free to fork this repository, make necessary modifications, and submit a merge request.
+Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  See a bug and know how to fix it, or know how to make this repository better?  Please feel free to make a fork, make necessary modifications, and submit a pull request to us.
 
 [top](#dojo-framework-library)
 

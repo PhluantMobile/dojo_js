@@ -99,35 +99,33 @@ dojo = {
 		else{
 			ajaxRequest.send();
 		}
-		var ajaxTimeout = setTimeout(function(){
-			ajaxRequest.abort();
-			if(typeof(vars.callback) != 'undefined'){
+		if(typeof(vars.callback) != 'undefined'){
+			var ajaxTimeout = setTimeout(function(){
+				ajaxRequest.abort();
 				vars.callback({
-					'status': 'timeout',
+					'status': 'error',
+					'reason': 'timeout',
 				});
-			}
-		},timeout);
-		ajaxRequest.onreadystatechange = function(){
-			clearTimeout(ajaxTimeout);
-			if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
-				var resp = ajaxRequest.responseText;
-				if(yql){
-					resp = {
-						'status': 'success',
-						'results': resp,
-					};
-				}
-				if(typeof(vars.js_object) != 'undefined'){
-					if(vars.js_object){
-						resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') != -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
+			},timeout);
+			ajaxRequest.onreadystatechange = function(){
+				if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
+					clearTimeout(ajaxTimeout);
+					var resp = ajaxRequest.responseText;
+					if(typeof(vars.js_object) != 'undefined'){
+						if(vars.js_object){
+							resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') != -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
+						}
 					}
-				}
-				if(typeof(vars.callback) != 'undefined'){
+					if(yql){
+						resp = {
+							'status': 'success',
+							'results': resp,
+						};
+					}
 					vars.callback(resp);
 				}
-			}
-			else{
-				if(typeof(vars.callback) != 'undefined'){
+				else if(ajaxRequest.status != 200){
+					clearTimeout(ajaxTimeout);
 					vars.callback({
 						'status': 'error',
 						'request_info': ajaxRequest
