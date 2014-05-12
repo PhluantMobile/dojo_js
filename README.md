@@ -752,7 +752,7 @@ Required specs:
 
 Optional specs:
 
-* map_zoom - the zoom level of the map.  Default is 10.
+* map_zoom - the zoom level of the map. A bounding box is generated from the markers by default.
 * markers - an object containing relevant information for any desired markers.
 * user_lat - the latitude for the user's location.  Required for the default Google Maps clickthrough.
 * user_lat - the longitude for the user's location.  Required for the default Google Maps clickthrough.

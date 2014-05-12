@@ -232,60 +232,35 @@ dojo = {
 		return document.getElementById(id);
 	},
 	gmaps_draw: function(vars){
-		var mapZoom = 10;
-		if(typeof(vars.map_zoom) != 'undefined'){
-			mapZoom = vars.map_zoom;
-		}
-		var mapOptions = {
-	        zoom: mapZoom,
+		if (vars.map_id === undefined)
+	    	return console.log('A map id must be specified');
+		if (typeof(vars.map_id) === 'string') vars.map_id = this.gid(vars.map_id);
+
+	    var map = new google.maps.Map(vars.map_id, {
+	    	zoom: vars.map_zoom,
 	        center: new google.maps.LatLng(vars.center_lat, vars.center_lng),
 	        disableDefaultUI: true,
 	        mapTypeId: google.maps.MapTypeId.ROADMAP
-	    };
-	    if(typeof(vars.map_id) == 'undefined'){
-	    	console.log('A map id must be specified');
-	    	return false;
-	    }
-	    else{
-	    	if(typeof(vars.map_id) == 'string'){
-	    		vars.map_id = this.gid(vars.map_id);
-	    	}
-	    }
-	    var map = new google.maps.Map(vars.map_id, mapOptions);
-	    if(typeof(vars.markers) != 'undefined'){
-		    for (var i in vars.markers) {
-		        var marker = vars.markers[i];
-		        var myLatLng = new google.maps.LatLng(marker.lat, marker.lng);
-		        var defaults = {
-		        	position: myLatLng,
-		        	map: map,
-		        };
-		        var ignore = ['lat', 'lng', 'clickthru'];
-		        for(var m in marker){
-		        	if(ignore.indexOf(marker[m]) != -1){
-		        		defaults[m] = marker[m];
-		        	}
-		        }
-		         var newMarker = new google.maps.Marker(defaults);
-		        if(typeof(marker.clickthru) != 'undefined'){
-		        	newMarker.clickthru = marker.clickthru;
-		        	google.maps.event.addListener(newMarker, 'click', function() {
-			            var url = 'http://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A;
-			            if(typeof(this.clickthru.url) != 'undefined'){
-			            	url = this.clickthru.url;
-			            }
-									if(typeof(this.clickthru.callback) == 'function'){
-										this.clickthru.callback();
-									}
-		            	dojo.dojo_track({
-							'type': 'click',
-							'key': this.clickthru.name,
-						});
-			            window.open(url, '_blank');
-			        });
-		        }
-	    	}
-    	}
+	    });
+
+	    var bounds = new google.maps.LatLngBounds();
+	    if (vars.markers) vars.markers.forEach(function(marker){
+	        marker.position = new google.maps.LatLng(marker.lat, marker.lng);
+	        marker.map = map;
+	        
+	        var gMarker = new google.maps.Marker(marker);
+	        if (marker.clickthru) google.maps.event.addListener(gMarker, 'click', function(){
+				if (marker.clickthru.callback) marker.clickthru.callback();
+            	dojo.dojo_track({
+					'type': 'click',
+					'key': marker.clickthru.name,
+				});
+	            window.open(marker.clickthru.url || 'https://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A, '_blank');
+	        });
+
+	        bounds.extend(gMarker.position);
+	    });
+	    if (vars.map_zoom === undefined) map.fitBounds(bounds);
 	},
 	gmaps_geo: function(vars){
 		var locType = 'address';
