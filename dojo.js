@@ -55,7 +55,7 @@ dojo = {
 	pl: null,
 	unitID: null,
 	webServiceUrl: 'http://lbs.phluant.com/web_services/',
-	dojoUrl: 'http://staging.dojo.phluant.com/',
+	dojoUrl: 'http://dojo.phluant.com/',
 	ajax: function(vars){
 		ajaxRequest = new XMLHttpRequest();
 		var sendData = '';
