@@ -677,8 +677,11 @@ dojo = {
 		var videoHtml = '<video src="'+this.video_properties.video_url+'"></video>';
 		cid.innerHTML = videoHtml;
 		dojo_videoElement = cid.getElementsByTagName('video')[0];
-		for(var i in this.video_properties.attributes){
-			dojo_videoElement.setAttribute(i, this.video_properties.attributes[i]);
+		for(var attr in this.video_properties.attributes){
+			if (this.video_properties.attributes[attr] === true) 
+				dojo_videoElement.setAttribute(attr, '');
+			else if (this.video_properites.attributes[attr] !== false)
+				dojo_videoElement.setAttribute(attr, this.video_properties.attributes[i]);
 		}
 		for(var i in this.video_properties.style){
 			dojo_videoElement.style[i] = this.video_properties.style[i];
