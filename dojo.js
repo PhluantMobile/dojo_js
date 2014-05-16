@@ -639,7 +639,7 @@ dojo = {
 	video: function(vars){
 		var self = this;
 		this.videoPlaying = true;
-		this.videoId = vars.container_id;
+		if (vars) this.videoId = vars.container_id;
 		if(typeof(this.videoId) == 'string'){
 			this.videoId = this.gid(this.videoId);
 		}
