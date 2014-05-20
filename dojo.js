@@ -200,7 +200,9 @@ dojo = {
             vars.callback(location);
         },function(e){
         	if(vars.failover){
-        		self.geolocation(vars);
+        		/* TODO: normalize return data to be the 
+        		   same as above, to maintain consistency */
+        		self.geolocation(vars);  
         	}
         	else{
         		vars.callback(false);
@@ -262,62 +264,43 @@ dojo = {
 	    });
 	    if (vars.map_zoom === undefined) map.fitBounds(bounds);
 	},
+	/* TODO: remove the fallback callback and normalifze the return data for callback */
 	gmaps_geo: function(vars){
-		var locType = 'address';
-		if(typeof(vars.loc_type) != 'undefined'){
-			locType = vars.loc_type;
-		}
-		if(this.geocoder == null){
-			this.geocoder = new google.maps.Geocoder();
-		}
-		var self = this;
-		if(locType == 'geo' || locType == 'latLng'){
-			if(this.valid_geo(vars.address)){
-				var geo = vars.address.split(',');
-				var latLng = new google.maps.LatLng(geo[0], geo[1]);
-				this.geocoder.geocode( { 'latLng' : latLng}, function(results, status) {
-					self.gmaps_return(results, status, vars);
-			    });
-			}
-			else{
-				console.log('Must be a valid lat/lng set for reverse geocoding');
-				return false;
-			}
+		if (!vars.callback) return false;
+		if (!vars.loc_type) vars.loc_type = 'address';
+		if (!this.geocoder) this.geocoder = new google.maps.Geocoder();
 
-		}		else{
-			this.geocoder.geocode( { 'address' : encodeURIComponent(vars.address)}, function(results, status) {
-				self.gmaps_return(results, status, vars);
-		    });
+		var opts = {};
+		if (['geo','latLng'].indexOf(vars.loc_type) !== -1) {
+			if (!this.valid_geo(vars.address))
+				return console.error('invalid lat/lng');
+
+			var coords = vars.address.split(',');
+			opts.latLng = new google.maps.LatLng(coords[0], coords[1]);
 		}
+		else opts.address = encodeURIComponent(vars.address);
+
+		this.geocoder.geocode(opts, function(results, status) {
+			dojo.gmaps_return(results, status, vars);
+		});
 	},
 	gmaps_return: function(results, status, vars){
-		if(status == google.maps.GeocoderStatus.OK) {
-			vars.callback(results);
-         }
-         else{
-         	if(typeof(vars.failover) == 'boolean'){
-         		if(vars.failover){
-         			var geoVars = {};
-         			geoVars.callback = vars.callback;
-         			if(typeof(vars.failover_callback) != 'undefined'){
-         				geoVars.callback = vars.failover_callback;
-         			}
-         			if(this.valid_zip(address)){
-						geoVars.data.type =  'postal_code';
-					}
-					if(this.valid_geo(address)){
-						geoVars.data.type =  'city_postal_by_geo';
-					}
-					if(typeof(geoVars.data.type) != 'undefined'){
-						geoVars.data.value = vars.address;
-					}
-         			this.geolocation(geoVars);
-         		}
-         	}
-         	else{
-         		vars.callback(false);
-         	}
-         }
+		if (status === google.maps.GeocoderStatus.OK) return vars.callback(results);
+		else if (vars.failover) {
+			var opts = {
+				data: {value: vars.address},
+				callback: vars.failover_callback || vars.callback,
+			};
+
+			/* TODO: don't wait until after the network request to do this check.
+			   Also, shouldn't this be done inside the geolocation function? */
+			if (this.valid_zip(vars.address)) opts.data.type =  'postal_code';
+			else if (this.valid_geo(vars.address)) opts.data.type =  'city_postal_by_geo';
+			else return console.error('invalid address');
+
+			this.geolocation(opts);
+		}
+		else vars.callback(false);
 	},
 	image_tracker: function(url){
 		var img = document.createElement("img");
@@ -678,7 +661,7 @@ dojo = {
 		cid.innerHTML = videoHtml;
 		dojo_videoElement = cid.getElementsByTagName('video')[0];
 		for(var attr in this.video_properties.attributes){
-			if (this.video_properties.attributes[attr] === true) 
+			if (this.video_propertiefs.attributes[attr] === true) 
 				dojo_videoElement.setAttribute(attr, '');
 			else if (this.video_properties.attributes[attr] !== false)
 				dojo_videoElement.setAttribute(attr, this.video_properties.attributes[attr]);
