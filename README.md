@@ -76,10 +76,14 @@ Specs:
 * callback: The close function for an expanded ad.  Required for any expandable ad running on MRAID.  Recommended in all cases.
 * init: The initialization function for an ad.  Required for any ad running on MRAID.  Recommended in all cases.
 * expanded: Default is false.  Only required for interstitial ads.
+* asynch_load: Default is null.  This functionality will asynchronously load any JavaScript scripts before the ad fires off the initialization.
+* asynch_load.insert_before: Required for any asynchronous loading.  Designates the reference element that the libaray will use to reference the load.
+* asynch_load.scripts: Required for any asynchronous loading.  Designates the scripts to load in array format.
 
 Example:
 
 ```
+
 <script>
 function contractAd(){
 	expand_div.style.display = 'none';
@@ -94,7 +98,11 @@ function initialize(){
 dojo.init({
 	'callback': contractAd,
 	'expanded': false,
-	'init': initialize
+	'init': initialize, 
+	'asynch_load': {
+		'insert_before': document.getElementsByTagName('head')[0],
+		'scripts': ['http://code.jquery.com/jquery.min.js', 'http://somesite.com/somescript.js']
+	}
 });
 </script>
 ```

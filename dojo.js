@@ -350,6 +350,30 @@ dojo = {
 		    newMetaTag.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";
 		    document.getElementsByTagName('head')[0].appendChild( newMetaTag );
 		}
+		if(typeof(vars.asynch_load) != 'undefined'){
+			var scripts = vars.asynch_load.scripts;
+			var insert_before = vars.asynch_load.insert_before;
+			var max = scripts.length;
+			var sCount = 0;
+			if(typeof(insert_before) == 'string') insert_before = this.gid(insert_before);
+			var insertParent = insert_before.parentNode;
+			for(var s=0; s<scripts.length; s++){
+			  var newScript = document.createElement('script');
+			  newScript.src = scripts[s];
+			  insertParent.insertBefore(newScript, insert_before);
+			  newScript.onload = function(){
+			    sCount++;
+			    if(sCount == max){
+			      self.init_check();
+			    }
+			  }
+			}
+		}
+		else{
+			this.init_check();
+		}
+	},
+	init_check: function(){
 		if(this.adInit != null){
 			if(this.isMraid){
 				if(mraid.getState() === 'loading'){
