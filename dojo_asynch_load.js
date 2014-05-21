@@ -14,9 +14,7 @@ for(var i=0; i<scripts.length; i++){
 }
 scriptLoaded = function(){
 	onload_count++;
-	console.log(onload_count);
 	if(onload_count == scripts.length && typeof(asynchLoad.callback) != 'undefined'){
-		console.log('about to callback');
 		asynchLoad.callback();
 	}
 }
