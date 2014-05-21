@@ -661,7 +661,7 @@ dojo = {
 		cid.innerHTML = videoHtml;
 		dojo_videoElement = cid.getElementsByTagName('video')[0];
 		for(var attr in this.video_properties.attributes){
-			if (this.video_propertiefs.attributes[attr] === true) 
+			if (this.video_properties.attributes[attr] === true) 
 				dojo_videoElement.setAttribute(attr, '');
 			else if (this.video_properties.attributes[attr] !== false)
 				dojo_videoElement.setAttribute(attr, this.video_properties.attributes[attr]);
