@@ -436,11 +436,6 @@ dojo = {
 		}
 		return Math.round(num*roundTo)/roundTo;
 	},
-	session_import: function(vars){
-		for(var i in vars){
-			this[i] = vars[i];
-		}
-	},
 	shoplocal: function(vars){
 		var settings = {
 			storeid: null,
