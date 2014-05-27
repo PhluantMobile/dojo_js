@@ -251,6 +251,7 @@ dojo = {
 	        marker.map = map;
 	        
 	        var gMarker = new google.maps.Marker(marker);
+
 	        if (marker.clickthru) google.maps.event.addListener(gMarker, 'click', function(){
 				if (marker.clickthru.callback) marker.clickthru.callback();
             	dojo.dojo_track({
@@ -259,6 +260,11 @@ dojo = {
 				});
 	            window.open(marker.clickthru.url || 'https://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A, '_blank');
 	        });
+
+	        if (typeof(marker.custom) === 'function') marker.custom(gMarker);
+	        else if (typeof(marker.custom) === 'object') 
+	        	for (var prop in marker.custom)
+	        		gMarker[prop] = marker.custom[prop];
 
 	        bounds.extend(gMarker.position);
 	    });
