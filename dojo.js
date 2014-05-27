@@ -261,10 +261,8 @@ dojo = {
 	            window.open(marker.clickthru.url || 'https://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A, '_blank');
 	        });
 
-	        if (typeof(marker.custom) === 'function') marker.custom(gMarker);
-	        else if (typeof(marker.custom) === 'object') 
-	        	for (var prop in marker.custom)
-	        		gMarker[prop] = marker.custom[prop];
+	        if (marker.events) for (var event in marker.events)
+		    	google.maps.event.addListener(gMarker, event, marker.events[event]);
 
 	        bounds.extend(gMarker.position);
 	    });

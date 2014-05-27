@@ -764,7 +764,7 @@ Optional specs:
 * user_lat - the latitude for the user's location.  Required for the default Google Maps clickthrough.
 * user_lat - the longitude for the user's location.  Required for the default Google Maps clickthrough.
 * markers - an object containing relevant information for any desired markers.
-	* markers[i].custom - either an object with properties that will be copied onto marker after its construction, or a function that takes the marker and modifies it (eg. to bind events)
+	* markers[i].events - an object that has event names for keys and callback functions for values.
 	* markers[i].lat - the latitude of the desired marker.  Required for marker to be set.
 	* markers[i].lng - the longitude of the desired marker.  Required for marker to be set.
 	* markers[i].clickthru - an object containing relevant information for any marker to be a clickthrough.  Default is a Google Maps hyperlink using the original lat/lng values as the start point and the lat/lng values as the end point
