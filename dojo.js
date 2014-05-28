@@ -388,7 +388,7 @@ dojo = {
 		if(this.adInit != null){
 			if(this.isMraid){
 				if(mraid.getState() === 'loading'){
-					mraid.addEventListener('viewableChange', self.mraid_ready);
+					mraid.addEventListener('ready', this.mraid_ready);
 				}
 				else{
 					this.mraid_ready();
