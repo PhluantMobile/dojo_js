@@ -347,8 +347,15 @@ dojo = {
 		            self.adIsExpanded = false;
 		        }
 		    });
+		    var tag_elem = document.body;
+		    if(typeof(vars.tag_elem) != 'undefined'){
+		    	tag_elem = vars.tag_elem;
+		    	if(typeof(tag_elem) == 'string'){
+		    		tag_elem = this.gid(tag_elem);
+		    	}
+		    }
 		    document.body.style.margin="0px";
-		    this.container.style.position="absolute";
+		    tag_elem.style.position="absolute";
 		    var newMetaTag = document.createElement('meta');
 		    newMetaTag.name = "viewport";
 		    newMetaTag.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";
