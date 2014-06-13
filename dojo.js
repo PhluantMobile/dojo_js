@@ -826,9 +826,24 @@ dojo = {
 	},
 }
 dojo.iosVersion = dojo.iosVersionCheck();
-var metas = document.getElementsByTagName('meta');
-for(var i=0; i<metas.length; i++){
-	if (metas[i].getAttribute("name") == "apple-mobile-web-app-status-bar-style"){
-        dojo.isDojo = true;
-    }
+if(typeof(global_ad_id1) != 'undefined'){
+	var newUrl = global_ad_id1[0].url.split('?');
+	var metricsArray = newUrl[1].split('&');
+	var metrics = {};
+	for(var i=0; i<metricsArray.length; i++){
+	  var metricParams = metricsArray[i].split('=');
+	  metrics[metricParams[0]] = decodeURIComponent(metricParams[1]);
+	}
+	dojo.unitID = metrics.ad_id;
+	var scripts = document.getElementsByTagName('script');
+	for(var i=0; i<scripts.length; i++){
+	  var scriptSrc = scripts[i].src;
+	  if(scriptSrc.indexOf('dojo.phluant.com') != -1){
+	    scriptSrc = scriptSrc.replace('http://dojo.phluant.com/adj/', '');
+	    scriptSrc = scriptSrc.split('/');
+	    dojo.pl = scriptSrc[0];
+	    break;
+	  }
+	}
+	dojo.isDojo = true;
 }
