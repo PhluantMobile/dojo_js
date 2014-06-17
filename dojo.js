@@ -144,6 +144,7 @@ dojo = {
 		});
 
 		if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
+		console.log('opening ' + vars.url);
 		window.open(vars.url, '_blank');
 	},
 	contract: function(){
