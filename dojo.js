@@ -142,6 +142,8 @@ dojo = {
 			'type': 'click',
 			'key': vars.name,
 		});
+		
+		if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
 		window.open(vars.url, '_blank');
 	},
 	contract: function(){
