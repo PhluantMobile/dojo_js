@@ -253,7 +253,7 @@ dojo = {
 	        var gMarker = new google.maps.Marker(marker);
 
 	        if (marker.clickthru) google.maps.event.addListener(gMarker, 'click', function(){
-				if (marker.clickthru.callback) marker.clickthru.callback();
+				if (marker.clickthru.callback) marker.clickthru.callback.call(this);
             	dojo.dojo_track({
 					'type': 'click',
 					'key': marker.clickthru.name,
