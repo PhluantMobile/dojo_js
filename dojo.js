@@ -254,11 +254,8 @@ dojo = {
 
 	        if (marker.clickthru) google.maps.event.addListener(gMarker, 'click', function(){
 				if (marker.clickthru.callback) marker.clickthru.callback.call(this);
-            	dojo.dojo_track({
-					'type': 'click',
-					'key': marker.clickthru.name,
-				});
-	            window.open(marker.clickthru.url || 'https://maps.google.com/?saddr='+vars.user_lat+','+vars.user_lng+'&daddr='+this.position.k+','+this.position.A, '_blank');
+				if (!marker.clickthru.url) marker.clickthru.url = 'https://maps.google.com/?saddr='+ vars.user_lat +','+ vars.user_lng +'&daddr='+ this.position.lat() +','+ this.position.lng();
+            	dojo.clickthru(marker.clickthru);
 	        });
 
 	        if (marker.events) for (var event in marker.events)
