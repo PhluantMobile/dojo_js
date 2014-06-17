@@ -142,7 +142,7 @@ dojo = {
 			'type': 'click',
 			'key': vars.name,
 		});
-		
+
 		if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
 		window.open(vars.url, '_blank');
 	},
@@ -193,23 +193,35 @@ dojo = {
 		this.ajax(varsExport);
 	},
 	geolocation_prompt: function(vars){
-		var self = this;
-		navigator.geolocation.getCurrentPosition(function(position){
-			var location = {
+		var resolved = false;
+
+		navigator.geolocation.getCurrentPosition(success, error, {
+			enableHighAccuracy: true,
+			timeout: 7000,
+			maximumAge: 0
+		});
+
+	    function success(position){
+	    	if (resolved) return;
+	    	else resolved = true;
+
+			vars.callback({
 				'lat': position.coords.latitude,
 				'lng': position.coords.longitude
-			}
-            vars.callback(location);
-        },function(e){
-        	if(vars.failover){
-        		/* TODO: normalize return data to be the 
-        		   same as above, to maintain consistency */
-        		self.geolocation(vars);  
-        	}
-        	else{
-        		vars.callback(false);
-        	}
-        });
+			});
+    	}
+
+    	function error(e){
+    		if (resolved) return;
+    		else resolved = true;
+
+    		/* TODO: normalize return data to be the 
+        	 same as above, to maintain consistency */
+        	if (vars.failover) dojo.geolocation(vars); 
+        	else vars.callback(false);
+        }
+
+	    setTimeout(error, 8000);
 	},
 	get_stores: function(vars){
 		var varsExport = {
