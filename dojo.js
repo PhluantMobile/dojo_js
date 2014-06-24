@@ -54,7 +54,7 @@ dojo = {
 	videoInt: null,
 	pl: null,
 	unitID: null,
-	webServiceUrl: 'http://lbs.phluant.com/web_services/',
+	webServiceUrl: 'http://lbs.phluant.com:8080/',
 	dojoUrl: 'http://dojo.phluant.com/',
 	ajax: function(vars){
 		ajaxRequest = new XMLHttpRequest();
