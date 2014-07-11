@@ -432,7 +432,13 @@ dojo = {
 		if (isViewable) { /*TODO: don't check isViewable again*/
 			if (!dojo.winLoaded) { /*Mraid doesn't fire the load event,*/
 				dojo.winLoaded = true;  /*so we have to do it manually*/
-				window.dispatchEvent(new Event('load'));
+
+			    try { window.dispatchEvent(new Event('load')); }
+			    catch(e) { /* depecrated event construction method */
+			    	var loadEvent = document.createEvent('Event');
+			        event.initEvent('load', true, true);
+			        window.dispatchEvent(loadEvent);
+			    }
 			}
 			dojo.track('viewableChange');
 			setTimeout(dojo.adInit.bind(dojo)); /*delay init until after load callbacks are fired*/
