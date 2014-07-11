@@ -1,7 +1,7 @@
 /*Dojo.js Framework v0.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 dojo = {
 	adInit: null,
-	adIsExpanded: false,
+	adIsExpanded: false, /* TODO: remove this stupid property */
 	closeCallback: null,
 	geocoder: null,
 	iosVersion: null,
@@ -27,6 +27,7 @@ dojo = {
 	},
 	isDojo: false,
 	isMraid: false,
+	winLoaded: false,
 	dojoConsoleLog: false,
 	video_properties: {
 		'aspect_ratio': '16:9',
@@ -350,8 +351,11 @@ dojo = {
 			}
 			*/
 		    this.isMraid = true;
+		    /* TODO: don't assume custom close */
+		    /* TODO: don't use mraid until it's ready */
 		    mraid.setExpandProperties({useCustomClose:true});
 		    mraid.addEventListener('stateChange', function(){
+		    	/* TODO: actually check the state */
 		        if(self.adIsExpanded){
 		        	if(typeof(self.closeCallback) != 'null'){
 		        		self.closeCallback();
@@ -419,18 +423,20 @@ dojo = {
 	    }
 	    return 0;
 	},
+	/* TODO: make sure both the DOM and mraid is ready before init */
 	mraid_ready: function(){
 		if(mraid.isViewable()) dojo.mraid_view_change();
 		else mraid.addEventListener('viewableChange', dojo.mraid_view_change);
 	},
-	mraid_view_change: function(){
-		if(mraid.isViewable()) { /*TODO: don't check isViewable again*/
+	mraid_view_change: function(isViewable){
+		if (isViewable) { /*TODO: don't check isViewable again*/
 			if (!dojo.winLoaded) { /*Mraid doesn't fire the load event,*/
 				dojo.winLoaded = true;  /*so we have to do it manually*/
 				window.dispatchEvent(new Event('load'));
 			}
 			dojo.track('viewableChange');
-			setTimeout(dojo.adInit.bind(dojo)); /*delay init until load callbacks fired*/
+			setTimeout(dojo.adInit.bind(dojo)); /*delay init until after load callbacks are fired*/
+			mraid.removeEventListener('viewableChange', dojo.mraid_view_change);
 		}
 	},
 	query_string: function(jsonConvert){
@@ -859,3 +865,14 @@ if(typeof(global_ad_id1) != 'undefined'){
 	}
 	dojo.isDojo = true;
 }
+
+if (document.readyState === 'complete') dojo.winLoaded = true;
+
+/* 	adding an event listener for 'load' doesn't 
+	work with multiple ads in the same mraid webview */
+/* else window.addEventListener('load', onLoad, false); */
+
+document.addEventListener('readystatechange', function(){ 
+    if (document.readyState === 'complete') document.winLoaded = true;
+    /* TODO: maybe remove event listener */
+}, false);
