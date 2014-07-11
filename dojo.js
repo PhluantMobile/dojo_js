@@ -428,8 +428,8 @@ dojo = {
 		if(mraid.isViewable()) dojo.mraid_view_change();
 		else mraid.addEventListener('viewableChange', dojo.mraid_view_change);
 	},
-	mraid_view_change: function(isViewable){
-		if (isViewable) { /*TODO: don't check isViewable again*/
+	mraid_view_change: function(){
+		if (mraid.isViewable()) { /*TODO: don't check isViewable again*/
 			if (!dojo.winLoaded) { /*Mraid doesn't fire the load event,*/
 				dojo.winLoaded = true;  /*so we have to do it manually*/
 
