@@ -879,6 +879,6 @@ if (document.readyState === 'complete') dojo.winLoaded = true;
 /* else window.addEventListener('load', onLoad, false); */
 
 document.addEventListener('readystatechange', function(){ 
-    if (document.readyState === 'complete') document.winLoaded = true;
+    if (document.readyState === 'complete') dojo.winLoaded = true;
     /* TODO: maybe remove event listener */
 }, false);
