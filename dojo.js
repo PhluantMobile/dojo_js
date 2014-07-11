@@ -436,7 +436,7 @@ dojo = {
 			    try { window.dispatchEvent(new Event('load')); }
 			    catch(e) { /* depecrated event construction method */
 			    	var loadEvent = document.createEvent('Event');
-			        event.initEvent('load', true, true);
+			        loadEvent.initEvent('load', true, true);
 			        window.dispatchEvent(loadEvent);
 			    }
 			}
