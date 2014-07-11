@@ -340,16 +340,6 @@ dojo = {
 			}
 		}
 		if(typeof(mraid) != "undefined"){
-			/*
-			if(this.adInit == null){
-				console.log('An initialization function must be set for MRAID to work properly.');
-				return false;
-			}
-			if(this.closeCallback == null){
-				console.log('A close function must be set for MRAID to work properly.');
-				return false;
-			}
-			*/
 		    this.isMraid = true;
 		    /* TODO: don't assume custom close */
 		    /* TODO: don't use mraid until it's ready */
@@ -357,9 +347,7 @@ dojo = {
 		    mraid.addEventListener('stateChange', function(){
 		    	/* TODO: actually check the state */
 		        if(self.adIsExpanded){
-		        	if(typeof(self.closeCallback) != 'null'){
-		        		self.closeCallback();
-		        	}
+		        	if(self.closeCallback) self.closeCallback();
 		            self.adIsExpanded = false;
 		        }
 		    });
