@@ -420,17 +420,17 @@ dojo = {
 	    return 0;
 	},
 	mraid_ready: function(){
-		if(mraid.isViewable()) this.mraid_view_change();
-		else mraid.addEventListener('viewableChange', this.mraid_view_change);
+		if(mraid.isViewable()) dojo.mraid_view_change();
+		else mraid.addEventListener('viewableChange', dojo.mraid_view_change);
 	},
 	mraid_view_change: function(){
 		if(mraid.isViewable()) { /*TODO: don't check isViewable again*/
-			if (!this.winLoaded) { /*Mraid doesn't fire the load event,*/
-				winLoaded = true;  /*so we have to do it manually*/
+			if (!dojo.winLoaded) { /*Mraid doesn't fire the load event,*/
+				dojo.winLoaded = true;  /*so we have to do it manually*/
 				window.dispatchEvent(new Event('load'));
 			}
-			this.track('viewableChange');
-			setTimeout(this.adInit.bind(this)); /*delay init until load callbacks fired*/
+			dojo.track('viewableChange');
+			setTimeout(dojo.adInit.bind(dojo)); /*delay init until load callbacks fired*/
 		}
 	},
 	query_string: function(jsonConvert){
