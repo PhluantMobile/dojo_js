@@ -156,7 +156,7 @@ dojo = {
 			mraid.close();
 		}
 		this.dojo_track({
-			'type': 'interaction',
+			'type': 'interactions',
 			'key': 'contract',
 		});
 		this.closeCallback();
@@ -174,7 +174,7 @@ dojo = {
 	expand: function(vars){
 		//var logMsg = 'expanding to '+vars.width+'px width, '+vars.height+'px height.';
 		this.dojo_track({
-			'type': 'interaction',
+			'type': 'interactions',
 			'key': 'expand',
 		});
 		if(this.isMraid){
@@ -628,7 +628,7 @@ dojo = {
 	},
 	track: function(name){
 		this.dojo_track({
-			'type': 'interaction',
+			'type': 'interactions',
 			'key': name,
 		});
 	},
