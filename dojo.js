@@ -2,7 +2,7 @@
 dojo = {
 	version: '0.2.0',
 	adInit: null,
-	adIsExpanded: false, /* TODO: remove this stupid property */
+	adIsExpanded: false, /* TODO:  remove this stupid property */
 	closeCallback: null,
 	geocoder: null,
 	iosVersion: null,
