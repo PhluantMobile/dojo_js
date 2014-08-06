@@ -150,17 +150,13 @@ dojo = {
 		window.open(vars.url, '_blank');
 	},
 	contract: function(){
-		if(this.videoPlaying){
-			this.video_close();
-		}
-		if(this.isMraid){
-			mraid.close();
-		}
+		if(this.videoPlaying) this.video_close();
+		if(this.isMraid) mraid.close();
 		this.dojo_track({
 			'type': 'interactions',
-			'key': 'contract',
+			'key': 'contract'
 		});
-		this.closeCallback();
+		if(this.closeCallback) this.closeCallback();
 	},
 	dojo_track: function(vars){
 		if(!this.isDojo || this.dojoConsoleLog){
