@@ -1,6 +1,6 @@
-/*Dojo.js Framework v0.1.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.2.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 dojo = {
-	version: '0.1.0',
+	version: '0.2.0',
 	adInit: null,
 	adIsExpanded: false, /* TODO: remove this stupid property */
 	closeCallback: null,
