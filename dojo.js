@@ -1,8 +1,8 @@
-/*Dojo.js Framework v0.2.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.2.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 dojo = {
-	version: '0.2.0',
+	version: '0.2.1',
 	adInit: null,
-	adIsExpanded: false, /* TODO: remove this stupid property */
+	adIsExpanded: false, /* TODO:  remove this stupid property */
 	closeCallback: null,
 	geocoder: null,
 	iosVersion: null,
@@ -150,17 +150,13 @@ dojo = {
 		window.open(vars.url, '_blank');
 	},
 	contract: function(){
-		if(this.videoPlaying){
-			this.video_close();
-		}
-		if(this.isMraid){
-			mraid.close();
-		}
+		if(this.videoPlaying) this.video_close();
+		if(this.isMraid) mraid.close();
 		this.dojo_track({
 			'type': 'interactions',
-			'key': 'contract',
+			'key': 'contract'
 		});
-		this.closeCallback();
+		if(this.closeCallback) this.closeCallback();
 	},
 	dojo_track: function(vars){
 		if(!this.isDojo || this.dojoConsoleLog){
