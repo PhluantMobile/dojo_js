@@ -178,8 +178,8 @@ dojo = {
 			this.iframeContractSize.x = this.iframeEl.offsetWidth;
 			this.iframeContractSize.y = this.iframeEl.offsetHeight;
 
-			this.iframeEl.style.width = width;
-			this.iframeEl.style.height = height;
+			if (width) this.iframeEl.style.width = width;
+			if (height) this.iframeEl.style.height = height;
 		}
 		if (this.isMraid) mraid.expand();
 
