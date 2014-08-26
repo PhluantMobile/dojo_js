@@ -181,6 +181,7 @@ dojo = {
 			this.iframeEl.style.width = width;
 			this.iframeEl.style.height = height;
 		}
+		if (this.isMraid) mraid.expand();
 
 		this.track('expand');
 		this.adIsExpanded = true;
