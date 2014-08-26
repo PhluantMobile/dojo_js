@@ -115,7 +115,7 @@ _Required for all expandable ads, interstitial/banner ads that need close funcit
 
 ### Expands
 
-This function receives the attributes of the ad in its expanded state, fires off the appropriate reporting tracker, and automatically handles any MRAID specific requirements.  For assets running outside of our ad serving network, a console log message will display the expansion properties.
+Use this function for expandable ads during their expansion. It optionally takes an expanded width & height, resizes the ads iframe container to that size if necessary, fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. Note that you still need to resize the ads actual creative manually. The width and height can be in pixels, or any other valid css value in the form of a string.
 
 Example:
 
@@ -124,10 +124,7 @@ Example:
 expand_btn.addEventListener('click', function(){
 	expand_div.style.display = 'block';
 	contract_div.style.display = 'none';
-	dojo.expand({
-		'width': 320,
-		'height': 416
-	});
+	dojo.expand(320, 480); // 320x480 pixels
 }
 </script>
 ```
@@ -140,7 +137,7 @@ _Required for all expandable ads._
 
 ### Contracts
 
-This function ensures our framework can properly close the ad, fires off the appropriate reporting tracker, automatically handle and MRAID specific requirements, and closes any video being played.  For assets running outside of our ad serving network, a console log message will outputted indicating 'contracting'.  Because the ad specific close function was already passed to the framework with the initialization, it's only necessary to call the framework function.
+Use this function for expandable ads during their contraction. It deconstructs any necessary components (such as HTML5 video), restores the ads iframe container to its size before expansion (if necessary), fires off the appropriate reporting tracker, fires the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.
 
 Example:
 

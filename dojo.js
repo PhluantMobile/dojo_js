@@ -1,6 +1,6 @@
-/*Dojo.js Framework v0.2.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 dojo = {
-	version: '0.2.1',
+	version: '0.3.0',
 	adInit: null,
 	adIsExpanded: false, /* TODO:  remove this stupid property */
 	closeCallback: null,
@@ -58,6 +58,10 @@ dojo = {
 	unitID: null,
 	webServiceUrl: 'http://lbs.phluant.com:8080/',
 	dojoUrl: 'http://dojo.phluant.com/',
+
+	iframeEl: null,
+	iframeContractSize: {},
+
 	ajax: function(vars){
 		ajaxRequest = new XMLHttpRequest();
 		var sendData = '';
@@ -150,33 +154,37 @@ dojo = {
 		window.open(vars.url, '_blank');
 	},
 	contract: function(){
-		if(this.videoPlaying) this.video_close();
-		if(this.isMraid) mraid.close();
-		this.dojo_track({
-			'type': 'interactions',
-			'key': 'contract'
-		});
-		if(this.closeCallback) this.closeCallback();
-	},
-	dojo_track: function(vars){
-		if(!this.isDojo || this.dojoConsoleLog){
-			console.log(vars.key);
-		}
-		if(this.isDojo){
-			var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+vars.type+'&key='+vars.key+'&time='+new Date().getTime();
-			this.image_tracker(url);
-		}
+		if (!this.adIsExpanded) return;
 
-	},
-	expand: function(vars){
-		//var logMsg = 'expanding to '+vars.width+'px width, '+vars.height+'px height.';
-		this.dojo_track({
-			'type': 'interactions',
-			'key': 'expand',
-		});
-		if(this.isMraid){
-			this.adIsExpanded = true;
+		if (this.videoPlaying) this.video_close();
+		if (this.iframeEl) {
+			this.iframeEl.style.width = this.iframeContractSize.x + 'px';
+			this.iframeEl.style.height = this.iframeContractSize.y + 'px';
 		}
+		if (this.isMraid) mraid.close();
+
+		this.track('contract');
+		this.adIsExpanded = false;
+
+		if (this.closeCallback) this.closeCallback();
+	},
+	expand: function(width,height){
+		if (this.adIsExpanded) return;
+
+		if (typeof(width) === 'number') width += 'px';
+		if (typeof(height) === 'number') height += 'px';
+
+		if (this.iframeEl) {
+			this.iframeContractSize.x = this.iframeEl.offsetWidth;
+			this.iframeContractSize.y = this.iframeEl.offsetHeight;
+
+			if (width) this.iframeEl.style.width = width;
+			if (height) this.iframeEl.style.height = height;
+		}
+		if (this.isMraid) mraid.expand();
+
+		this.track('expand');
+		this.adIsExpanded = true;
 	},
 	geolocation: function(vars){
 		console.log(vars);
@@ -334,6 +342,8 @@ dojo = {
 		if(typeof(vars.expanded) != 'undefined'){
 			if(vars.expanded){
 				self.adIsExpanded = true;
+				self.iframeContractSize.x = self.iframeEl.offsetWidth;
+				self.iframeContractSize.y = self.iframeEl.offsetHeight;
 			}
 		}
 		if(typeof(mraid) != "undefined"){
@@ -342,7 +352,7 @@ dojo = {
 		    /* TODO: don't use mraid until it's ready */
 		    mraid.setExpandProperties({useCustomClose:true});
 		    mraid.addEventListener('stateChange', function(){
-		    	/* TODO: actually check the state */
+		    	/* TODO: actually check the state INSTEAD */
 		        if(self.adIsExpanded){
 		        	if(self.closeCallback) self.closeCallback();
 		            self.adIsExpanded = false;
@@ -629,6 +639,15 @@ dojo = {
 			'key': name,
 		});
 	},
+	dojo_track: function(vars){
+		if (!this.isDojo || this.dojoConsoleLog){
+			console.log(vars.key);
+		}
+		if (this.isDojo){
+			var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+vars.type+'&key='+vars.key+'&time='+new Date().getTime();
+			this.image_tracker(url);
+		}
+	},
 	valid_email: function(email){
         var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         return filter.test(email);
@@ -857,10 +876,27 @@ if(typeof(global_ad_id1) != 'undefined'){
 	dojo.isDojo = true;
 }
 
+function isIframe() {
+    try { return window.self !== window.top; } 
+    catch (e) { return true; }
+}
+
+function getThisFrameEl(){
+	var frameEl = null; // TODO: catch security error when parent is different domain
+	var i=0, iframes = window.parent.document.getElementsByTagName('iframe');
+	while (frameEl = iframes[i++])
+		if (frameEl.contentWindow === window) break;
+	return frameEl;
+}
+
+// TODO: make sure this is ok to do before onload
+if (isIframe()) dojo.iframeEl = getThisFrameEl();
+
 if (document.readyState === 'complete') dojo.winLoaded = true;
 
 /* 	adding an event listener for 'load' doesn't 
 	work with multiple ads in the same mraid webview */
+
 /* else window.addEventListener('load', onLoad, false); */
 
 document.addEventListener('readystatechange', function(){ 
