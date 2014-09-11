@@ -342,8 +342,10 @@ dojo = {
 		if(typeof(vars.expanded) != 'undefined'){
 			if(vars.expanded){
 				self.adIsExpanded = true;
-				self.iframeContractSize.x = self.iframeEl.offsetWidth;
-				self.iframeContractSize.y = self.iframeEl.offsetHeight;
+				if (self.iframeEl) {
+					self.iframeContractSize.x = self.iframeEl.offsetWidth;
+					self.iframeContractSize.y = self.iframeEl.offsetHeight;
+				}
 			}
 		}
 		if(typeof(mraid) != "undefined"){
