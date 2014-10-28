@@ -1,6 +1,6 @@
-/*Dojo.js Framework v0.3.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.2 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 dojo = {
-	version: '0.3.1',
+	version: '0.3.2',
 	adInit: null,
 	adIsExpanded: false, /* TODO:  remove this stupid property */
 	closeCallback: null,
@@ -52,7 +52,6 @@ dojo = {
 		},
 	},
 	videoPlaying: false,
-	videoReload: false,
 	videoInt: null,
 	pl: null,
 	unitID: null,
@@ -222,9 +221,9 @@ dojo = {
     		if (resolved) return;
     		else resolved = true;
 
-    		/* TODO: normalize return data to be the 
+    		/* TODO: normalize return data to be the
         	 same as above, to maintain consistency */
-        	if (vars.failover) dojo.geolocation(vars); 
+        	if (vars.failover) dojo.geolocation(vars);
         	else vars.callback(false);
         }
 
@@ -270,7 +269,7 @@ dojo = {
 	    if (vars.markers) vars.markers.forEach(function(marker){
 	        marker.position = new google.maps.LatLng(marker.lat, marker.lng);
 	        marker.map = map;
-	        
+
 	        var gMarker = new google.maps.Marker(marker);
 
 	        if (marker.clickthru) google.maps.event.addListener(gMarker, 'click', function(){
@@ -682,30 +681,24 @@ dojo = {
 	video: function(vars){
 		var self = this;
 		this.videoPlaying = true;
-		if (vars) this.videoId = vars.container_id;
-		if(typeof(this.videoId) == 'string'){
-			this.videoId = this.gid(this.videoId);
-		}
 		objCheck = ['style', 'attributes'];
-		if(!this.videoReload){
+		if(!this.video_properties.reload && !this.vidContainer){
 			for(var i in vars){
 				if(objCheck.indexOf(i) != -1){
-					for(var v in vars[i]){
-						this.video_properties[i][v] = vars[i][v];
-					}
+					for(var v in vars[i]){ this.video_properties[i][v] = vars[i][v]; }
 				}
-				else{
-					this.video_properties[i] = vars[i];
-				}
+				else { this.video_properties[i] = vars[i]; }
 			}
 		}
+		if (vars) this.vidContainer = vars.container_id;
+		if(typeof(this.vidContainer) == 'string'){
+			this.vidContainer = this.gid(this.vidContainer);
+		}
+
 		if(this.video_properties.full_screen){
 			this.video_properties.attributes['webkit-playsinline'] = false;
 		}
-		if(typeof(this.video_properties.container_id) == 'string'){
-			this.video_properties.container_id = this.gid(this.video_properties.container_id);
-		}
-		var cid = this.video_properties.container_id;
+
 		var ar = this.video_properties.aspect_ratio.split(':');
 		if(this.video_properties.style.width == '0px' && this.video_properties.style.height == '0px'){
 			console.log('At least a height or a width for the video element or its parent element must be declared');
@@ -717,11 +710,10 @@ dojo = {
 		if(this.video_properties.style.width == '0px' && this.video_properties.style.height != '0px'){
 			this.video_properties.style.width = this.video_properties.style.height.replace('px','')*(ar[0]/[1])+'px';
 		}
-		var videoHtml = '<video src="'+this.video_properties.video_url+'"></video>';
-		cid.innerHTML = videoHtml;
-		dojo_videoElement = cid.getElementsByTagName('video')[0];
+		dojo_videoElement = document.createElement("video");
+		dojo_videoElement.src = this.video_properties.video_url;
 		for(var attr in this.video_properties.attributes){
-			if (this.video_properties.attributes[attr] === true) 
+			if (this.video_properties.attributes[attr] === true)
 				dojo_videoElement.setAttribute(attr, '');
 			else if (this.video_properties.attributes[attr] !== false)
 				dojo_videoElement.setAttribute(attr, this.video_properties.attributes[attr]);
@@ -729,11 +721,20 @@ dojo = {
 		for(var i in this.video_properties.style){
 			dojo_videoElement.style[i] = this.video_properties.style[i];
 		}
+		dojo_videoElement.addEventListener('canplaythrough', function(){
+			if(self.video_properties.attributes.autoplay === true){
+				dojo_videoElement.play();
+			}
+		});
+		this.vidContainer.appendChild(dojo_videoElement);
+		dojo_videoElement.load();
+
 		dojo_videoElement.addEventListener('play', function(){
 			self.dojo_track({
 				'type': 'video',
 				'key': 'play'
 			});
+
 			if(self.video_properties.full_screen){
 				self.video_full_screen(dojo_videoElement);
 			}
@@ -741,11 +742,13 @@ dojo = {
 				self.video_properties.play_callback();
 			}
 		});
+
 		dojo_videoElement.addEventListener('pause', function(){
 			if(typeof(self.video_properties.pause_callback )== 'function'){
 				self.video_properties.pause_callback();
 			}
 		});
+
 		dojo_videoElement.addEventListener('loadedmetadata', function() {
 			var quartiles = {
 				'25': false,
@@ -753,40 +756,61 @@ dojo = {
 				'75': false,
 			};
 			var duration = dojo_videoElement.duration;
-    		self.videoInt = setInterval(function(){
-    			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
-    			for(var q in quartiles){
-    				if(check == q && !quartiles[q]){
-    					self.dojo_track({
-							'type': 'video',
-							'key': 'quartile'+q
-						});
-						quartiles[q] = true;
-					}
-    			}
-    		},100);
+  		self.videoInt = setInterval(function(){
+  			if (dojo_videoElement.currentTime) self.video_position = dojo_videoElement.currentTime;
+  			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
+  			for(var q in quartiles){
+  				if(check == q && !quartiles[q]){
+  					self.dojo_track({
+						'type': 'video',
+						'key': 'quartile'+q
+					});
+					var quartEvent = new Event('quartile'+q);
+					dojo_videoElement.dispatchEvent(quartEvent);
+					quartiles[q] = true;
+				}
+  			}
+  		},100);
 		});
-		if(this.video_properties.attributes.autoplay === true){
-			setTimeout(function(){
-				dojo_videoElement.play();
-			},500);
-		}
+
 		if(!this.video_properties.full_screen){
 			dojo_videoElement.addEventListener('ended', function(){
-		        self.video_close();
-		    });
+				self.video_position = 0;
+        self.video_close();
+		  });
 		}
-	    dojo_videoElement.addEventListener('webkitendfullscreen', function(){
-	        self.video_close();
-		});
+		var videoIsMuted = false;
+
+	  dojo_videoElement.addEventListener('volumechange', function() {
+			if(!videoIsMuted && (dojo_videoElement.muted || dojo_videoElement.volume === 0.0)) {
+				var muteEvent = new Event('muted');
+				dojo_videoElement.dispatchEvent(muteEvent);
+				videoIsMuted = true;
+			} else if (videoIsMuted && !dojo_videoElement.muted && dojo_videoElement.volume > 0.0) {
+				var unmuteEvent = new Event('unmuted');
+				dojo_videoElement.dispatchEvent(unmuteEvent);
+				videoIsMuted = false;
+			}
+	  });
+	  return dojo_videoElement;
 	},
 	video_close: function(){
-		this.video_properties.container_id.innerHTML = '';
+		var self = this;
+		var videoCloseEvent = new CustomEvent('videoClose', { 'detail': {'duration': self.video_position }});
+		dojo_videoElement.dispatchEvent(videoCloseEvent);
+		this.vidContainer.removeChild(dojo_videoElement); // innerHTML = '';
 		this.videoPlaying = false;
 		clearInterval(this.videoInt);
+
+		if (!self.video_position) {
+			self.dojo_track({
+				'type': 'video',
+				'key': 'videoComplete'
+			});
+		}
 		this.dojo_track({
 			'type': 'video',
-			'key': 'videoComplete'
+			'key': 'close'
 		});
 		if(typeof(this.video_properties.close_callback) == 'function'){
 			this.video_properties.close_callback();
@@ -816,7 +840,8 @@ dojo = {
 		    endEvent = 'msendfullscreen';
 		}
 		elem.addEventListener(endEvent, function(){
-	        self.video_close();
+			self.video_position = 0;
+	    self.video_close();
 		});
 	},
 	xmlToObject: function(xml, parse) {
@@ -879,7 +904,7 @@ if(typeof(global_ad_id1) != 'undefined'){
 }
 
 function isIframe() {
-    try { return window.self !== window.top; } 
+    try { return window.self !== window.top; }
     catch (e) { return true; }
 }
 
@@ -896,12 +921,12 @@ if (isIframe()) dojo.iframeEl = getThisFrameEl();
 
 if (document.readyState === 'complete') dojo.winLoaded = true;
 
-/* 	adding an event listener for 'load' doesn't 
+/* 	adding an event listener for 'load' doesn't
 	work with multiple ads in the same mraid webview */
 
 /* else window.addEventListener('load', onLoad, false); */
 
-document.addEventListener('readystatechange', function(){ 
+document.addEventListener('readystatechange', function(){
     if (document.readyState === 'complete') dojo.winLoaded = true;
     /* TODO: maybe remove event listener */
 }, false);
