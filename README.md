@@ -202,6 +202,8 @@ _Required for all clickthroughs that are to be tracked, recommended in all other
 
 This function ensures that a specialized event can be entered into our tracking system, i.e. a user navigating to a certain section of the ad.  For assets running outside of our ad serving network, a console log message displaying the reporting name will be outputted.
 
+If a tracker is automatically called (i.e. not user initiated), pass in true as a second argument to prevent time tracking to automatically extend another 60 seconds.
+
 Example:
 
 ```

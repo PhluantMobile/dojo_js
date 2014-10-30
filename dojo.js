@@ -326,7 +326,6 @@
 				else if (this.valid_geo(vars.address)) opts.data.type =  'city_postal_by_geo';
 				else return console.error('invalid address');
 
-<<<<<<< HEAD
 				this.geolocation(opts);
 			}
 			else vars.callback(false);
@@ -464,7 +463,7 @@
 				self.pageTimeInterval = window.setInterval(function(){
 					self.elapsedTime+= 5;
 					if (self.elapsedTime - self.lastInteractionTime <= 60) {
-						self.track('time elapsed ' + self.elapsedTime + 's');
+						self.track('time elapsed ' + self.elapsedTime + 's', true);
 					}
 				}, 5000);
 			} else {
@@ -664,16 +663,15 @@
 				vars.callback(returnData);
 			}
 		},
-		track: function(name){
+		track: function(name, isAutoFired){
 			this.dojo_track({
 				'type': 'interactions',
 				'key': name,
-			});
+			}, isAutoFired);
 		},
-		dojo_track: function(vars){
-			if (vars.key && vars.key.indexOf("time elapsed") === -1) {
-				this.lastInteractionTime = this.elapsedTime; //Assume a tracking event is an interaction
-			}
+		dojo_track: function(vars, isAutoFired){  // If tracking is auto-fired (not user initiated), don't extend timer
+			if (isAutoFired) this.lastInteractionTime = this.elapsedTime;
+
 			if (!this.isDojo || this.dojoConsoleLog){
 				console.log(vars.key);
 			}
@@ -798,7 +796,7 @@
 		  					self.dojo_track({
 								'type': 'video',
 								'key': 'quartile'+q
-							});
+							}, true);
 							var quartEvent = new Event('quartile'+q);
 							dojo_videoElement.dispatchEvent(quartEvent);
 							quartiles[q] = true;
