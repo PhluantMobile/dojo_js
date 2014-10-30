@@ -62,6 +62,10 @@
 		iframeEl: null,
 		iframeContractSize: {},
 
+		lastInteractionTime: 0,
+		pageTimeInterval: undefined,
+		elapsedTime: 0,
+
 		ajax: function(vars){
 			ajaxRequest = new XMLHttpRequest();
 			var sendData = '';
@@ -165,7 +169,7 @@
 
 			this.track('contract');
 			this.adIsExpanded = false;
-
+			this.pageTime(false);
 			if (this.closeCallback) this.closeCallback();
 		},
 		expand: function(width,height){
@@ -185,6 +189,7 @@
 
 			this.track('expand');
 			this.adIsExpanded = true;
+			this.pageTime(true);
 		},
 		geolocation: function(vars){
 			console.log(vars);
@@ -442,6 +447,21 @@
 				mraid.removeEventListener('viewableChange', dojo.mraid_view_change);
 			}
 		},
+		pageTime: function(shouldStart) { // true will start the timer, false will stop it
+			var self = this;
+			if (shouldStart) {
+				self.elapsedTime = 0;
+				self.lastInteractionTime = 0;
+				self.pageTimeInterval = window.setInterval(function(){
+					self.elapsedTime+= 5;
+					if (self.elapsedTime - self.lastInteractionTime <= 60) {
+						self.track('time elapsed ' + self.elapsedTime + 's');
+					}
+				}, 5000);
+			} else {
+				window.clearInterval(self.pageTimeInterval);
+			}
+		},
 		query_string: function(jsonConvert){
 			var url = window.location.href;
 			if(url.indexOf('?') != -1){
@@ -642,6 +662,9 @@
 			});
 		},
 		dojo_track: function(vars){
+			if (vars.key && vars.key.indexOf("time elapsed") === -1) {
+				this.lastInteractionTime = this.elapsedTime; //Assume a tracking event is an interaction
+			}
 			if (!this.isDojo || this.dojoConsoleLog){
 				console.log(vars.key);
 			}
