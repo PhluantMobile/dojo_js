@@ -66,6 +66,10 @@
 		pageTimeInterval: undefined,
 		elapsedTime: 0,
 
+		expandedEl: null,
+		useCustomClose: false,
+		closeImg: null,
+
 		ajax: function(vars){
 			ajaxRequest = new XMLHttpRequest();
 			var sendData = '';
@@ -167,7 +171,13 @@
 				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
 			}
 			if (this.isMraid) mraid.close();
-
+			else {
+				if (!this.useCustomClose) {
+					if (!this.expandedEl) this.expandedEl = this.gid("expanded");
+					this.expandedEl.removeChild(this.closeImg);
+					this.closeImg = undefined;
+				}
+			}
 			this.track('contract');
 			this.adIsExpanded = false;
 			this.pageTime(false);
@@ -187,6 +197,25 @@
 				if (height) this.iframeEl.style.height = height;
 			}
 			if (this.isMraid) mraid.expand();
+
+			if (!this.useCustomClose && !this.isMraid) {
+				var self = this;
+				var closeImg = new Image();
+				closeImg.style.position = "absolute";
+				closeImg.style.left = "0";
+				closeImg.style.top = "0";
+				closeImg.style.width = "50px";
+				closeImg.style.height = "50px";
+				closeImg.onload = function() {
+					if (!self.expandedEl) self.expandedEl = self.gid("expanded");
+					self.expandedEl.appendChild(closeImg);
+					closeImg.addEventListener('click', function() { self.contract(); });
+				}
+				// closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
+				closeImg.src = "http://test1.phluant.com/repositories/campaigns2/9000/img/close.png";
+
+				self.closeImg = closeImg;
+			}
 
 			this.track('expand');
 			this.adIsExpanded = true;
@@ -352,6 +381,12 @@
 			if(typeof(vars.init) == 'function'){
 				this.adInit = vars.init;
 			}
+			if(typeof(vars.expandedEl) == 'string'){
+		    		this.expandedEl = this.gid(vars.expandedEl);
+		    	}
+		    	if(typeof(vars.useCustomClose) == 'boolean'){
+		    		this.useCustomClose = vars.useCustomClose;
+		    	}
 			if(typeof(vars.expanded) != 'undefined'){
 				if(vars.expanded){
 					self.adIsExpanded = true;
@@ -670,7 +705,7 @@
 			}, isAutoFired);
 		},
 		dojo_track: function(vars, isAutoFired){  // If tracking is auto-fired (not user initiated), don't extend timer
-			if (isAutoFired) this.lastInteractionTime = this.elapsedTime;
+			if (!isAutoFired) this.lastInteractionTime = this.elapsedTime;
 
 			if (!this.isDojo || this.dojoConsoleLog){
 				console.log(vars.key);

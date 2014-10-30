@@ -79,6 +79,8 @@ Specs:
 * asynch_load: Default is null.  This functionality will asynchronously load any JavaScript scripts before the ad fires off the initialization.
 * asynch_load.insert_before: Required for any asynchronous loading.  Designates the reference element that the libaray will use to reference the load.
 * asynch_load.scripts: Required for any asynchronous loading.  Designates the scripts to load in array format.
+* useCustomClose: Default is false. Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
+* expandedEl: Element within which to add the close button.  By default this will try to get the element with id of 'expanded'.
 
 Example:
 
