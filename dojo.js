@@ -155,6 +155,7 @@
 
 			if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
 			console.log('opening ' + vars.url);
+			this.pageTime(false);
 			window.open(vars.url, '_blank');
 		},
 		contract: function(){
@@ -780,21 +781,22 @@
 					'75': false,
 				};
 				var duration = dojo_videoElement.duration;
-	  		self.videoInt = setInterval(function(){
-	  			if (dojo_videoElement.currentTime) self.video_position = dojo_videoElement.currentTime;
-	  			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
-	  			for(var q in quartiles){
-	  				if(check == q && !quartiles[q]){
-	  					self.dojo_track({
-							'type': 'video',
-							'key': 'quartile'+q
-						});
-						var quartEvent = new Event('quartile'+q);
-						dojo_videoElement.dispatchEvent(quartEvent);
-						quartiles[q] = true;
-					}
-	  			}
-	  		},100);
+
+	  			dojo_videoElement.addEventListener('timeupdate', function(e){
+		  			if (dojo_videoElement.currentTime) self.video_position = dojo_videoElement.currentTime;
+		  			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
+		  			for(var q in quartiles){
+		  				if(check >= q && !quartiles[q]){
+		  					self.dojo_track({
+								'type': 'video',
+								'key': 'quartile'+q
+							});
+							var quartEvent = new Event('quartile'+q);
+							dojo_videoElement.dispatchEvent(quartEvent);
+							quartiles[q] = true;
+						}
+		  			}
+		  		},100);
 			});
 
 			if(!this.video_properties.full_screen){
