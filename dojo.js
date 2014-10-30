@@ -326,12 +326,20 @@
 				else if (this.valid_geo(vars.address)) opts.data.type =  'city_postal_by_geo';
 				else return console.error('invalid address');
 
+<<<<<<< HEAD
 				this.geolocation(opts);
 			}
 			else vars.callback(false);
 		},
-		image_tracker: function(url){
+		image_tracker: function(url, retryTime){
+			var self = this;
+			var retryTime = (retryTime * 2) || 100;
 			var img = document.createElement("img");
+			img.onerror = function(){
+				if(retryTime <  3200)
+					window.setTimeout(function() { self.image_tracker(url, retryTime); }, retryTime);
+				else console.log("Can't load tracking pixel at " + url);
+			}
 			img.src = url;
 			img.height = '1px';
 			img.width = '1px';
