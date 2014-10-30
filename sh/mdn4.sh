@@ -9,4 +9,4 @@ lastVer=$(git tag -l | grep '[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}' | sort -n -t
 if [ -e "dojo-$lastVer.js" ] ; then exit ; fi
 
 cp dojo.js dojo-$lastVer.js
-cp dojo.js dojo-$lastVer.min.js
+cp dojo.min.js dojo-$lastVer.min.js
