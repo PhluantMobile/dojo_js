@@ -1,6 +1,6 @@
 # Dojo Framework Library
 
-The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the framework is to provide our clients with a code base that works both inside and outside of our Dojo ad serving network, which will substantially reduce the amount of time needed to launch a rich media campaign.  It also provides a number of core features that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so all core features will work independently of jQuery or any other JavaScript framework library.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  The feature list is below.  
+The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the framework is to provide our clients with a code base that works both inside and outside of our Dojo ad serving network, which will substantially reduce the amount of time needed to launch a rich media campaign.  It also provides a number of core features that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so all core features will work independently of jQuery or any other JavaScript framework library.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  The feature list is below.
 
 * [Element ID referencing](#element-id-referencing)
 * [Initialization](#initialization)
@@ -98,7 +98,7 @@ function initialize(){
 dojo.init({
 	'callback': contractAd,
 	'expanded': false,
-	'init': initialize, 
+	'init': initialize,
 	'asynch_load': {
 		'insert_before': document.getElementsByTagName('head')[0],
 		'scripts': ['http://code.jquery.com/jquery.min.js', 'http://somesite.com/somescript.js']
@@ -242,12 +242,14 @@ section2.addEventListener('click', function(){
 
 ### HTML5 Video
 
-This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a video container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
+This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
+
+Returns an HTML5 video element.
 
 Required Attributes:
 
 * video_url: The URL for the video source.  Can be relative (same server) or absolute (remote server).
-* container_id: The DOM element ID for the video container.
+* container_id: The DOM element ID for the container in which to add the video.
 
 Optional Attributes:
 
@@ -267,16 +269,18 @@ Additional Notes:
 
 * The video tag will take on the height and width of the parent container by default, so be sure these are set properly!  The default z-index is 5000.  These values can be overwritten, along with any other styling attributes inserted as needed.
 * Be sure to utilize the ```dojo.videoPlaying``` boolean if using a click function call, as this will ensure the video isn't called multiple times.
+* Standard HTML video events are emitted on the returned video element.  Additionally, custom quartile events will be emitted on the returned video element for 25%, 50%, and 75% watched (events are 'quartile25', 'quartile50', 'quartile75')
 
 Example:
 
 ```
 <div id="video_container"></div>
 <script>
-var video_container = dojo.gid('video_container');
-video_container.addEventListener('click', function(){
+var container = dojo.gid('video_container');
+var videoElement;
+container.addEventListener('click', function(){
 	if(!dojo.videoPlaying){
-		dojo.video({
+		videoElement = dojo.video({
 			'video_url': 'videos/somevideo.mp4',
 			'container_id': video_container,
 			'aspect_ratio': '16:9',
@@ -290,6 +294,9 @@ video_container.addEventListener('click', function(){
 		});
 	}
 });
+
+// To add listeners:
+videoElement.addEventListener('play', function(){...})
 </script>
 ```
 
