@@ -837,7 +837,7 @@
 							quartiles[q] = true;
 						}
 		  			}
-		  		},100);
+		  		});
 			});
 
 			if(!this.video_properties.full_screen){
