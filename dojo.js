@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.2 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.3 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.2',
+		version: '0.3.3',
 		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
