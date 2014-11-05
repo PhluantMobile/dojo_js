@@ -160,7 +160,8 @@
 			if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
 			console.log('opening ' + vars.url);
 			this.pageTime(false);
-			window.open(vars.url, '_blank');
+			if (this.isMraid) mraid.open(vars.url);
+			else window.open(vars.url, '_blank');
 		},
 		contract: function(){
 			if (!this.adIsExpanded) return;
