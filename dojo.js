@@ -397,11 +397,13 @@
 					}
 				}
 			}
-			var mraidScript = document.createElement('script');
-			mraidScript.onload = function() {self.initMraid(vars);};
-			mraidScript.onerror = function() {self.initMraid(vars);};
-			mraidScript.src = 'mraid.js';
-			document.getElementsByTagName('head').item(0).appendChild(mraidScript);
+			if(typeof(mraid) === "undefined"){
+				var mraidScript = document.createElement('script');
+				mraidScript.onload = function() {self.initMraid(vars); console.log('onload');};
+				mraidScript.onerror = function() {self.initMraid(vars); console.log('onerror');};
+				mraidScript.src = 'mraid.js';
+				document.getElementsByTagName('head').item(0).appendChild(mraidScript);
+			} else { self.initMraid(vars); }
 		},
 		initMraid: function(vars){
 			if(typeof(mraid) != "undefined"){
