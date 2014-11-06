@@ -397,6 +397,13 @@
 					}
 				}
 			}
+			var mraidScript = document.createElement('script');
+			mraidScript.onload = function() {self.initMraid(vars);};
+			mraidScript.onerror = function() {self.initMraid(vars);};
+			mraidScript.src = 'mraid.js';
+			document.getElementsByTagName('head').item(0).appendChild(mraidScript);
+		},
+		initMraid: function(vars){
 			if(typeof(mraid) != "undefined"){
 			    this.isMraid = true;
 			    /* TODO: don't assume custom close */
