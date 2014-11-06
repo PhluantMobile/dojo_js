@@ -152,12 +152,17 @@
 			return str.charAt(0).toUpperCase()+str.slice(1);
 		},
 		clickthru: function(vars){
+			var tagParams = this.getTagParams();
+			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
+			var clickthruURL = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL);
+			prepend = prepend && decodeURIComponent(prepend) && vars.prepend;
+
 			this.dojo_track({
 				'type': 'click',
 				'key': vars.name,
 			});
 
-			if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
+			if (prepend) vars.url = prepend + encodeURIComponent(vars.url);
 			console.log('opening ' + vars.url);
 			this.pageTime(false);
 			if (this.isMraid) mraid.open(vars.url);
@@ -286,6 +291,25 @@
 			}
 			varsExport.data.type = 'get_stores';
 			this.ajax(varsExport);
+		},
+		getTagParams: function(){
+			if (!dojo.isDojo) return {};
+
+			var scripts = document.getElementsByTagName('script');
+			var i=0, tagScript = scripts[0];
+			while (!tagScript.src.match(/dojo.phluant.com\/adj/))
+				tagScript = scripts[++i];
+
+			if (tagScript.src.indexOf('?') === -1) return {};
+
+			var params = tagScript.src.slice(tagScript.src.indexOf('?') +1).split('&');
+			var parsedParams = {};
+			params.forEach(function(param){
+				var splitParam = param.split('=');
+				parsedParams[splitParam[0]] = splitParam[1];
+			});
+
+			return parsedParams;
 		},
 		gid: function(id){
 			return document.getElementById(id);
