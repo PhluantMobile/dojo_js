@@ -478,6 +478,10 @@
 		    }
 		    return 0;
 		},
+		log: function(message) {
+			if(!this.isMraid) { console.log(message); }
+			else { window.alert(message); }
+		},
 		/* TODO: make sure both the DOM and mraid is ready before init */
 		mraid_ready: function(){
 			if(mraid.isViewable()) dojo.mraid_view_change();
