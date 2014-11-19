@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.3 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.4 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.3',
+		version: '0.3.4',
 		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
@@ -152,12 +152,17 @@
 			return str.charAt(0).toUpperCase()+str.slice(1);
 		},
 		clickthru: function(vars){
+			var tagParams = this.getTagParams();
+			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
+			var clickthruURL = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL);
+			prepend = prepend && decodeURIComponent(prepend) && vars.prepend;
+
 			this.dojo_track({
 				'type': 'click',
 				'key': vars.name,
 			});
 
-			if (vars.prepend) vars.url = vars.prepend + encodeURIComponent(vars.url);
+			if (prepend) vars.url = prepend + encodeURIComponent(vars.url);
 			console.log('opening ' + vars.url);
 			this.pageTime(false);
 			if (this.isMraid) mraid.open(vars.url);
@@ -287,6 +292,25 @@
 			varsExport.data.type = 'get_stores';
 			this.ajax(varsExport);
 		},
+		getTagParams: function(){
+			if (!dojo.isDojo) return {};
+
+			var scripts = document.getElementsByTagName('script');
+			var i=0, tagScript = scripts[0];
+			while (!tagScript.src.match(/dojo.phluant.com\/adj/))
+				tagScript = scripts[++i];
+
+			if (tagScript.src.indexOf('?') === -1) return {};
+
+			var params = tagScript.src.slice(tagScript.src.indexOf('?') +1).split('&');
+			var parsedParams = {};
+			params.forEach(function(param){
+				var splitParam = param.split('=');
+				parsedParams[splitParam[0]] = splitParam[1];
+			});
+
+			return parsedParams;
+		},
 		gid: function(id){
 			return document.getElementById(id);
 		},
@@ -364,11 +388,11 @@
 			var self = this;
 			var retryTime = (retryTime * 2) || 100;
 			var img = document.createElement("img");
-			img.onerror = function(){
-				if(retryTime <  3200)
-					window.setTimeout(function() { self.image_tracker(url, retryTime); }, retryTime);
-				else console.log("Can't load tracking pixel at " + url);
-			}
+			// img.onerror = function(){
+			// 	if(retryTime <  3200)
+			// 		window.setTimeout(function() { self.image_tracker(url, retryTime); }, retryTime);
+			// 	else console.log("Can't load tracking pixel at " + url);
+			// }
 			img.src = url;
 			img.height = '1px';
 			img.width = '1px';
@@ -397,6 +421,15 @@
 					}
 				}
 			}
+			if(typeof(mraid) === "undefined"){
+				var mraidScript = document.createElement('script');
+				mraidScript.onload = function() {self.initMraid(vars); console.log('onload');};
+				mraidScript.onerror = function() {self.initMraid(vars); console.log('onerror');};
+				mraidScript.src = 'mraid.js';
+				document.getElementsByTagName('head').item(0).appendChild(mraidScript);
+			} else { self.initMraid(vars); }
+		},
+		initMraid: function(vars){
 			if(typeof(mraid) != "undefined"){
 			    this.isMraid = true;
 			    /* TODO: don't assume custom close */
@@ -468,6 +501,10 @@
 		        return window.Number( agent.substr( start + 3, 3 ).replace( '_', '.' ) );
 		    }
 		    return 0;
+		},
+		log: function(message) {
+			if(!this.isMraid) { console.log(message); }
+			else { window.alert(message); }
 		},
 		/* TODO: make sure both the DOM and mraid is ready before init */
 		mraid_ready: function(){
