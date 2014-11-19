@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.4 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.5 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.4',
+		version: '0.3.5',
 		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
@@ -145,7 +145,7 @@
 							'request_info': ajaxRequest
 						});
 					}
-				}
+				};
 			}
 		},
 		capitalize: function(str){
@@ -216,7 +216,7 @@
 					if (!self.expandedEl) self.expandedEl = self.gid("expanded");
 					self.expandedEl.appendChild(closeImg);
 					closeImg.addEventListener('click', function() { self.contract(); });
-				}
+				};
 				// closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
 				closeImg.src = "http://test1.phluant.com/repositories/campaigns2/9000/img/close.png";
 
@@ -430,6 +430,7 @@
 			} else { self.initMraid(vars); }
 		},
 		initMraid: function(vars){
+			var self = this;
 			if(typeof(mraid) != "undefined"){
 			    this.isMraid = true;
 			    /* TODO: don't assume custom close */
@@ -472,7 +473,7 @@
 				    if(sCount == max){
 				      self.init_check();
 				    }
-				  }
+				  };
 				}
 			}
 			else{
@@ -688,11 +689,11 @@
 								status: 'success',
 								shoplocal_url: this.url,
 								results: storeData,
-							}
+							};
 							determineStep();
 						}
 					},
-				}
+				};
 				if(typeof(vars.data.pd) != 'undefined'){
 					storeInfo.url += '&pd='+vars.data.pd;
 				}
@@ -777,7 +778,7 @@
 		    if(phone_num){
 		    	phone_num = phone_num.replace(/[^0-9]/g, '');
 				return /^\d{10}/.test(zipTest);
-		    };
+		    }
 		},
 		valid_zip: function(zip){
 	       return /^\d{5}(-\d{4})?$/.test(zip);
@@ -984,7 +985,7 @@
 			}
 			return obj;
 		},
-	}
+	};
 	dojo.iosVersion = dojo.iosVersionCheck();
 	if(typeof(global_ad_id1) != 'undefined'){
 		var newUrl = global_ad_id1[0].url.split('?');
