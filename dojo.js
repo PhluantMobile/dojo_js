@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.3 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.4 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.3',
+		version: '0.3.4',
 		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
@@ -388,11 +388,11 @@
 			var self = this;
 			var retryTime = (retryTime * 2) || 100;
 			var img = document.createElement("img");
-			img.onerror = function(){
-				if(retryTime <  3200)
-					window.setTimeout(function() { self.image_tracker(url, retryTime); }, retryTime);
-				else console.log("Can't load tracking pixel at " + url);
-			}
+			// img.onerror = function(){
+			// 	if(retryTime <  3200)
+			// 		window.setTimeout(function() { self.image_tracker(url, retryTime); }, retryTime);
+			// 	else console.log("Can't load tracking pixel at " + url);
+			// }
 			img.src = url;
 			img.height = '1px';
 			img.width = '1px';
