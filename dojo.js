@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.5 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.8 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.5',
+		version: '0.3.8',
 		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
@@ -426,6 +426,7 @@
 				mraidScript.onload = function() {self.initMraid(vars); console.log('onload');};
 				mraidScript.onerror = function() {self.initMraid(vars); console.log('onerror');};
 				mraidScript.src = 'mraid.js';
+				mraidScript.type = 'text/javascript';
 				document.getElementsByTagName('head').item(0).appendChild(mraidScript);
 			} else { self.initMraid(vars); }
 		},
@@ -435,10 +436,10 @@
 			    this.isMraid = true;
 			    /* TODO: don't assume custom close */
 			    /* TODO: don't use mraid until it's ready */
-			    mraid.setExpandProperties({useCustomClose:true});
-			    mraid.addEventListener('stateChange', function(){
+			    mraid.setExpandProperties({'useCustomClose': self.useCustomClose});
+			    mraid.addEventListener('stateChange', function(e){
 			    	/* TODO: actually check the state INSTEAD */
-			        if(self.adIsExpanded){
+			        if(self.adIsExpanded && e != 'expanded'){
 			        	if(self.closeCallback) self.closeCallback();
 			            self.adIsExpanded = false;
 			        }
