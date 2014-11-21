@@ -437,9 +437,9 @@
 			    /* TODO: don't assume custom close */
 			    /* TODO: don't use mraid until it's ready */
 			    mraid.setExpandProperties({'useCustomClose': self.useCustomClose});
-			    mraid.addEventListener('stateChange', function(){
+			    mraid.addEventListener('stateChange', function(e){
 			    	/* TODO: actually check the state INSTEAD */
-			        if(self.adIsExpanded){
+			        if(self.adIsExpanded && e != 'expanded'){
 			        	if(self.closeCallback) self.closeCallback();
 			            self.adIsExpanded = false;
 			        }
