@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.8 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.9 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.8',
+		version: '0.3.9',
 		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
@@ -69,6 +69,23 @@
 		expandedEl: null,
 		useCustomClose: false,
 		closeImg: null,
+
+		addCloseButton: function() {
+			var self = this;
+			var closeImg = new Image();
+			closeImg.style.position = "absolute";
+			closeImg.style.left = "0";
+			closeImg.style.top = "0";
+			closeImg.style.width = "50px";
+			closeImg.style.height = "50px";
+			closeImg.onload = function() {
+				if (!self.expandedEl) self.expandedEl = self.gid("expanded");
+				self.expandedEl.appendChild(closeImg);
+				closeImg.addEventListener('click', function() { self.contract(); });
+			};
+			closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
+			self.closeImg = closeImg;
+		},
 
 		ajax: function(vars){
 			ajaxRequest = new XMLHttpRequest();
@@ -205,22 +222,7 @@
 			if (this.isMraid) mraid.expand();
 
 			if (!this.useCustomClose && !this.isMraid) {
-				var self = this;
-				var closeImg = new Image();
-				closeImg.style.position = "absolute";
-				closeImg.style.left = "0";
-				closeImg.style.top = "0";
-				closeImg.style.width = "50px";
-				closeImg.style.height = "50px";
-				closeImg.onload = function() {
-					if (!self.expandedEl) self.expandedEl = self.gid("expanded");
-					self.expandedEl.appendChild(closeImg);
-					closeImg.addEventListener('click', function() { self.contract(); });
-				};
-				// closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
-				closeImg.src = "http://test1.phluant.com/repositories/campaigns2/9000/img/close.png";
-
-				self.closeImg = closeImg;
+				this.addCloseButton();
 			}
 
 			this.track('expand');
@@ -384,15 +386,9 @@
 			}
 			else vars.callback(false);
 		},
-		image_tracker: function(url, retryTime){
+		image_tracker: function(url){
 			var self = this;
-			var retryTime = (retryTime * 2) || 100;
 			var img = document.createElement("img");
-			// img.onerror = function(){
-			// 	if(retryTime <  3200)
-			// 		window.setTimeout(function() { self.image_tracker(url, retryTime); }, retryTime);
-			// 	else console.log("Can't load tracking pixel at " + url);
-			// }
 			img.src = url;
 			img.height = '1px';
 			img.width = '1px';
@@ -415,6 +411,9 @@
 			if(typeof(vars.expanded) != 'undefined'){
 				if(vars.expanded){
 					self.adIsExpanded = true;
+					if (!this.useCustomClose && !this.isMraid) {
+						this.addCloseButton();
+					}
 					if (self.iframeEl) {
 						self.iframeContractSize.x = self.iframeEl.offsetWidth;
 						self.iframeContractSize.y = self.iframeEl.offsetHeight;
@@ -437,13 +436,7 @@
 			    /* TODO: don't assume custom close */
 			    /* TODO: don't use mraid until it's ready */
 			    mraid.setExpandProperties({'useCustomClose': self.useCustomClose});
-			    mraid.addEventListener('stateChange', function(e){
-			    	/* TODO: actually check the state INSTEAD */
-			        if(self.adIsExpanded && e != 'expanded'){
-			        	if(self.closeCallback) self.closeCallback();
-			            self.adIsExpanded = false;
-			        }
-			    });
+
 			    var tag_elem = document.body;
 			    if(typeof(vars.tag_elem) != 'undefined'){
 			    	tag_elem = vars.tag_elem;
@@ -482,18 +475,15 @@
 			}
 		},
 		init_check: function(){
+			var self = this;
 			if(this.adInit != null){
 				if(this.isMraid){
 					if(mraid.getState() === 'loading'){
-						mraid.addEventListener('ready', this.mraid_ready);
+						mraid.addEventListener('ready', self.mraid_ready);
 					}
-					else{
-						this.mraid_ready();
-					}
+					else { self.mraid_ready(); }
 				}
-				else{
-					this.adInit();
-				}
+				else { self.adInit(); }
 			}
 		},
 		iosVersionCheck: function() {
@@ -505,12 +495,21 @@
 		    return 0;
 		},
 		log: function(message) {
-			if(!this.isMraid) { console.log(message); }
-			else { window.alert(message); }
+			this.dojo_track({
+				'type': 'Developer',
+				'key': message,
+			}, false);
 		},
 		/* TODO: make sure both the DOM and mraid is ready before init */
 		mraid_ready: function(){
-			if(mraid.isViewable()) dojo.mraid_view_change();
+			var self = this;
+			mraid.addEventListener('stateChange', function(e){
+        if(e === 'hidden'){
+        	if (self.closeCallback) self.closeCallback();
+          self.adIsExpanded = false;
+        }
+	    });
+			if (mraid.isViewable()) dojo.mraid_view_change();
 			else mraid.addEventListener('viewableChange', dojo.mraid_view_change);
 		},
 		mraid_view_change: function(){
