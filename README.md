@@ -34,13 +34,14 @@ The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's cli
 
 ## How To Use
 
-Place the JavaScript tag referencing the framework before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work.  For your convenience, we have a copy of the code on our CDN server you may use at http://mdn4.phluantmobile.net/jslib/dojo.js/.  Example tag:
+Place the JavaScript tag referencing the framework before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work. Each version of the framework is hosted on our CDN for optimal delivery. 
+
+For the latest stable release use ```http://mdn4.phluantmobile.net/jslib/dojo/dojo.min.js```  
+Specific releases can be used by appending "-{MAJOR}.{MINOR}". For example:
 
 ```
-<script src="http://mdn4.phluantmobile.net/jslib/dojo_js/dojo.min.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.3.min.js"></script>
 ```
-
-All coding examples used in this documentation can utilize jQuery or other JavaScript framework library equivalents unless otherwise indicated.
 
 [top](#dojo-framework-library)
 
