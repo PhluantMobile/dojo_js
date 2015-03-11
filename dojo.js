@@ -2,7 +2,6 @@
 (function(){
 	window.dojo = {
 		version: '0.3.9',
-		adInit: null,
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -188,22 +187,24 @@
 		contract: function(){
 			if (!this.adIsExpanded) return;
 
+			if (this.isMraid) mraid.close();
+
 			if (this.videoPlaying) this.video_close();
 			if (this.iframeEl) {
 				this.iframeEl.style.width = this.iframeContractSize.x + 'px';
 				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
 			}
-			if (this.isMraid) mraid.close();
-			else {
-				if (!this.useCustomClose) {
-					if (!this.expandedEl) this.expandedEl = this.gid("expanded");
-					this.expandedEl.removeChild(this.closeImg);
-					this.closeImg = undefined;
-				}
+			if (!this.isMraid && !this.useCustomClose) {
+				// TODO: set display to hidden instead of removal
+				if (!this.expandedEl) this.expandedEl = this.gid("expanded");
+				this.expandedEl.removeChild(this.closeImg);
+				this.closeImg = undefined;
 			}
+
 			this.track('contract');
 			this.adIsExpanded = false;
 			this.pageTime(false);
+
 			if (this.closeCallback) this.closeCallback();
 		},
 		expand: function(width,height){
@@ -395,95 +396,58 @@
 			document.getElementsByTagName('body')[0].appendChild(img);
 		},
 		init: function(vars){
-			var self = this;
-			if(typeof(vars.callback) == 'function'){
-				this.closeCallback = vars.callback;
-			}
-			if(typeof(vars.init) == 'function'){
-				this.adInit = vars.init;
-			}
-			if(typeof(vars.expandedEl) == 'string'){
-		    		this.expandedEl = this.gid(vars.expandedEl);
-		    	}
-		    	if(typeof(vars.useCustomClose) == 'boolean'){
-		    		this.useCustomClose = vars.useCustomClose;
-		    	}
-			if(typeof(vars.expanded) != 'undefined'){
-				if(vars.expanded){
-					self.adIsExpanded = true;
-					if (!this.useCustomClose && !this.isMraid) {
-						this.addCloseButton();
-					}
-					if (self.iframeEl) {
-						self.iframeContractSize.x = self.iframeEl.offsetWidth;
-						self.iframeContractSize.y = self.iframeEl.offsetHeight;
-					}
-				}
-			}
-			if(typeof(mraid) === "undefined"){
-				var mraidScript = document.createElement('script');
-				mraidScript.onload = function() {self.initMraid(vars); console.log('onload');};
-				mraidScript.onerror = function() {self.initMraid(vars); console.log('onerror');};
-				mraidScript.src = 'mraid.js';
-				mraidScript.type = 'text/javascript';
-				document.getElementsByTagName('head').item(0).appendChild(mraidScript);
-			} else { self.initMraid(vars); }
-		},
-		initMraid: function(vars){
-			var self = this;
-			if(typeof(mraid) != "undefined"){
-			    this.isMraid = true;
-			    /* TODO: don't assume custom close */
-			    /* TODO: don't use mraid until it's ready */
-			    mraid.setExpandProperties({'useCustomClose': self.useCustomClose});
+			this.closeCallback = vars.callback;
+	    	this.expandedEl = this.gid(vars.expandedEl);
+		    this.useCustomClose = vars.useCustomClose;
 
-			    var tag_elem = document.body;
-			    if(typeof(vars.tag_elem) != 'undefined'){
-			    	tag_elem = vars.tag_elem;
-			    	if(typeof(tag_elem) == 'string'){
-			    		tag_elem = this.gid(tag_elem);
-			    	}
-			    }
-			    document.body.style.margin="0px";
-			    tag_elem.style.position="absolute";
-			    var newMetaTag = document.createElement('meta');
-			    newMetaTag.name = "viewport";
-			    newMetaTag.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";
-			    document.getElementsByTagName('head')[0].appendChild( newMetaTag );
-			}
-			if(typeof(vars.asynch_load) != 'undefined'){
-				var scripts = vars.asynch_load.scripts;
-				var insert_before = vars.asynch_load.insert_before;
-				var max = scripts.length;
-				var sCount = 0;
-				if(typeof(insert_before) == 'string') insert_before = this.gid(insert_before);
-				var insertParent = insert_before.parentNode;
-				for(var s=0; s<scripts.length; s++){
-				  var newScript = document.createElement('script');
-				  newScript.src = scripts[s];
-				  insertParent.insertBefore(newScript, insert_before);
-				  newScript.onload = function(){
-				    sCount++;
-				    if(sCount == max){
-				      self.init_check();
-				    }
-				  };
-				}
-			}
-			else{
-				this.init_check();
-			}
-		},
-		init_check: function(){
 			var self = this;
-			if(this.adInit != null){
-				if(this.isMraid){
-					if(mraid.getState() === 'loading'){
-						mraid.addEventListener('ready', self.mraid_ready);
-					}
-					else { self.mraid_ready(); }
+			var loadScripts = vars.asynch_load && vars.async_load.scripts || [];
+			if (typeof(mraid) === 'undefined') loadScripts.push('mraid.js');
+			// TODO: make sure the DOM is ready first
+			this.loadAsync(loadScripts, this.initMraid.bind(this, function(){
+				if (self.isMraid) configMraid();
+
+				if (self.isMraid && !self.winLoaded) { 
+					/* mraid failed to fire the load event, so we have to do it manually */
+					self.winLoaded = true;
+				    try { window.dispatchEvent(new Event('load')); }
+				    catch(e) { /* depecrated event construction method */
+				    	var loadEvent = document.createEvent('Event');
+				        loadEvent.initEvent('load', true, true);
+				        window.dispatchEvent(loadEvent);
+				    }
 				}
-				else { self.adInit(); }
+
+				if (vars.expanded || vars.isInterstitial) self.expand();
+				if (vars.init) setTimeout(vars.init()); /*delay callback until after doc load callbacks are fired*/
+			}));
+		},
+		configMraid: function(){
+			var self = this;
+			// list to close / contract events
+			mraid.addEventListener('stateChange', function(e){
+        		if (e === 'hidden' || (e === 'default' && self.adIsExpanded)) self.contract();
+	    	});
+
+	    	mraid.setExpandProperties({'useCustomClose': this.useCustomClose});
+		},
+		initMraid: function(callback){
+			this.isMraid = typeof(mraid) !== "undefined";
+
+			if (!this.isMraid) return callback();
+			else if (mraid.getState() === 'loading')
+				mraid.addEventListener('ready', this.onMraidReady.bind(this,callback));
+			else this.onMraidReady(callback);
+		},
+		onMraidReady: function(callback){
+			if (mraid.isViewable()) this.onMraidViewChange(callback);
+			else mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback));
+		},
+		onMraidViewChange: function(callback){
+			this.log('viewableChange');
+			if (mraid.isViewable()) { /*TODO: don't check isViewable again*/
+				callback();
+				mraid.removeEventListener('viewableChange', this.onMraidViewChange);
 			}
 		},
 		iosVersionCheck: function() {
@@ -499,35 +463,6 @@
 				'type': 'Developer',
 				'key': message,
 			}, false);
-		},
-		/* TODO: make sure both the DOM and mraid is ready before init */
-		mraid_ready: function(){
-			var self = this;
-			mraid.addEventListener('stateChange', function(e){
-        if(e === 'hidden'){
-        	if (self.closeCallback) self.closeCallback();
-          self.adIsExpanded = false;
-        }
-	    });
-			if (mraid.isViewable()) dojo.mraid_view_change();
-			else mraid.addEventListener('viewableChange', dojo.mraid_view_change);
-		},
-		mraid_view_change: function(){
-			if (mraid.isViewable()) { /*TODO: don't check isViewable again*/
-				if (!dojo.winLoaded) { /*Mraid doesn't fire the load event,*/
-					dojo.winLoaded = true;  /*so we have to do it manually*/
-
-				    try { window.dispatchEvent(new Event('load')); }
-				    catch(e) { /* depecrated event construction method */
-				    	var loadEvent = document.createEvent('Event');
-				        loadEvent.initEvent('load', true, true);
-				        window.dispatchEvent(loadEvent);
-				    }
-				}
-				dojo.track('viewableChange');
-				setTimeout(dojo.adInit.bind(dojo)); /*delay init until after load callbacks are fired*/
-				mraid.removeEventListener('viewableChange', dojo.mraid_view_change);
-			}
 		},
 		pageTime: function(shouldStart) { // true will start the timer, false will stop it
 			var self = this;
@@ -569,6 +504,22 @@
 				roundTo = Math.pow(10, round);
 			}
 			return Math.round(num*roundTo)/roundTo;
+		},
+		// TODO: add error handling
+		loadAsync: function(scripts, callback) {
+			if (scripts.length <= 0) return callback();
+
+			var loadCount = 0;
+			scripts.forEach(function(src){
+				var script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.async = true;
+				script.onload = script.onerror = function(){
+				    if (++loadCount === scripts.length) callback();
+				};
+				script.src = src;
+				document.getElementsByTagName('head')[0].appendChild(script);
+			});
 		},
 		shoplocal: function(vars){
 			var settings = {
