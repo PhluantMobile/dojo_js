@@ -315,7 +315,8 @@
 			return parsedParams;
 		},
 		gid: function(id){
-			return document.getElementById(id);
+			if (id instanceof HTMLElement) return id;
+			else return document.getElementById(id) || document.getElementsByTagName(id)[0];
 		},
 		gmaps_draw: function(vars){
 			if (vars.map_id === undefined)
