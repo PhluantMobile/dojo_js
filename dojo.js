@@ -70,20 +70,17 @@
 		closeImg: null,
 
 		addCloseButton: function() {
-			var self = this;
-			var closeImg = new Image();
-			closeImg.style.position = "absolute";
-			closeImg.style.left = "0";
-			closeImg.style.top = "0";
-			closeImg.style.width = "50px";
-			closeImg.style.height = "50px";
-			closeImg.onload = function() {
-				if (!self.expandedEl) self.expandedEl = self.gid("expanded");
-				self.expandedEl.appendChild(closeImg);
-				closeImg.addEventListener('click', function() { self.contract(); });
-			};
-			closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
-			self.closeImg = closeImg;
+			if (this.closeImg && this.closeImg.parentElement) return this.closeImg.style.display = "block";
+
+			this.closeImg = new Image();
+			this.closeImg.style.cssText = "position: absolute; right:0; top:0; width: 45px;";
+			this.closeImg.classList.add('close');
+			this.closeImg.addEventListener('click', this.contract.bind(this));
+			this.closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
+			if (this.expandedEl) this.expandedEl.appendChild(this.closeImg);
+		},
+		removeCloseButton: function() {
+			this.closeImg.style.display = "none";
 		},
 
 		ajax: function(vars){
@@ -194,12 +191,7 @@
 				this.iframeEl.style.width = this.iframeContractSize.x + 'px';
 				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
 			}
-			if (!this.isMraid && !this.useCustomClose) {
-				// TODO: set display to hidden instead of removal
-				if (!this.expandedEl) this.expandedEl = this.gid("expanded");
-				this.expandedEl.removeChild(this.closeImg);
-				this.closeImg = undefined;
-			}
+			if (!this.isMraid && !this.useCustomClose) this.removeCloseButton();
 
 			this.track('contract');
 			this.adIsExpanded = false;
@@ -398,7 +390,7 @@
 		},
 		init: function(vars){
 			this.closeCallback = vars.callback;
-	    	this.expandedEl = this.gid(vars.expandedEl);
+	    	this.expandedEl = this.gid(vars.expandedEl) || this.gid('expanded');
 		    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
