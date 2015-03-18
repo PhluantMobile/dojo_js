@@ -183,10 +183,13 @@
 		},
 		contract: function(){
 			if (!this.adIsExpanded) return;
+			else this.adIsExpanded = false;
 
 			if (this.isMraid) mraid.close();
-
-			if (this.videoPlaying) this.video_close();
+			if (this.videoPlaying) {
+				this.video_properties.reload = false; 
+				this.video_close();
+			}
 			if (this.iframeEl) {
 				this.iframeEl.style.width = this.iframeContractSize.x + 'px';
 				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
@@ -194,7 +197,6 @@
 			if (!this.isMraid && !this.useCustomClose) this.removeCloseButton();
 
 			this.track('contract');
-			this.adIsExpanded = false;
 			this.pageTime(false);
 
 			if (this.closeCallback) this.closeCallback();
@@ -826,7 +828,7 @@
 			if(!this.video_properties.full_screen){
 				dojo_videoElement.addEventListener('ended', function(){
 					self.video_position = 0;
-	        self.video_close();
+	        		self.video_close();
 			  });
 			}
 			var videoIsMuted = false;
@@ -855,16 +857,19 @@
 			if (!self.video_position) {
 				self.dojo_track({
 					'type': 'video',
-					'key': 'videoComplete'
+					'key': 'complete'
 				});
 			}
+
 			this.dojo_track({
 				'type': 'video',
 				'key': 'close'
 			});
+
 			if(typeof(this.video_properties.close_callback) == 'function'){
 				this.video_properties.close_callback();
 			}
+
 			if(this.video_properties.reload){
 				this.videoReload = true;
 				this.video_properties.attributes.autoplay = false;
@@ -891,7 +896,7 @@
 			}
 			elem.addEventListener(endEvent, function(){
 				self.video_position = 0;
-		    self.video_close();
+		    	self.video_close();
 			});
 		},
 		xmlToObject: function(xml, parse) {
