@@ -2,7 +2,7 @@
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" !=  master ] ; then exit ; fi
 
-lastVer=$(git tag -l | grep '[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}' | sort -n -t . | tail -1)
+lastVer=$(git tag -l | grep '[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
 lastMajVer=$(git tag -l | sort -r -n -t . | grep -m1 -o '[0-9]\{1,\}\.[0-9]\{1,\}')
 
 # stop here if file alread exists
