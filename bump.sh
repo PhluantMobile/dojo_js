@@ -23,7 +23,7 @@ fi
 BREscape (){ printf '%s\n' "$1" | sed 's/[[\.*^$/]/\\&/g'; }
 
 newVer=$1
-lastVer=$(git tag -l | grep '[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}' | sort -n -t . | tail -1)
+lastVer=$(git tag -l | grep '[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}' | sort -t. -k 1,1n -k 2,2n -k 3,3n | tail -1)
 safeVer=$(BREscape $lastVer)
 [ "$(git stash)" = "No local changes to save" ] || isStashed=true
 
