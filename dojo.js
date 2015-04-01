@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.13 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.14 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.13',
+		version: '0.3.14',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -693,7 +693,7 @@
 				console.log(vars.key);
 			}
 			if (this.isDojo){
-				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+vars.type+'&key='+vars.key+'&time='+new Date().getTime();
+				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
 				this.image_tracker(url);
 			}
 		},
