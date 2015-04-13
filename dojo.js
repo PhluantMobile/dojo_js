@@ -397,9 +397,9 @@
 			if (typeof(mraid) === 'undefined') loadScripts.push('mraid.js');
 			// TODO: make sure the DOM is ready first
 			this.loadAsync(loadScripts, this.initMraid.bind(this, function(){
-				if (self.isMraid) configMraid();
+				if (self.isMraid) self.configMraid();
 
-				if (self.isMraid && !self.winLoaded) { 
+				if (self.isMraid && !self.winLoaded) {
 					/* mraid failed to fire the load event, so we have to do it manually */
 					self.winLoaded = true;
 				    try { window.dispatchEvent(new Event('load')); }
@@ -799,7 +799,7 @@
 			});
 
 			dojo_videoElement.addEventListener('loadedmetadata', function() {
-				
+
 				var duration = dojo_videoElement.duration;
 
 	  			dojo_videoElement.addEventListener('timeupdate', function(e){
