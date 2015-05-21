@@ -559,11 +559,11 @@
 				callback: geoCallback,
 			};
 			if(typeof(vars.data.location) != 'undefined'){
-				if(pcf.valid_zip(vars.data.location)){
+				if(dojo.valid_zip(vars.data.location)){
 					citystatezip = vars.data.location;
 					determineStep();
 				}
-				else if(pcf.valid_geo(vars.data.location)){
+				else if(dojo.valid_geo(vars.data.location)){
 					geoCall.data = {
 						type: 'city_postal_by_geo',
 						value: vars.data.location
@@ -575,7 +575,7 @@
 				}
 			}
 			else{
-				pcf.geolocation(geoCall);
+				dojo.geolocation(geoCall);
 			}
 			function determineStep(){
 				if(settings.storeid == null){
@@ -640,7 +640,7 @@
 				if(typeof(vars.data.pd) != 'undefined'){
 					storeInfo.url += '&pd='+vars.data.pd;
 				}
-				pcf.ajax(storeInfo);
+				dojo.ajax(storeInfo);
 			}
 			function fetchCall(callType, treeId){
 					var callInfo = {
@@ -667,7 +667,7 @@
 					if(typeof(vars.data.pd) != 'undefined'){
 						callInfo.url += '&pd='+vars.data.pd;
 					}
-					pcf.ajax(callInfo);
+					dojo.ajax(callInfo);
 			}
 			function geoCallback(d){
 				if(d.status == 'success'){
