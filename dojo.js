@@ -184,7 +184,7 @@
 			if (!this.adIsExpanded) return;
 			else this.adIsExpanded = false;
 
-			if (this.isMraid) mraid.close();
+			if (this.isMraid && mraid.getState() === 'expanded') mraid.close();
 			if (this.videoPlaying) this.video_close();
 
 			if (this.iframeEl) {
