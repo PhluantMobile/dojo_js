@@ -166,19 +166,21 @@
 		clickthru: function(vars){
 			var tagParams = this.getTagParams();
 			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
-			var clickthruURL = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL);
-			prepend = prepend && decodeURIComponent(prepend) && vars.prepend;
+			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
 
 			this.dojo_track({
 				'type': 'click',
 				'key': vars.name,
 			});
 
-			if (prepend) vars.url = prepend + encodeURIComponent(vars.url);
-			console.log('opening ' + vars.url);
+			var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
+			if (prepend) url = prepend + encodeURIComponent(url);
+
+			console.log('opening ' + url);
+
 			this.pageTime(false);
-			if (this.isMraid) mraid.open(vars.url);
-			else window.open(vars.url, '_blank');
+			if (this.isMraid) mraid.open(url);
+			else window.open(url, '_blank');
 		},
 		contract: function(){
 			if (!this.adIsExpanded) return;
