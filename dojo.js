@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.16 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.17 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.16',
+		version: '0.3.17',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -166,19 +166,21 @@
 		clickthru: function(vars){
 			var tagParams = this.getTagParams();
 			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
-			var clickthruURL = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL);
-			prepend = prepend && decodeURIComponent(prepend) && vars.prepend;
+			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
 
 			this.dojo_track({
 				'type': 'click',
 				'key': vars.name,
 			});
 
-			if (prepend) vars.url = prepend + encodeURIComponent(vars.url);
-			console.log('opening ' + vars.url);
+			var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
+			if (prepend) url = prepend + encodeURIComponent(url);
+
+			this.log('opening ' + url);
+
 			this.pageTime(false);
-			if (this.isMraid) mraid.open(vars.url);
-			else window.open(vars.url, '_blank');
+			if (this.isMraid) mraid.open(url);
+			else window.open(url, '_blank');
 		},
 		contract: function(){
 			if (!this.adIsExpanded) return;
@@ -222,7 +224,6 @@
 			this.pageTime(true);
 		},
 		geolocation: function(vars){
-			console.log(vars);
 			var varsExport = {
 				'url': this.webServiceUrl+'geolocation/export',
 				'method': 'GET',
@@ -277,7 +278,7 @@
 				}
 			};
 			if(typeof(vars.data.campaign_id) == 'undefined'){
-				console.log('campaign_id is a required attribute for this function');
+				this.log('campaign_id is a required attribute for this function');
 				return false;
 			}
 			for(var i in vars.data){
@@ -311,7 +312,7 @@
 		},
 		gmaps_draw: function(vars){
 			if (vars.map_id === undefined)
-		    	return console.log('A map id must be specified');
+		    	return this.log('A map id must be specified');
 			if (typeof(vars.map_id) === 'string') vars.map_id = this.gid(vars.map_id);
 
 		    var map = new google.maps.Map(vars.map_id, {
@@ -451,7 +452,9 @@
 		    return 0;
 		},
 		log: function(message) {
-			this.dojo_track({
+			if (!this.isDojo || this.dojoConsoleLog)
+				console.log(message);
+			else this.dojo_track({
 				'type': 'Developer',
 				'key': message,
 			}, false);
@@ -690,7 +693,7 @@
 			if (!isAutoFired) this.lastInteractionTime = this.elapsedTime;
 
 			if (!this.isDojo || this.dojoConsoleLog){
-				console.log(vars.key);
+				this.log(vars.key);
 			}
 			if (this.isDojo){
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
@@ -749,7 +752,7 @@
 
 			var ar = this.video_properties.aspect_ratio.split(':');
 			if(this.video_properties.style.width == '0px' && this.video_properties.style.height == '0px'){
-				console.log('At least a height or a width for the video element or its parent element must be declared');
+				this.log('At least a height or a width for the video element or its parent element must be declared');
 				return false;
 			}
 			if(this.video_properties.style.width != '0px' && this.video_properties.style.height == '0px'){
