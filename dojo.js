@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.15 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.3.16 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.15',
+		version: '0.3.16',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -184,7 +184,7 @@
 			if (!this.adIsExpanded) return;
 			else this.adIsExpanded = false;
 
-			if (this.isMraid) mraid.close();
+			if (this.isMraid && mraid.getState() === 'expanded') mraid.close();
 			if (this.videoPlaying) this.video_close();
 
 			if (this.iframeEl) {
@@ -559,11 +559,11 @@
 				callback: geoCallback,
 			};
 			if(typeof(vars.data.location) != 'undefined'){
-				if(pcf.valid_zip(vars.data.location)){
+				if(dojo.valid_zip(vars.data.location)){
 					citystatezip = vars.data.location;
 					determineStep();
 				}
-				else if(pcf.valid_geo(vars.data.location)){
+				else if(dojo.valid_geo(vars.data.location)){
 					geoCall.data = {
 						type: 'city_postal_by_geo',
 						value: vars.data.location
@@ -575,7 +575,7 @@
 				}
 			}
 			else{
-				pcf.geolocation(geoCall);
+				dojo.geolocation(geoCall);
 			}
 			function determineStep(){
 				if(settings.storeid == null){
@@ -640,7 +640,7 @@
 				if(typeof(vars.data.pd) != 'undefined'){
 					storeInfo.url += '&pd='+vars.data.pd;
 				}
-				pcf.ajax(storeInfo);
+				dojo.ajax(storeInfo);
 			}
 			function fetchCall(callType, treeId){
 					var callInfo = {
@@ -667,7 +667,7 @@
 					if(typeof(vars.data.pd) != 'undefined'){
 						callInfo.url += '&pd='+vars.data.pd;
 					}
-					pcf.ajax(callInfo);
+					dojo.ajax(callInfo);
 			}
 			function geoCallback(d){
 				if(d.status == 'success'){
