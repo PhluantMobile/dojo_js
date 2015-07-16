@@ -8,10 +8,5 @@
   },
   "scripts": {
     "test": "grunt --verbose"
-  },
-  jshintConfig: {
-    "curly": true,
-    unused: true,
-    eqnull: true,
   }
 }
