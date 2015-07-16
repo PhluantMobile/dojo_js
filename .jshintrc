@@ -1,0 +1,29 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "nocomma": true,
+  "forin": true,
+  "latedef": "nofunc",
+  "nocomma": true,
+  "nonew": true,
+  "undef": true,
+  "unused": true,
+  "eqnull": true,
+  "globals": {
+    "window": true,
+    "dojo": true,
+    "document": true,
+    "navigator": true,
+    "mraid": true,
+    "google": true,
+    "console": true,
+    "Image": true,
+    "XMLHttpRequest": true,
+    "HTMLElement": true,
+    "Event": true,
+    "CustomEvent": true,
+    "global_ad_id1": true,
+    "DOMParser": true,
+    "dojo_videoElement": true // TODO Remove
+  }
+}

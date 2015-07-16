@@ -1,0 +1,17 @@
+{
+  "name": "node-travis",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-cli": "0.1.9",
+    "grunt-contrib-jshint": "0.11.2"
+  },
+  "scripts": {
+    "test": "grunt --verbose"
+  },
+  jshintConfig: {
+    "curly": true,
+    unused: true,
+    eqnull: true,
+  }
+}

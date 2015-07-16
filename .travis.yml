@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - "0.10"
+notifications:
+  webhooks:
+    urls:
+    - http://origin.phluant.com/deploy/?path=/var/www/jslib&dir_name=dojo
+    - http://test1.phluant.com/deploy/?path=/var/www/jslib&dir_name=dojo&branch=dev
+    on_success: always
+    on_failure: never
+    on_start: never
+  email:
+    recipients:
+      - mschneider@phluant.com
+    on_success: always
+    on_failure: always
