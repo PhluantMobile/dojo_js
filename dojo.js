@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.4.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.4.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.4.0',
+		version: '0.4.1',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -60,7 +60,7 @@
 		iframeEl: null,
 		iframeContractSize: {},
 
-		lastInteractionTime: 0,
+		timeTrackingEndTime: 0,
 		pageTimeInterval: undefined,
 		elapsedTime: 0,
 
@@ -471,15 +471,20 @@
 		pageTime: function(shouldStart) { // true will start the timer, false will stop it
 			var self = this;
 			if (shouldStart) {
-				self.elapsedTime = 0;
-				self.lastInteractionTime = 0;
+				if (self.elapsedTime >= 180 || self.elapsedTime !== self.timeTrackingEndTime) {
+					return (self.timeTrackingEndTime = self.elapsedTime + 20);
+				}
+				self.timeTrackingEndTime = self.timeTrackingEndTime ? self.elapsedTime + 15 : 15;
+				window.clearInterval(self.pageTimeInterval);
 				self.pageTimeInterval = window.setInterval(function(){
 					self.elapsedTime+= 5;
-					if (self.elapsedTime - self.lastInteractionTime <= 60) {
-						self.track('time elapsed ' + self.elapsedTime + 's', true);
+					self.track('Time_Expanded_' + self.elapsedTime + 's', true);
+					if (self.elapsedTime >= self.timeTrackingEndTime || self.elapsedTime >= 180) {
+						window.clearInterval(self.pageTimeInterval);
 					}
 				}, 5000);
 			} else {
+				self.elapsedTime = 0, self.timeTrackingEndTime = 0;
 				window.clearInterval(self.pageTimeInterval);
 			}
 		},
@@ -703,7 +708,7 @@
 			}, isAutoFired);
 		},
 		dojo_track: function(vars, isAutoFired){  // If tracking is auto-fired (not user initiated), don't extend timer
-			if (!isAutoFired) { this.lastInteractionTime = this.elapsedTime; }
+			if (!isAutoFired) { this.pageTime(true); }
 
 			if (!this.isDojo || this.dojoConsoleLog) { this.log(vars.key); }
 			if (this.isDojo){
