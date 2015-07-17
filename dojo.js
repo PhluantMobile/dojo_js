@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.3.17 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.4.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.3.17',
+		version: '0.4.1',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -60,7 +60,7 @@
 		iframeEl: null,
 		iframeContractSize: {},
 
-		lastInteractionTime: 0,
+		timeTrackingEndTime: 0,
 		pageTimeInterval: undefined,
 		elapsedTime: 0,
 
@@ -69,48 +69,44 @@
 		closeImg: null,
 
 		addCloseButton: function() {
-			if (this.closeImg && this.closeImg.parentElement) return this.closeImg.style.display = "block";
+			if (this.closeImg && this.closeImg.parentElement) { return (this.closeImg.style.display = "block"); }
 
 			this.closeImg = new Image();
 			this.closeImg.style.cssText = "position: absolute; right:0; top:0; width: 45px;";
 			this.closeImg.classList.add('close');
 			this.closeImg.addEventListener('click', this.contract.bind(this));
 			this.closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
-			if (this.expandedEl) this.expandedEl.appendChild(this.closeImg);
+			if (this.expandedEl) { this.expandedEl.appendChild(this.closeImg); }
 		},
 		removeCloseButton: function() {
 			this.closeImg.style.display = "none";
 		},
 
 		ajax: function(vars){
-			ajaxRequest = new XMLHttpRequest();
+			var ajaxRequest = new XMLHttpRequest();
 			var sendData = '';
-			var yql = false;
+			var useYQL = false;
 			var asynch = true;
 			var self = this;
-			if(typeof(vars.asynch) == 'boolean'){
-				asynch = vars.asynch;
-			}
-			if(typeof(vars.yql) != 'undefined'){
-				yql = true;
-			}
-			if(typeof(vars.data) != 'undefined'){
-				for(var i in vars.data){
-					sendData += ((sendData != '')?'&':'')+i+'='+encodeURIComponent(vars.data[i]);
+			if(typeof(vars.asynch) === 'boolean'){ asynch = vars.asynch; }
+			if(typeof(vars.yql) !== 'undefined'){ useYQL = true; }
+			if(typeof(vars.data) !== 'undefined'){
+				for (var i in vars.data) {
+					if( vars.data.hasOwnProperty( i ) ) {
+						sendData += ((sendData !== '')?'&':'')+i+'='+encodeURIComponent(vars.data[i]);
+					}
 				}
 			}
-			if((vars.method != 'POST' || yql) && sendData != ''){
-				vars.url += ((vars.url.indexOf('?') != -1)?'&':'?')+sendData;
+			if((vars.method !== 'POST' || useYQL) && sendData){
+				vars.url += ((vars.url.indexOf('?') !== -1)?'&':'?')+sendData;
 			}
 			var timeout = 10000;
-			if(typeof(vars.timeout) == 'number'){
-				timeout = vars.timeout;
-			}
-			if(yql){
-				var format = ((typeof(vars.yql.format) == 'string')? vars.yql.format : 'json');
+			if (typeof(vars.timeout) === 'number') { timeout = vars.timeout; }
+			if(useYQL){
+				var format = ((typeof(vars.yql.format) === 'string')? vars.yql.format : 'json');
 				var yql = 'format='+format+'&q='+encodeURIComponent('select * from '+format+' where url="' +vars.url+ '"');
 				vars.url = 'http://query.yahooapis.com/v1/public/yql';
-				if(vars.method != 'POST'){
+				if(vars.method !== 'POST'){
 					vars.url += '?'+yql;
 				}
 				else{
@@ -118,15 +114,15 @@
 				}
 			}
 			ajaxRequest.open(vars.method, vars.url, asynch);
-			if(vars.method == 'POST'){
+			if(vars.method === 'POST'){
 				ajaxRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 				ajaxRequest.send(sendData);
 			}
 			else{
 				ajaxRequest.send();
 			}
-			if(typeof(vars.callback) != 'undefined'){
-				var ajaxTimeout = setTimeout(function(){
+			if(typeof(vars.callback) !== 'undefined'){
+				var ajaxTimeout = window.setTimeout(function(){
 					ajaxRequest.abort();
 					vars.callback({
 						'status': 'error',
@@ -134,15 +130,15 @@
 					});
 				},timeout);
 				ajaxRequest.onreadystatechange = function(){
-					if (ajaxRequest.readyState == 4 && ajaxRequest.status == 200) {
-						clearTimeout(ajaxTimeout);
+					if (ajaxRequest.readyState === 4 && ajaxRequest.status === 200) {
+						window.clearTimeout(ajaxTimeout);
 						var resp = ajaxRequest.responseText;
-						if(typeof(vars.js_object) != 'undefined'){
+						if(typeof(vars.js_object) !== 'undefined'){
 							if(vars.js_object){
-								resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') != -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
+								resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') !== -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
 							}
 						}
-						if(yql){
+						if(useYQL){
 							resp = {
 								'status': 'success',
 								'results': resp,
@@ -150,8 +146,8 @@
 						}
 						vars.callback(resp);
 					}
-					else if(ajaxRequest.status != 200){
-						clearTimeout(ajaxTimeout);
+					else if(ajaxRequest.status !== 200){
+						window.clearTimeout(ajaxTimeout);
 						vars.callback({
 							'status': 'error',
 							'request_info': ajaxRequest
@@ -174,46 +170,46 @@
 			});
 
 			var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
-			if (prepend) url = prepend + encodeURIComponent(url);
+			if (prepend) { url = prepend + encodeURIComponent(url); }
 
 			this.log('opening ' + url);
 
 			this.pageTime(false);
-			if (this.isMraid) mraid.open(url);
-			else window.open(url, '_blank');
+			if (this.isMraid) { mraid.open(url); }
+			else { window.open(url, '_blank'); }
 		},
 		contract: function(){
-			if (!this.adIsExpanded) return;
-			else this.adIsExpanded = false;
+			if (!this.adIsExpanded) { return; }
+			else { this.adIsExpanded = false; }
 
-			if (this.isMraid && mraid.getState() === 'expanded') mraid.close();
-			if (this.videoPlaying) this.video_close();
+			if (this.isMraid && mraid.getState() === 'expanded') { mraid.close(); }
+			if (this.videoPlaying) { this.video_close(); }
 
 			if (this.iframeEl) {
 				this.iframeEl.style.width = this.iframeContractSize.x + 'px';
 				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
 			}
-			if (!this.isMraid && !this.useCustomClose) this.removeCloseButton();
+			if (!this.isMraid && !this.useCustomClose) { this.removeCloseButton(); }
 
 			this.track('contract');
 			this.pageTime(false);
 
-			if (this.closeCallback) this.closeCallback();
+			if (this.closeCallback) { this.closeCallback(); }
 		},
 		expand: function(width,height){
-			if (this.adIsExpanded) return;
+			if (this.adIsExpanded) { return; }
 
-			if (typeof(width) === 'number') width += 'px';
-			if (typeof(height) === 'number') height += 'px';
+			if (typeof(width) === 'number') { width += 'px'; }
+			if (typeof(height) === 'number') { height += 'px'; }
 
 			if (this.iframeEl) {
 				this.iframeContractSize.x = this.iframeEl.offsetWidth;
 				this.iframeContractSize.y = this.iframeEl.offsetHeight;
 
-				if (width) this.iframeEl.style.width = width;
-				if (height) this.iframeEl.style.height = height;
+				if (width) { this.iframeEl.style.width = width; }
+				if (height) { this.iframeEl.style.height = height; }
 			}
-			if (this.isMraid) mraid.expand();
+			if (this.isMraid) { mraid.expand(); }
 
 			if (!this.useCustomClose && !this.isMraid) {
 				this.addCloseButton();
@@ -230,7 +226,7 @@
 				'callback': vars.callback,
 				'js_object': true,
 			};
-			if(typeof(vars.data) != 'undefined'){
+			if(typeof(vars.data) !== 'undefined'){
 				varsExport.data = vars.data;
 			}
 			this.ajax(varsExport);
@@ -245,26 +241,26 @@
 			});
 
 		    function success(position){
-		    	if (resolved) return;
-		    	else resolved = true;
+		    	if (resolved) { return; }
+		    	else { resolved = true; }
 
-				vars.callback({
-					'lat': position.coords.latitude,
-					'lng': position.coords.longitude
-				});
+					vars.callback({
+						'lat': position.coords.latitude,
+						'lng': position.coords.longitude
+					});
 	    	}
 
-	    	function error(e){
-	    		if (resolved) return;
-	    		else resolved = true;
+	    	function error(){
+	    		if (resolved) { return; }
+	    		else { resolved = true; }
 
 	    		/* TODO: normalize return data to be the
 	        	 same as above, to maintain consistency */
-	        	if (vars.failover) dojo.geolocation(vars);
-	        	else vars.callback(false);
-	        }
+        	if (vars.failover) { dojo.geolocation(vars); }
+        	else { vars.callback(false); }
+        }
 
-		    setTimeout(error, 8000);
+		    window.setTimeout(error, 8000);
 		},
 		get_stores: function(vars){
 			var varsExport = {
@@ -277,25 +273,26 @@
 					'dist': 30
 				}
 			};
-			if(typeof(vars.data.campaign_id) == 'undefined'){
+			if (typeof(vars.data.campaign_id) === 'undefined') {
 				this.log('campaign_id is a required attribute for this function');
 				return false;
 			}
-			for(var i in vars.data){
-				varsExport.data[i] = vars.data[i];
+			for (var i in vars.data){
+				if( vars.data.hasOwnProperty( i ) ) {
+					varsExport.data[i] = vars.data[i];
+				}
 			}
 			varsExport.data.type = 'get_stores';
 			this.ajax(varsExport);
 		},
 		getTagParams: function(){
-			if (!dojo.isDojo) return {};
+			if (!dojo.isDojo) { return {}; }
 
 			var scripts = document.getElementsByTagName('script');
 			var i=0, tagScript = scripts[0];
-			while (!tagScript.src.match(/dojo.phluant.com\/adj/))
-				tagScript = scripts[++i];
+			while (!tagScript.src.match(/dojo.phluant.com\/adj/)) { tagScript = scripts[++i]; }
 
-			if (tagScript.src.indexOf('?') === -1) return {};
+			if (tagScript.src.indexOf('?') === -1) { return {}; }
 
 			var params = tagScript.src.slice(tagScript.src.indexOf('?') +1).split('&');
 			var parsedParams = {};
@@ -307,63 +304,74 @@
 			return parsedParams;
 		},
 		gid: function(id){
-			if (id instanceof HTMLElement) return id;
-			else return document.getElementById(id) || document.getElementsByTagName(id)[0];
+			if (id instanceof HTMLElement) { return id; }
+			else { return document.getElementById(id) || document.getElementsByTagName(id)[0]; }
 		},
 		gmaps_draw: function(vars){
-			if (vars.map_id === undefined)
-		    	return this.log('A map id must be specified');
-			if (typeof(vars.map_id) === 'string') vars.map_id = this.gid(vars.map_id);
+			if (vars.map_id === undefined) { return this.log('A map id must be specified'); }
+			if (typeof(vars.map_id) === 'string') { vars.map_id = this.gid(vars.map_id); }
 
-		    var map = new google.maps.Map(vars.map_id, {
-		    	zoom: vars.map_zoom,
+		    var map = new google.maps.Map(
+		    	vars.map_id,
+		    	{
+		    		zoom: vars.map_zoom,
 		        center: new google.maps.LatLng(vars.center_lat, vars.center_lng),
 		        disableDefaultUI: true,
 		        mapTypeId: google.maps.MapTypeId.ROADMAP
-		    });
+		    	}
+		    );
 
 		    var bounds = new google.maps.LatLngBounds();
-		    if (vars.markers) vars.markers.forEach(function(marker){
+		    if (vars.markers) {
+		    	vars.markers.forEach(function(marker){
 		        marker.position = new google.maps.LatLng(marker.lat, marker.lng);
 		        marker.map = map;
 
 		        var gMarker = new google.maps.Marker(marker);
 
-		        if (marker.clickthru) google.maps.event.addListener(gMarker, 'click', function(){
-					if (marker.clickthru.callback) marker.clickthru.callback.call(this);
-					if (!marker.clickthru.url) marker.clickthru.url = 'https://maps.google.com/?saddr='+ vars.user_lat +','+ vars.user_lng +'&daddr='+ this.position.lat() +','+ this.position.lng();
-	            	dojo.clickthru(marker.clickthru);
-		        });
+		        if (marker.clickthru) {
+		        	google.maps.event.addListener(gMarker, 'click', function() {
+								if (marker.clickthru.callback) { marker.clickthru.callback.call(this); }
+								if (!marker.clickthru.url) {
+									marker.clickthru.url = 'https://maps.google.com/?saddr='+ vars.user_lat +','+ vars.user_lng +'&daddr='+ this.position.lat() +','+ this.position.lng();
+								}
+								dojo.clickthru(marker.clickthru);
+		        	});
+		      	}
 
-		        if (marker.events) for (var event in marker.events)
-			    	google.maps.event.addListener(gMarker, event, marker.events[event]);
-
+		        if (marker.events) {
+		        	for (var event in marker.events) {
+		        		if( marker.events.hasOwnProperty( event ) ) {
+			    				google.maps.event.addListener(gMarker, event, marker.events[event]);
+			    			}
+			    		}
+			    	}
 		        bounds.extend(gMarker.position);
-		    });
-		    if (vars.map_zoom === undefined) map.fitBounds(bounds);
+		    	});
+		    }
+		    if (vars.map_zoom === undefined) { map.fitBounds(bounds); }
 		},
 		/* TODO: remove the fallback callback and normalifze the return data for callback */
 		gmaps_geo: function(vars){
-			if (!vars.callback) return false;
-			if (!vars.loc_type) vars.loc_type = 'address';
-			if (!this.geocoder) this.geocoder = new google.maps.Geocoder();
+			if (!vars.callback) { return false; }
+			if (!vars.loc_type) { vars.loc_type = 'address'; }
+			if (!this.geocoder) { this.geocoder = new google.maps.Geocoder(); }
 
 			var opts = {};
 			if (['geo','latLng'].indexOf(vars.loc_type) !== -1) {
-				if (!this.valid_geo(vars.address))
-					return console.error('invalid lat/lng');
+				if (!this.valid_geo(vars.address)) { return console.error('invalid lat/lng'); }
 
 				var coords = vars.address.split(',');
 				opts.latLng = new google.maps.LatLng(coords[0], coords[1]);
 			}
-			else opts.address = encodeURIComponent(vars.address);
+			else { opts.address = encodeURIComponent(vars.address); }
 
 			this.geocoder.geocode(opts, function(results, status) {
 				dojo.gmaps_return(results, status, vars);
 			});
 		},
 		gmaps_return: function(results, status, vars){
-			if (status === google.maps.GeocoderStatus.OK) return vars.callback(results);
+			if (status === google.maps.GeocoderStatus.OK) { return vars.callback(results); }
 			else if (vars.failover) {
 				var opts = {
 					data: {value: vars.address},
@@ -372,16 +380,15 @@
 
 				/* TODO: don't wait until after the network request to do this check.
 				   Also, shouldn't this be done inside the geolocation function? */
-				if (this.valid_zip(vars.address)) opts.data.type =  'postal_code';
-				else if (this.valid_geo(vars.address)) opts.data.type =  'city_postal_by_geo';
-				else return console.error('invalid address');
+				if (this.valid_zip(vars.address)) { opts.data.type =  'postal_code'; }
+				else if (this.valid_geo(vars.address)) { opts.data.type =  'city_postal_by_geo'; }
+				else { return console.error('invalid address'); }
 
 				this.geolocation(opts);
 			}
-			else vars.callback(false);
+			else { vars.callback(false); }
 		},
 		image_tracker: function(url){
-			var self = this;
 			var img = document.createElement("img");
 			img.src = url;
 			img.height = '1px';
@@ -395,10 +402,10 @@
 
 			var self = this;
 			var loadScripts = vars.asynch_load && vars.async_load.scripts || [];
-			if (typeof(mraid) === 'undefined') loadScripts.push('mraid.js');
+			if (typeof(mraid) === 'undefined') { loadScripts.push('mraid.js'); }
 			// TODO: make sure the DOM is ready first
 			this.loadAsync(loadScripts, this.initMraid.bind(this, function(){
-				if (self.isMraid) self.configMraid();
+				if (self.isMraid) { self.configMraid(); }
 
 				if (self.isMraid && !self.winLoaded) {
 					/* mraid failed to fire the load event, so we have to do it manually */
@@ -411,30 +418,31 @@
 				    }
 				}
 
-				if (vars.expanded || vars.isInterstitial) self.expand();
-				if (vars.init) setTimeout(vars.init()); /*delay callback until after doc load callbacks are fired*/
+				if (vars.expanded || vars.isInterstitial) { self.expand(); }
+				if (vars.init) { window.setTimeout(vars.init()); } /*delay callback until after doc load callbacks are fired*/
 			}));
 		},
 		configMraid: function(){
 			var self = this;
 			// list to close / contract events
 			mraid.addEventListener('stateChange', function(e){
-        		if (e === 'hidden' || (e === 'default' && self.adIsExpanded)) self.contract();
-	    	});
+      	if (e === 'hidden' || (e === 'default' && self.adIsExpanded)) { self.contract(); }
+    	});
 
-	    	mraid.setExpandProperties({'useCustomClose': this.useCustomClose});
+	    mraid.setExpandProperties({'useCustomClose': this.useCustomClose});
 		},
 		initMraid: function(callback){
 			this.isMraid = typeof(mraid) !== "undefined";
 
-			if (!this.isMraid) return callback();
-			else if (mraid.getState() === 'loading')
+			if (!this.isMraid) { return callback(); }
+			else if (mraid.getState() === 'loading') {
 				mraid.addEventListener('ready', this.onMraidReady.bind(this,callback));
-			else this.onMraidReady(callback);
+			}
+			else { this.onMraidReady(callback); }
 		},
 		onMraidReady: function(callback){
-			if (mraid.isViewable()) this.onMraidViewChange(callback);
-			else mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback));
+			if (mraid.isViewable()) { this.onMraidViewChange(callback); }
+			else { mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback)); }
 		},
 		onMraidViewChange: function(callback){
 			this.log('viewableChange');
@@ -452,32 +460,39 @@
 		    return 0;
 		},
 		log: function(message) {
-			if (!this.isDojo || this.dojoConsoleLog)
-				console.log(message);
-			else this.dojo_track({
-				'type': 'Developer',
-				'key': message,
-			}, false);
+			if (!this.isDojo || this.dojoConsoleLog) { console.log(message); }
+			else {
+				this.dojo_track({
+					'type': 'Developer',
+					'key': message,
+				}, false);
+			}
 		},
 		pageTime: function(shouldStart) { // true will start the timer, false will stop it
 			var self = this;
 			if (shouldStart) {
-				self.elapsedTime = 0;
-				self.lastInteractionTime = 0;
+				if (self.elapsedTime >= 180 || self.elapsedTime !== self.timeTrackingEndTime) {
+					return (self.timeTrackingEndTime = self.elapsedTime + 20);
+				}
+				self.timeTrackingEndTime = self.timeTrackingEndTime ? self.elapsedTime + 15 : 15;
+				window.clearInterval(self.pageTimeInterval);
 				self.pageTimeInterval = window.setInterval(function(){
 					self.elapsedTime+= 5;
-					if (self.elapsedTime - self.lastInteractionTime <= 60) {
-						self.track('time elapsed ' + self.elapsedTime + 's', true);
+					self.track('Time_Expanded_' + self.elapsedTime + 's', true);
+					if (self.elapsedTime >= self.timeTrackingEndTime || self.elapsedTime >= 180) {
+						window.clearInterval(self.pageTimeInterval);
 					}
 				}, 5000);
 			} else {
+				self.elapsedTime = 0;
+				self.timeTrackingEndTime = 0;
 				window.clearInterval(self.pageTimeInterval);
 			}
 		},
 		query_string: function(jsonConvert){
 			var url = window.location.href;
-			if(url.indexOf('?') != -1){
-				var urlObj = new Object();
+			if(url.indexOf('?') !== -1){
+				var urlObj = {};
 				var qString = url.split('?');
 				var params = qString[1].split('&');
 				for(var i=0; i<params.length; i++){
@@ -502,7 +517,7 @@
 		},
 		// TODO: add error handling
 		loadAsync: function(scripts, callback) {
-			if (scripts.length <= 0) return callback();
+			if (scripts.length <= 0) { return callback(); }
 
 			var loadCount = 0;
 			scripts.forEach(function(src){
@@ -510,7 +525,7 @@
 				script.type = 'text/javascript';
 				script.async = true;
 				script.onload = script.onerror = function(){
-				    if (++loadCount === scripts.length) callback();
+				  if (++loadCount === scripts.length) { callback(); }
 				};
 				script.src = src;
 				document.getElementsByTagName('head')[0].appendChild(script);
@@ -525,18 +540,18 @@
 				listingimagewidth: 60,
 			};
 			for(var s in settings){
-				if(typeof(vars.data[s]) != 'undefined'){
+				if(typeof(vars.data[s]) !== 'undefined'){
 					settings[s] = vars.data[s];
 				}
 			}
 			var callType = null;
 			var returnData = {};
 			var self = this;
-			if(typeof(vars.data.call_type) != 'undefined'){
+			if(typeof(vars.data.call_type) !== 'undefined'){
 				callType = vars.data.call_type.split(',');
 				for(var i=0; i<callType.length; i++){
-					if(callType[i] != 'store'){
-						if(typeof(vars.data[callType[i]+'ids']) == 'undefined'){
+					if(callType[i] !== 'store'){
+						if(typeof(vars.data[callType[i]+'ids']) === 'undefined'){
 							console.error('data.'+callType[i]+'ids must be defined for the respective lookup.');
 							return false;
 						}
@@ -551,9 +566,9 @@
 				}
 			}
 			var req = ['company', 'campaignid'];
-			for(var i=0; i<req.length; i++){
-				if(typeof(vars.data[req[i]]) == 'undefined'){
-					console.error('data.'+req[i]+' is a required attribute for the shoplocal function.');
+			for (var j = 0; j < req.length; j++) {
+				if (typeof(vars.data[req[j]]) === 'undefined') {
+					console.error('data.'+req[j]+' is a required attribute for the shoplocal function.');
 					return false;
 				}
 			}
@@ -561,7 +576,7 @@
 			var geoCall = {
 				callback: geoCallback,
 			};
-			if(typeof(vars.data.location) != 'undefined'){
+			if(typeof(vars.data.location) !== 'undefined'){
 				if(dojo.valid_zip(vars.data.location)){
 					citystatezip = vars.data.location;
 					determineStep();
@@ -581,14 +596,14 @@
 				dojo.geolocation(geoCall);
 			}
 			function determineStep(){
-				if(settings.storeid == null){
+				if(settings.storeid === null){
 					fetchStore();
 				}
-				else if(callType != null){
+				else if(callType !== null){
 					var proceed = true;
 					for(var i=0; i<callType.length; i++){
 						for(var t in returnData[callType[i]]){
-							if(returnData[callType[i]][t] == null){
+							if(returnData[callType[i]][t] === null){
 								fetchCall(callType[i], t);
 								proceed = false;
 								break;
@@ -611,24 +626,26 @@
 						format: 'xml',
 					},
 					callback: function(d){
-						if(d.status != 'error'){
+						if(d.status !== 'error'){
 							var data = self.xmlToObject(d.results, true);
 							var storeData = data.query.results.content;
 							var stores = storeData.collection.data;
 							settings.storeid = null;
-							for(var i in stores){
-								var grab = true;
-								if(typeof(vars.data.name_flag) != 'undefined' && stores[i]['@attributes'].name.indexOf(vars.data.name_flag) != -1){
-									grab = false;
-								}
-								if(stores[i]['@attributes'].contentflag != 'Y'){
-									grab = false;
-								}
-								if(grab && settings.storeid == null){
-									settings.storeid = stores[i]['@attributes'].storeid;
-								}
-								if(!grab){
-									delete storeData.collection.data[i];
+							for (var i in stores){
+								if( stores.hasOwnProperty( i ) ) {
+									var grab = true;
+									if(typeof(vars.data.name_flag) !== 'undefined' && stores[i]['@attributes'].name.indexOf(vars.data.name_flag) !== -1){
+										grab = false;
+									}
+									if(stores[i]['@attributes'].contentflag !== 'Y'){
+										grab = false;
+									}
+									if(grab && settings.storeid === null){
+										settings.storeid = stores[i]['@attributes'].storeid;
+									}
+									if(!grab){
+										delete storeData.collection.data[i];
+									}
 								}
 							}
 							returnData.stores = {
@@ -640,7 +657,7 @@
 						}
 					},
 				};
-				if(typeof(vars.data.pd) != 'undefined'){
+				if(typeof(vars.data.pd) !== 'undefined'){
 					storeInfo.url += '&pd='+vars.data.pd;
 				}
 				dojo.ajax(storeInfo);
@@ -653,7 +670,7 @@
 							format: 'xml',
 						},
 						callback: function(d){
-							if(d.status != 'error'){
+							if(d.status !== 'error'){
 								var data = self.xmlToObject(d.results, true);
 								returnData[callType][treeId] = {
 									status: 'success',
@@ -665,15 +682,17 @@
 						},
 					};
 					for(var s in settings){
-						callInfo.url += '&'+s+'='+settings[s];
+						if( settings.hasOwnProperty( s ) ) {
+							callInfo.url += '&'+s+'='+settings[s];
+						}
 					}
-					if(typeof(vars.data.pd) != 'undefined'){
+					if(typeof(vars.data.pd) !== 'undefined'){
 						callInfo.url += '&pd='+vars.data.pd;
 					}
 					dojo.ajax(callInfo);
 			}
 			function geoCallback(d){
-				if(d.status == 'success'){
+				if(d.status === 'success'){
 					returnData.user_info = d.results;
 					citystatezip = d.results.postal_code;
 					determineStep();
@@ -690,11 +709,9 @@
 			}, isAutoFired);
 		},
 		dojo_track: function(vars, isAutoFired){  // If tracking is auto-fired (not user initiated), don't extend timer
-			if (!isAutoFired) this.lastInteractionTime = this.elapsedTime;
+			if (!isAutoFired) { this.pageTime(true); }
 
-			if (!this.isDojo || this.dojoConsoleLog){
-				this.log(vars.key);
-			}
+			if (!this.isDojo || this.dojoConsoleLog) { this.log(vars.key); }
 			if (this.isDojo){
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
 				this.image_tracker(url);
@@ -705,9 +722,9 @@
 	        return filter.test(email);
 	    },
 		valid_geo: function(geoTest){
-			passed = true;
+			var passed = true;
 			geoTest = geoTest.split(',');
-			if(typeof(geoTest) == 'object'){
+			if(typeof(geoTest) === 'object'){
 				for(var i=0; i<geoTest.length; i++){
 					if(isNaN(geoTest[i])){
 						passed = false;
@@ -723,26 +740,31 @@
 		valid_phone: function(phone_num){
 		    if(phone_num){
 		    	phone_num = phone_num.replace(/[^0-9]/g, '');
-				return /^\d{10}/.test(zipTest);
+				return /^\d{10}/.test(phone_num);
 		    }
 		},
 		valid_zip: function(zip){
-	       return /^\d{5}(-\d{4})?$/.test(zip);
-	    },
+       return /^\d{5}(-\d{4})?$/.test(zip);
+    },
+
 		video: function(vars){
 			var self = this;
 			this.videoPlaying = true;
-			objCheck = ['style', 'attributes'];
+			var objCheck = ['style', 'attributes'];
 			if (!this.vidContainer){
 				for(var i in vars){
-					if(objCheck.indexOf(i) != -1){
-						for(var v in vars[i]){ this.video_properties[i][v] = vars[i][v]; }
+					if(objCheck.indexOf(i) !== -1){
+						for(var v in vars[i]){
+							if( vars[i].hasOwnProperty( v ) ) {
+								this.video_properties[i][v] = vars[i][v];
+							}
+						}
 					}
 					else { this.video_properties[i] = vars[i]; }
 				}
 			}
-			if (vars) this.vidContainer = vars.container_id;
-			if(typeof(this.vidContainer) == 'string'){
+			if (vars) { this.vidContainer = vars.container_id; }
+			if(typeof(this.vidContainer) === 'string'){
 				this.vidContainer = this.gid(this.vidContainer);
 			}
 
@@ -751,26 +773,28 @@
 			}
 
 			var ar = this.video_properties.aspect_ratio.split(':');
-			if(this.video_properties.style.width == '0px' && this.video_properties.style.height == '0px'){
+			if(this.video_properties.style.width === '0px' && this.video_properties.style.height === '0px'){
 				this.log('At least a height or a width for the video element or its parent element must be declared');
 				return false;
 			}
-			if(this.video_properties.style.width != '0px' && this.video_properties.style.height == '0px'){
+			if(this.video_properties.style.width !== '0px' && this.video_properties.style.height === '0px'){
 				this.video_properties.style.height = this.video_properties.style.width.replace('px','')*(ar[1]/ar[0])+'px';
 			}
-			if(this.video_properties.style.width == '0px' && this.video_properties.style.height != '0px'){
+			if(this.video_properties.style.width === '0px' && this.video_properties.style.height !== '0px'){
 				this.video_properties.style.width = this.video_properties.style.height.replace('px','')*(ar[0]/[1])+'px';
 			}
 			dojo_videoElement = document.createElement("video");
 			dojo_videoElement.src = this.video_properties.video_url;
 			for(var attr in this.video_properties.attributes){
-				if (this.video_properties.attributes[attr] === true)
-					dojo_videoElement.setAttribute(attr, '');
-				else if (this.video_properties.attributes[attr] !== false)
+				if (this.video_properties.attributes[attr] === true) { dojo_videoElement.setAttribute(attr, ''); }
+				else if (this.video_properties.attributes[attr] !== false) {
 					dojo_videoElement.setAttribute(attr, this.video_properties.attributes[attr]);
+				}
 			}
-			for(var i in this.video_properties.style){
-				dojo_videoElement.style[i] = this.video_properties.style[i];
+			for(var prop in this.video_properties.style) {
+				if ( this.video_properties.style.hasOwnProperty( prop ) ) {
+					dojo_videoElement.style[prop] = this.video_properties.style[prop];
+				}
 			}
 			dojo_videoElement.addEventListener('canplaythrough', function(){
 				if(self.video_properties.attributes.autoplay === true){
@@ -791,12 +815,12 @@
 					hasEnded = false;
 					quartiles = {'25': false, '50': false, '75': false};
 				}
-				if (self.video_properties.full_screen) self.video_full_screen(dojo_videoElement);
-				if (self.video_properties.play_callback ) self.video_properties.play_callback();
+				if (self.video_properties.full_screen) { self.video_full_screen(dojo_videoElement); }
+				if (self.video_properties.play_callback ) { self.video_properties.play_callback(); }
 			});
 
 			dojo_videoElement.addEventListener('pause', function(){
-				if(typeof(self.video_properties.pause_callback )== 'function'){
+				if(typeof(self.video_properties.pause_callback) === 'function'){
 					self.video_properties.pause_callback();
 				}
 			});
@@ -804,13 +828,12 @@
 			dojo_videoElement.addEventListener('loadedmetadata', function() {
 
 				var duration = dojo_videoElement.duration;
-
-	  			dojo_videoElement.addEventListener('timeupdate', function(e){
-		  			if (dojo_videoElement.currentTime) self.video_position = dojo_videoElement.currentTime;
-		  			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
-		  			for(var q in quartiles){
-		  				if(check >= q && !quartiles[q]){
-		  					self.dojo_track({
+  			dojo_videoElement.addEventListener('timeupdate', function(){
+	  			if (dojo_videoElement.currentTime) { self.video_position = dojo_videoElement.currentTime; }
+	  			var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
+	  			for(var q in quartiles){
+	  				if(check >= q && !quartiles[q]){
+	  					self.dojo_track({
 								'type': 'video',
 								'key': 'quartile'+q
 							}, true);
@@ -818,14 +841,14 @@
 							dojo_videoElement.dispatchEvent(quartEvent);
 							quartiles[q] = true;
 						}
-		  			}
-		  		});
+	  			}
+	  		});
 			});
 
 			var hasEnded = true;
 			function onEnd(){
-				if (hasEnded) return;
-				else hasEnded = true;
+				if (hasEnded) { return; }
+				else { hasEnded = true; }
 
 				self.dojo_track({
 					'type': 'video',
@@ -860,9 +883,9 @@
 
 			this.vidContainer.removeChild(dojo_videoElement); // innerHTML = '';
 			this.videoPlaying = false;
-			clearInterval(this.videoInt);
+			window.clearInterval(this.videoInt);
 
-			if (this.video_properties.close_callback) this.video_properties.close_callback();
+			if (this.video_properties.close_callback) { this.video_properties.close_callback(); }
 		},
 		video_full_screen: function(elem, onEnd){
 			var endEvent = 'endfullscreen';
@@ -889,7 +912,7 @@
 				xml = parser.parseFromString(xml,"text/xml");
 			}
 			var obj = {};
-			if (xml.nodeType == 1) {
+			if (xml.nodeType === 1) {
 				if (xml.attributes.length > 0) {
 				obj["@attributes"] = {};
 					for (var j = 0; j < xml.attributes.length; j++) {
@@ -897,17 +920,17 @@
 						obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
 					}
 				}
-			} else if (xml.nodeType == 3) {
+			} else if (xml.nodeType === 3) {
 				obj = xml.nodeValue;
 			}
 			if (xml.hasChildNodes()) {
 				for(var i = 0; i < xml.childNodes.length; i++) {
 					var item = xml.childNodes.item(i);
 					var nodeName = item.nodeName;
-					if (typeof(obj[nodeName]) == "undefined") {
+					if (typeof(obj[nodeName]) === "undefined") {
 						obj[nodeName] = this.xmlToObject(item, false);
 					} else {
-						if (typeof(obj[nodeName].push) == "undefined") {
+						if (typeof(obj[nodeName].push) === "undefined") {
 							var old = obj[nodeName];
 							obj[nodeName] = [];
 							obj[nodeName].push(old);
@@ -920,7 +943,7 @@
 		},
 	};
 	dojo.iosVersion = dojo.iosVersionCheck();
-	if(typeof(global_ad_id1) != 'undefined'){
+	if(typeof(global_ad_id1) !== 'undefined'){
 		var newUrl = global_ad_id1[0].url.split('?');
 		var metricsArray = newUrl[1].split('&');
 		var metrics = {};
@@ -930,9 +953,9 @@
 		}
 		dojo.unitID = metrics.ad_id;
 		var scripts = document.getElementsByTagName('script');
-		for(var i=0; i<scripts.length; i++){
-		  var scriptSrc = scripts[i].src;
-		  if(scriptSrc.indexOf('dojo.phluant.com') != -1){
+		for (var k = 0; k < scripts.length; k++){
+		  var scriptSrc = scripts[k].src;
+		  if(scriptSrc.indexOf('dojo.phluant.com') !== -1){
 		    scriptSrc = scriptSrc.replace('http://dojo.phluant.com/adj/', '');
 		    scriptSrc = scriptSrc.split('/');
 		    dojo.pl = scriptSrc[0];
@@ -950,15 +973,16 @@
 	function getThisFrameEl(){
 		var frameEl = null; // TODO: catch security error when parent is different domain
 		var i=0, iframes = window.parent.document.getElementsByTagName('iframe');
-		while (frameEl = iframes[i++])
-			if (frameEl.contentWindow === window) break;
+		while ((frameEl = iframes[i++])) {
+			if (frameEl.contentWindow === window) { break; }
+		}
 		return frameEl;
 	}
 
 	// TODO: make sure this is ok to do before onload
-	if (isIframe()) dojo.iframeEl = getThisFrameEl();
+	if (isIframe()) { dojo.iframeEl = getThisFrameEl(); }
 
-	if (document.readyState === 'complete') dojo.winLoaded = true;
+	if (document.readyState === 'complete') { dojo.winLoaded = true; }
 
 	/* 	adding an event listener for 'load' doesn't
 		work with multiple ads in the same mraid webview */
@@ -966,7 +990,7 @@
 	/* else window.addEventListener('load', onLoad, false); */
 
 	document.addEventListener('readystatechange', function(){
-	    if (document.readyState === 'complete') dojo.winLoaded = true;
+	    if (document.readyState === 'complete') { dojo.winLoaded = true; }
 	    /* TODO: maybe remove event listener */
 	}, false);
 })();

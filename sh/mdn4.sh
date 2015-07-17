@@ -1,3 +1,4 @@
+
 # Server-Side Script For Automatic Creation Of Versioned Dojo.js Files
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" !=  master ] ; then exit ; fi
