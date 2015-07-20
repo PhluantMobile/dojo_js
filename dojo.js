@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.4.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.4.2 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.4.1',
+		version: '0.4.2',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -459,18 +459,18 @@
 		    }
 		    return 0;
 		},
-		log: function(message) {
+		log: function(message, isAutoFired) {
 			if (!this.isDojo || this.dojoConsoleLog) { console.log(message); }
 			else {
 				this.dojo_track({
 					'type': 'Developer',
 					'key': message,
-				}, false);
+				}, typeof isAutoFired === 'undefined' ? true : isAutoFired);
 			}
 		},
 		pageTime: function(shouldStart) { // true will start the timer, false will stop it
 			var self = this;
-			if (shouldStart) {
+			if (shouldStart && self.adIsExpanded) {
 				if (self.elapsedTime >= 180 || self.elapsedTime !== self.timeTrackingEndTime) {
 					return (self.timeTrackingEndTime = self.elapsedTime + 20);
 				}
@@ -479,7 +479,7 @@
 				self.pageTimeInterval = window.setInterval(function(){
 					self.elapsedTime+= 5;
 					self.track('Time_Expanded_' + self.elapsedTime + 's', true);
-					if (self.elapsedTime >= self.timeTrackingEndTime || self.elapsedTime >= 180) {
+					if (self.elapsedTime >= self.timeTrackingEndTime || self.elapsedTime >= 180 || !self.adIsExpanded) {
 						window.clearInterval(self.pageTimeInterval);
 					}
 				}, 5000);
