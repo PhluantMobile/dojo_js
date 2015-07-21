@@ -714,6 +714,9 @@
 			if (!this.isDojo || this.dojoConsoleLog) { this.log(vars.key); }
 			if (this.isDojo){
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
+				if (typeof global_ad_id1[0] !== 'undefined' && global_ad_id1[0].user_prefs) {
+					url += '&user_prefs=' + global_ad_id1[0].user_prefs;
+				}
 				this.image_tracker(url);
 			}
 		},
