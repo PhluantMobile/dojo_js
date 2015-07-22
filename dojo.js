@@ -966,6 +966,7 @@
 		  }
 		}
 		dojo.isDojo = true;
+		dojo.dojoUrl = global_ad_id1[0].url.substring(0,global_ad_id1[0].url.indexOf("dojo.phluant.com") + 16);
 	}
 
 	function isIframe() {
