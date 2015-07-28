@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.5.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.5.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.5.0',
+		version: '0.5.1',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -714,8 +714,12 @@
 			if (!this.isDojo || this.dojoConsoleLog) { this.log(vars.key); }
 			if (this.isDojo){
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
-				if (typeof global_ad_id1[0] !== 'undefined' && global_ad_id1[0].user_prefs) {
-					url += '&user_prefs=' + global_ad_id1[0].user_prefs;
+				if (typeof global_ad_id1[0] !== 'undefined') {
+					g_ad = global_ad_id1[0];
+					if (g_ad.user_prefs) { url += '&user_prefs=' + g_ad.user_prefs; }
+					if (g_ad.idfa) { url += '&idfa=' + g_ad.idfa; }
+					if (g_ad.location.lat) { url += '&lat=' + g_ad.location.lat; }
+					if (g_ad.location.lng) { url += '&lng=' + g_ad.location.lng; }
 				}
 				this.image_tracker(url);
 			}
