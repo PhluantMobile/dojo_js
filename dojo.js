@@ -714,8 +714,12 @@
 			if (!this.isDojo || this.dojoConsoleLog) { this.log(vars.key); }
 			if (this.isDojo){
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
-				if (typeof global_ad_id1[0] !== 'undefined' && global_ad_id1[0].user_prefs) {
-					url += '&user_prefs=' + global_ad_id1[0].user_prefs;
+				if (typeof global_ad_id1[0] !== 'undefined') {
+					g_ad = global_ad_id1[0];
+					if (g_ad[0].user_prefs) { url += '&user_prefs=' + g_ad[0].user_prefs; }
+					if (g_ad[0].idfa) { url += '&idfa=' + g_ad[0].idfa; }
+					if (g_ad[0].location.lat) { url += '&lat=' + g_ad[0].location.lat; }
+					if (g_ad[0].location.lng) { url += '&lng=' + g_ad[0].location.lng; }
 				}
 				this.image_tracker(url);
 			}
