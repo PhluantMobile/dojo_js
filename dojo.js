@@ -1,7 +1,7 @@
-/*Dojo.js Framework v0.5.1 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v0.5.2 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.5.1',
+		version: '0.5.2',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -303,7 +303,7 @@
 
 			return parsedParams;
 		},
-		gid: function(id){
+		gid: function(id){  // TODO remove
 			if (id instanceof HTMLElement) { return id; }
 			else { return document.getElementById(id) || document.getElementsByTagName(id)[0]; }
 		},
@@ -396,7 +396,7 @@
 			document.getElementsByTagName('body')[0].appendChild(img);
 		},
 		init: function(vars){
-			this.closeCallback = vars.callback;
+			this.closeCallback = vars.callback; // change arg name from 'callback' to make more clear
 	    	this.expandedEl = this.gid(vars.expandedEl) || this.gid('expanded');
 		    this.useCustomClose = vars.useCustomClose;
 
@@ -404,7 +404,7 @@
 			var loadScripts = vars.asynch_load && vars.async_load.scripts || [];
 			if (typeof(mraid) === 'undefined') { loadScripts.push('mraid.js'); }
 			// TODO: make sure the DOM is ready first
-			this.loadAsync(loadScripts, this.initMraid.bind(this, function(){
+			this.loadAsync(loadScripts, this.initMraid.bind(this, function(){ // TODO Fix variable, instructions show insert_before
 				if (self.isMraid) { self.configMraid(); }
 
 				if (self.isMraid && !self.winLoaded) {
@@ -719,7 +719,7 @@
 					if (g_ad.user_prefs) { url += '&user_prefs=' + g_ad.user_prefs; }
 					if (g_ad.idfa) { url += '&idfa=' + g_ad.idfa; }
 					if (g_ad.location.lat) { url += '&lat=' + g_ad.location.lat; }
-					if (g_ad.location.lng) { url += '&lng=' + g_ad.location.lng; }
+					if (g_ad.location.lng) { url += '&long=' + g_ad.location.lng; }
 				}
 				this.image_tracker(url);
 			}
