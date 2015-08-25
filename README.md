@@ -5,9 +5,9 @@ The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's cli
 * [Element ID referencing](#element-id-referencing)
 * [Initialization](#initialization)
 * [Automatic MRAID detection and handling](#initialization)
-* [Expands](#expands)
-* [Contracts](#contracts)
-* [Clickthroughs](#clickthroughs)
+* [Expand](#expand)
+* [Contract](#contract)
+* [Clickthru](#clickthru)
 * [Custom trackers](#custom-trackers)
 * [HTML5 video](#html5-video)
 * [All geolocation and weather API calls to Phluant's resources](#geolocationweather-api-calls)
@@ -29,18 +29,27 @@ The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's cli
 * [Phone Number Validation](#phone-number-validation)
 * [Zip Code Validation](#zip-code-validation)
 * [Technical Support](#technical-support)
+* [Contributing and Testing](#contributing-and-testing)
 
 ---
 
 ## How To Use
 
-Place the JavaScript tag referencing the framework before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work. Each version of the framework is hosted on our CDN for optimal delivery. 
+Place the JavaScript tag referencing the framework before any campaign specific code.  You may do this either in the head or inline.  We recommend you use the minified version for any non-development work. Each version of the framework is hosted on our CDN for optimal delivery.
 
-For the latest stable release use ```http://mdn4.phluantmobile.net/jslib/dojo/dojo.min.js```  
-Specific releases can be used by appending "-{MAJOR}.{MINOR}". For example:
+For the latest stable release use:
+http://mdn4.phluantmobile.net/jslib/dojo/dojo.min.js (production)
+or http://mdn4.phluantmobile.net/jslib/dojo/dojo.js (development)
 
-```
-<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.3.min.js"></script>
+*However, we recommend that you __specify the version number__ in order to ensure stability.  As of August 2015, the most up to date version is 0.5.2.  Please check __releases__ for the most up-to-date version.*
+
+Specific releases can be used by appending "-{MAJOR}.{MINOR}.{PATCH}". For example:
+
+```html
+<!-- production -->
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.5.2.min.js"></script>
+<!-- development -->
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.5.2.js"></script>
 ```
 
 [top](#dojo-framework-library)
@@ -49,20 +58,24 @@ Specific releases can be used by appending "-{MAJOR}.{MINOR}". For example:
 
 ### Element ID referencing
 
-The ads we serve up can be placed on a web site or mobile application with multiple ad instances.  This function ensures any element ID referenced in the code will have the name-spacing attribute added to it if needed, with the standard ```document.getElementById()``` function being the fallback.
+```javascript
+dojo.gid( elementId );
+```
+
+**elementId**  
+Type: String  
+A string containing the ID of the element you would like to reference.
+
+This function is a shortcut for ```document.getElementById()```.
 
 Example:
 
-```
-<script>
-var contract_div = dojo.gid('contract_div');
+```javascript
 var expand_div = dojo.gid('expand_div');
-var expand_btn = dojo.gid('expand_btn');
 var close_btn = dojo.gid('close_btn');
-</script>
 ```
 
-_Required for any campaign that will have multiple ad instances served, and is recommended in all other cases.  It's compatible when being used with jQuery or other JavaScript framework libraries._
+_Optional_
 
 [top](#dojo-framework-library)
 
@@ -70,24 +83,44 @@ _Required for any campaign that will have multiple ad instances served, and is r
 
 ### Initialization
 
+```javascript
+dojo.init( settings );
+```
+
+**settings**  
+Type: Object  
+Key/value pairs to set init options.
+
+- **init**  
+  Type: Function  
+  The initialization callback function for an ad.  Required for any ad running on MRAID.  Recommended in all cases.
+- **callback**  
+  Type: Function  
+  Callback function that is executed when an expanded ad is contracted.  Required for any expandable ad running on MRAID.  Recommended in all cases.
+- **expanded**  
+  Type: Boolean  
+  Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only required for interstitial ads.
+- **asynch_load**  
+  Type: Object  
+  This allows ad to asynchronously load any JavaScript scripts before running the initialization callback.  Default is null.  Not required.
+  - **insert_before**  
+    Type: String  
+    Designates the reference element that the library will use to reference the load.
+  - **scripts**  
+    Type: Array of Strings  
+    Designates the script URLs to load before running the initialization callback.
+- **useCustomClose**  
+  Type: Boolean  
+  Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
+- **expandedEl**  
+  Type: String  
+  ID of the element within which to add the close button.  If not included, will try to get the element with id of 'expanded'.
+
 This function initializes the framework for expandable ads and interstitial/banner ads that need close functionality.  It also initializes any MRAID specific functionality if the MRAID framework is detected.  The developer will need to ensure an appropriate callback function is designated for contracting/closing the ad.  If the callback function contains object function calls, the object must have an explicit reference.
-
-Specs:
-
-* callback: The close function for an expanded ad.  Required for any expandable ad running on MRAID.  Recommended in all cases.
-* init: The initialization function for an ad.  Required for any ad running on MRAID.  Recommended in all cases.
-* expanded: Default is false.  Only required for interstitial ads.
-* asynch_load: Default is null.  This functionality will asynchronously load any JavaScript scripts before the ad fires off the initialization.
-* asynch_load.insert_before: Required for any asynchronous loading.  Designates the reference element that the libaray will use to reference the load.
-* asynch_load.scripts: Required for any asynchronous loading.  Designates the scripts to load in array format.
-* useCustomClose: Default is false. Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
-* expandedEl: Element within which to add the close button.  By default this will try to get the element with id of 'expanded'.
 
 Example:
 
-```
-
-<script>
+```javascript
 function contractAd(){
 	expand_div.style.display = 'none';
 	contract_div.style.display = 'block';
@@ -97,17 +130,17 @@ function initialize(){
 	//Initialization code.
 }
 
-//Including the expand attribute is optional for expandable ads starting out in the contracted state.  For interstitial/banner ads, set the attribute to true.  Including the callback attribute is optional for interstitial and banner ads not requiring close functionality.
 dojo.init({
+	'init': initialize,
 	'callback': contractAd,
 	'expanded': false,
-	'init': initialize,
 	'asynch_load': {
 		'insert_before': document.getElementsByTagName('head')[0],
-		'scripts': ['http://code.jquery.com/jquery.min.js', 'http://somesite.com/somescript.js']
-	}
+		'scripts': ['http://code.jquery.com/jquery.min.js', 'http://somesite.com/somescript.js']		
+	},
+	'useCustomClose': false,
+	'expandedEl': 'expanded'
 });
-</script>
 ```
 
 _Required for all expandable ads, interstitial/banner ads that need close funcitonality, and any ad that will run in MRAID._
@@ -116,20 +149,40 @@ _Required for all expandable ads, interstitial/banner ads that need close funcit
 
 ---
 
-### Expands
+### Expand
 
-Use this function for expandable ads during their expansion. It optionally takes an expanded width & height, resizes the ads iframe container to that size if necessary, fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. Note that you still need to resize the ads actual creative manually. The width and height can be in pixels, or any other valid css value in the form of a string.
+```javascript
+dojo.expand( width, height );
+```
+
+**width**  
+Type: Integer or String  
+If argument is an integer, indicates the width in number of pixels.  Otherwise, a String containing any valid css value may be used.  
+
+**height**  
+Type: Integer or String  
+If argument is an integer, indicates the height in number of pixels.  Otherwise, a String containing any valid css value may be used.  
+
+Use this function for expandable ads, to switch between contracted and expanded state.  This method resizes the ad's iframe container to the specified size (if necessary), fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. This will automatically begin tracking the amount of time the ad has been expanded.
+
+Note that you still need to resize the ad creative manually.
 
 Example:
 
-```
-<script>
+```javascript
 expand_btn.addEventListener('click', function(){
 	expand_div.style.display = 'block';
 	contract_div.style.display = 'none';
 	dojo.expand(320, 480); // 320x480 pixels
 }
-</script>
+```
+
+**OR**
+```javascript
+expand_btn.addEventListener('click', function(){
+	// code...
+	dojo.expand("320px", "480px"); // Also 320x480 pixels
+}
 ```
 
 _Required for all expandable ads._
@@ -138,18 +191,20 @@ _Required for all expandable ads._
 
 ---
 
-### Contracts
+### Contract
 
-Use this function for expandable ads during their contraction. It deconstructs any necessary components (such as HTML5 video), restores the ads iframe container to its size before expansion (if necessary), fires off the appropriate reporting tracker, fires the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.
+```javascript
+dojo.contract();
+```
+
+Use this function for expandable ads, to switch from expanded and contracted state.  It deconstructs any necessary components (such as HTML5 video), restores the ad's iframe container to the size it was before expansion (if necessary), fires an appropriate reporting tracker, executes the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.  This also stops and resets tracking for time spent in the expanded state.
 
 Example:
 
-```
-<script>
+```javascript
 contract_btn.addEventListener('click', function(){
 	dojo.contract();
 });
-</script>
 ```
 
 _Requried for all expandable ads as well as interstitial/banner ads that require close functionality._
@@ -158,41 +213,66 @@ _Requried for all expandable ads as well as interstitial/banner ads that require
 
 ---
 
-### Clickthroughs
+### Clickthru
 
-This function ensures any user initiated clickthrough can be entered into our tracking system, and will open either a new browser tab (mobile web) or the mobile app's web viewer.  For assets running outside of our ad serving network, a console log message displaying the reporting name will be outputted.
-
-Example of traditional hyperlink using the element ID as the reporting name:
-
+```javascript
+dojo.clickthru(vars);
 ```
-<a id="clickthrough1" href="http://somesite.com">Clickthrough 1</a><br />
-<a id="clickthrough2" href="http://othersite.com">Clickthrough 2</a>
+
+**vars**  
+Type: Object  
+Key/value pairs to set clickthru options.
+
+- **name**  
+  Type: String  
+  A name to describe the clickthrough (for reporting purposes only).  Recommended in all cases.
+- **url**  
+  Type: String  
+  The landing page URL.  Required.
+- **prepend**  
+  Type: String  
+  A click prepend to be added in front of the URL, usually used for third party click tracking.  Completely optional.
+
+This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
+
+Example with two different clickthru items.  DOJO reporting will tally each of them separately:
+
+```html
+<button id="shoes" href="http://somesite.com/shoes">Buy Shoes</button><br />
+<button id="boots" href="http://somesite.com/boots">Buy Boots</button>
 <script>
-var links = document.getElementsByTagName("a");
-for (var i=0; i<links.length; i++){
-    links[i].addEventListener("click", function (a){
-    	a.preventDefault();
-    	dojo.clickthru({
-    		'url': links[i].href,
-    		'name': links[i].id
-    	});
+document.getElementById('shoes').addEventListener("click", function (e){
+    e.preventDefault();
+    dojo.clickthru({
+    	'url': "http://somesite.com/shoes",
+    	'name': "shoes"
     });
-}
+});
+
+document.getElementById('boots').addEventListener("click", function (e){
+    e.preventDefault();
+    dojo.clickthru({
+    	'url': "http://somesite.com/boots",
+    	'name': "boots"
+    });
+});
 </script>
 ```
 
-Example of using an element as a 'hotspot':
+Example using a click prepend:
 
-```
+```html
 <div id="clickthrough"></div>
 <script>
-var clickthrough = dojo.gid('clickthrough');
+var clickthrough = document.getElementById('clickthrough');
 clickthrough.addEventListener('click', function(){
 	dojo.clickthru({
 		'url': 'http://somesite.com',
 		'name': 'clickthrough',
+		'prepend': 'http://ad.tracker.net/click/a1bc23d4?url='
 	});
 });
+// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http://somesite.com
 </script>
 ```
 _Required for all clickthroughs that are to be tracked, recommended in all other cases._
@@ -203,49 +283,45 @@ _Required for all clickthroughs that are to be tracked, recommended in all other
 
 ### Custom Trackers
 
-This function ensures that a specialized event can be entered into our tracking system, i.e. a user navigating to a certain section of the ad.  For assets running outside of our ad serving network, a console log message displaying the reporting name will be outputted.
+```javascript
+dojo.track(description);
+```
 
-If a tracker is automatically called (i.e. not user initiated), pass in true as a second argument to prevent time tracking to automatically extend another 60 seconds.
+**description**  
+Type: String  
+Description of custom tracking event (i.e. 'swipe right', 'select product', etc.)
+
+This function allows custom interactions to be tracked inside DOJO (such as a user navigating to a certain section of the ad, etc.).  For assets running outside of our ad serving network, a message displaying the reporting name will logged to the console.
+
+By default, if a tracking event occurs while an ad is in the expanded state, this is assumed to be a user interaction, and will extend expanded time tracking for another 15 seconds.  If the tracking event is not triggered by a user interaction, **true** must be passed in as a second argument to indicate that this tracking occurred without user interaction.
+
+**Warning regarding event tracking**  
+We would not recommend recording a large variety of unique events, as this will slow down reporting in DOJO and increase the size of generated reports (for each unique event tracked, an additional column is added the the reporting spreadsheet).  If running in DOJO, please reach out to your campaign manager to decide the number and type of events to track.
 
 Example:
 
-```
-<ul>
-	<li id="section1">Seciton 1</li>
-	<li id="section2">Section 2</li>
-</ul>
-<div id="element1">
-	Some content
-</div>
-<div id="element2">
-	More content
-</div>
+```javascript
+var shoes = document.getElementById('shoes');
+var boots = document.getElementById('boots');
 
-<script>
-var section1 = dojo.gid('section1');
-var section2 = dojo.gid('section2');
-var element1 = dojo.gid('element1');
-var element2 = dojo.gid('element2');
-
-section1.addEventListener('click', function(){
-	element1.style.display = 'block';
-	element2.style.display = 'none';
-	dojo.track('element1Display');
+shoes.addEventListener('click', function(){
+	shoes.className = 'active';
+	boots.className = '';
+	dojo.track('Shoes selected');
 });
 
-section2.addEventListener('click', function(){
-	element2.style.display = 'block';
-	element1.style.display = 'none';
-	dojo.track('element2Display');
+boots.addEventListener('click', function(){
+	boots.className = 'active';
+	shoes.className = '';
+	dojo.track('Boots selected');
 });
-</script>
 ```
 
 [top](#dojo-framework-library)
 
 ---
 
-### HTML5 Video
+### HTML5 Video *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
 
 This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
 
@@ -314,7 +390,7 @@ videoElement.addEventListener('play', function(){...})
 Phluant maintains a web based application capable of providing geolocation and weather information based on location, using Maxmind and National Weather Service resources respectively.  All lookups are done by AJAX and require the developer to specify a callback function to return the data. Please be aware the mobile data providers have a wide latitude in assigning IP addresses to users, which may return an inaccurate location.  If geocoordinates can't be obtained from the publisher and precise geocoordinates are needed, it's recommended to use the [HTML5 Geolocation Prompt](#geolocation-prompt).
 
 
-#### Geolocation
+#### Geolocation *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
 
 Geolocation Lookup Methods:
 
@@ -480,7 +556,7 @@ The weather data returned can vary based on custom input values.  The start_valu
 
 ---
 
-### Store Locator API Call
+### Store Locator API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
 
 This function provides certain clients the ability to pull store location information information for various ads, namely to display the closest number of stores in relation to the user.  If your campaign has been set up with this feature, this API call will work for you.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.
 
@@ -571,7 +647,7 @@ dojo.get_stores({
 
 ---
 
-### ShopLocal API Call
+### ShopLocal API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
 
 Because Phluant has an established relationship with ShopLocal, we are already set up to aggregate ShopLocal data to our ads. Any Phluant client with an established ShopLocal campaign can utilize this function to call in relevant ShopLocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.  All data is returned in JavaScript object format.
 
@@ -1002,6 +1078,15 @@ console.log(dojo.valid_zip('98034'));
 Phluant Mobile is committed to helping our clients in successfully using this framework to design and develop their mobile advertisements.  Please feel free to utilize this repository's [issue tracker](../../issues) for general feedback, feature requests, bug reports, tech support questions, etc.  See a bug and know how to fix it, or know how to make this repository better?  Please feel free to make a fork, make necessary modifications, and submit a pull request to us.
 
 [top](#dojo-framework-library)
+
+---
+
+### Contributing and Testing
+
+If you would like to contribute an improvement or a bug fix, please:
+
+* Ensure all code passes [jshint](http://jshint.com/)
+* Ensure all functionality works in both mobile web and MRAID (in-app) environments
 
 ---
 
