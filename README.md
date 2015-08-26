@@ -411,10 +411,78 @@ videoElement.addEventListener('play', function(){...})
 
 ### Geolocation/Weather API calls
 
-Phluant maintains a web based application capable of providing geolocation and weather information based on location, using Maxmind and National Weather Service resources respectively.  All lookups are done by AJAX and require the developer to specify a callback function to return the data. Please be aware the mobile data providers have a wide latitude in assigning IP addresses to users, which may return an inaccurate location.  If geocoordinates can't be obtained from the publisher and precise geocoordinates are needed, it's recommended to use the [HTML5 Geolocation Prompt](#geolocation-prompt).
+```javascript
+var vars = {
+	'callback': callback,
+	'data': {
+		'type': type,
+		'subtype': subtype,
+		'value': value,
+		'end': end
+	}
+};
+
+dojo.geolocation({ vars });
+```
+
+#### Arguments
+
+**vars**  
+Type: Object  
+Key/value pairs to set geolocation options.
+
+- **callback**  
+  Type: Function  
+  Callback function to run when data is returned.  Required.
+- **data**  
+  Type: Object  
+  Data object containing key/value pairs to send with the GET request.  Optional - if this is not included, a simple geolocation request by IP addess is made.
+  - **type**  
+    Type: String  
+    Options are `'dma'`, `'postal_code'`, `'geo_by_address'`, `'address_by_geo'`, `'city_postal_by_geo'`, `'weather'`, `'ip_address'`.  Optional, defaults to `'ip_address'` if not specified.
+  - **subtype**  
+    Type: String
+    Options are `'postal_code'`, `'geo'`, `'ip'`.  Optional, defaults to `'ip'` if not specified.
+  - **value**  
+    Type: String
+    Required in some cases depending on the type selected above, see specifications below.
+  - **end**  
+    Type: String
+    _For weather calls only._  Specifies the time/date range of weather data to request, to a maximum of 14 days.  Acceptable values would include '3 days' or '12 hours', for example.  Optional, defaults to `'1 day'` if not specified.
+
+Phluant maintains a web based application capable of providing geolocation and weather information based on location, using Maxmind and National Weather Service resources respectively.  All lookups are done by AJAX and require the developer to specify a callback function to return the data. See below for descriptions of the different **types**.  When using geolocation by IP address, please be aware the mobile data providers have a lot of flexibility in assigning IP addresses to users, which may return an inaccurate location.  If geocoordinates can't be obtained from the publisher and precise geocoordinates are needed, it's recommended to use the [HTML5 Geolocation Prompt](#geolocation-prompt).
+
+#### IP Address (`'ip_address'`)
+
+Looks up user's location by IP Address.  *Note:* mobile data providers have flexibility in assigning IP addresses to users, thus **accuracy** of geolocation **may vary**.
+
+##### Additional Data Parameters
+
+- **subtype**  
+  Not applicable to this type.
+- **value**  
+  Type: String
+  The user IP Address can be optionally passed in this parameter, otherwise the user's IP will be looked up.
+- **end**  
+  Not applicable to this type.
+
+Example:
+
+```javascript
+function handleReturnedData(data){
+	// Do something
+}
+
+dojo.geolocation({
+	'callback': handleReturnedData,
+});
+```
+
+Returned Object Example:
 
 
-#### Geolocation *(Legacy functionality scheduled to be removed in dojo.js version 1.0.0)*
+
+#### Geolocation
 
 Geolocation Lookup Methods:
 
