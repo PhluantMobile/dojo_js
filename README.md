@@ -62,10 +62,12 @@ Specific releases can be used by appending "-{MAJOR}.{MINOR}.{PATCH}". For examp
 dojo.gid( elementId );
 ```
 
+#### Arguments
 **elementId**  
 Type: String  
 A string containing the ID of the element you would like to reference.
 
+#### Description
 This function is a shortcut for ```document.getElementById()```.
 
 Example:
@@ -86,6 +88,8 @@ _Optional_
 ```javascript
 dojo.init( settings );
 ```
+
+#### Arguments
 
 **settings**  
 Type: Object  
@@ -115,6 +119,8 @@ Key/value pairs to set init options.
 - **expandedEl**  
   Type: String  
   ID of the element within which to add the close button.  If not included, will try to get the element with id of 'expanded'.
+
+#### Description
 
 This function initializes the framework for expandable ads and interstitial/banner ads that need close functionality.  It also initializes any MRAID specific functionality if the MRAID framework is detected.  The developer will need to ensure an appropriate callback function is designated for contracting/closing the ad.  If the callback function contains object function calls, the object must have an explicit reference.
 
@@ -155,6 +161,8 @@ _Required for all expandable ads, interstitial/banner ads that need close funcit
 dojo.expand( width, height );
 ```
 
+#### Arguments
+
 **width**  
 Type: Integer or String  
 If argument is an integer, indicates the width in number of pixels.  Otherwise, a String containing any valid css value may be used.  
@@ -162,6 +170,8 @@ If argument is an integer, indicates the width in number of pixels.  Otherwise, 
 **height**  
 Type: Integer or String  
 If argument is an integer, indicates the height in number of pixels.  Otherwise, a String containing any valid css value may be used.  
+
+#### Description
 
 Use this function for expandable ads, to switch between contracted and expanded state.  This method resizes the ad's iframe container to the specified size (if necessary), fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. This will automatically begin tracking the amount of time the ad has been expanded.
 
@@ -197,6 +207,12 @@ _Required for all expandable ads._
 dojo.contract();
 ```
 
+#### Arguments
+
+None
+
+#### Description
+
 Use this function for expandable ads, to switch from expanded and contracted state.  It deconstructs any necessary components (such as HTML5 video), restores the ad's iframe container to the size it was before expansion (if necessary), fires an appropriate reporting tracker, executes the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.  This also stops and resets tracking for time spent in the expanded state.
 
 Example:
@@ -219,6 +235,8 @@ _Requried for all expandable ads as well as interstitial/banner ads that require
 dojo.clickthru(vars);
 ```
 
+#### Arguments
+
 **vars**  
 Type: Object  
 Key/value pairs to set clickthru options.
@@ -232,6 +250,8 @@ Key/value pairs to set clickthru options.
 - **prepend**  
   Type: String  
   A click prepend to be added in front of the URL, usually used for third party click tracking.  Completely optional.
+
+#### Description
 
 This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
 
@@ -284,12 +304,16 @@ _Required for all clickthroughs that are to be tracked, recommended in all other
 ### Custom Trackers
 
 ```javascript
-dojo.track(description);
+dojo.track(name);
 ```
 
-**description**  
+#### Arguments
+
+**name**  
 Type: String  
-Description of custom tracking event (i.e. 'swipe right', 'select product', etc.)
+Descriptive name of tracking event (i.e. 'swipe right', 'select product', etc.)
+
+#### Description
 
 This function allows custom interactions to be tracked inside DOJO (such as a user navigating to a certain section of the ad, etc.).  For assets running outside of our ad serving network, a message displaying the reporting name will logged to the console.
 
@@ -321,7 +345,7 @@ boots.addEventListener('click', function(){
 
 ---
 
-### HTML5 Video *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### HTML5 Video *(Legacy functionality scheduled to be modified in dojo.js version 1.0.0)*
 
 This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
 
@@ -390,7 +414,7 @@ videoElement.addEventListener('play', function(){...})
 Phluant maintains a web based application capable of providing geolocation and weather information based on location, using Maxmind and National Weather Service resources respectively.  All lookups are done by AJAX and require the developer to specify a callback function to return the data. Please be aware the mobile data providers have a wide latitude in assigning IP addresses to users, which may return an inaccurate location.  If geocoordinates can't be obtained from the publisher and precise geocoordinates are needed, it's recommended to use the [HTML5 Geolocation Prompt](#geolocation-prompt).
 
 
-#### Geolocation *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+#### Geolocation *(Legacy functionality scheduled to be removed in dojo.js version 1.0.0)*
 
 Geolocation Lookup Methods:
 
@@ -556,7 +580,7 @@ The weather data returned can vary based on custom input values.  The start_valu
 
 ---
 
-### Store Locator API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### Store Locator API Call *(Legacy functionality scheduled to be removed in dojo.js version 1.0.0)*
 
 This function provides certain clients the ability to pull store location information information for various ads, namely to display the closest number of stores in relation to the user.  If your campaign has been set up with this feature, this API call will work for you.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.
 
@@ -647,7 +671,7 @@ dojo.get_stores({
 
 ---
 
-### ShopLocal API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### ShopLocal API Call *(Legacy functionality scheduled to be removed in dojo.js version 1.0.0)*
 
 Because Phluant has an established relationship with ShopLocal, we are already set up to aggregate ShopLocal data to our ads. Any Phluant client with an established ShopLocal campaign can utilize this function to call in relevant ShopLocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.  All data is returned in JavaScript object format.
 
