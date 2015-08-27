@@ -30,7 +30,7 @@
     isMraid: false,
     winLoaded: false,
     dojoConsoleLog: false,
-    videoPlaying: false,
+    dojo_videoElement: null,
     pl: null,
     unitID: null,
     webServiceUrl: 'http://lbs.phluant.com:8080/',
@@ -158,19 +158,17 @@
       else { window.open(url, '_blank'); }
     },
     contract: function(){
-      if (!this.adIsExpanded) { return; }
-      else { this.adIsExpanded = false; }
 
-      if (this.isMraid && mraid.getState() === 'expanded') { mraid.close(); }
-
-
-      //Added Video Controls
-      if (this.videoPlaying = true) {
-        // this.video_close();
+      if (typeof(dojo_videoElement) !== "undefined" && dojo_videoElement.videoPlaying === true) {
         dojo_videoElement.pause();
         dojo_videoElement.currentTime = 0;
         dojo_videoElement.videoPlaying = false;
       }
+
+      if (!this.adIsExpanded) { return; }
+      else { this.adIsExpanded = false; }
+
+      if (this.isMraid && mraid.getState() === 'expanded') { mraid.close(); }
 
       if (this.iframeEl) {
         this.iframeEl.style.width = this.iframeContractSize.x + 'px';
@@ -202,8 +200,8 @@
         this.addCloseButton();
       }
 
-      if (this.videoPlaying = false) {
-        dojo_videoElement.play();
+      if (this.dojo_videoElement !== null) {
+        this.dojo_videoElement.play();
       }
 
       this.track('expand');
@@ -767,7 +765,7 @@
     });
 
     dojo_videoElement.addEventListener('pause', function(){
-        if (hasEnded == false) {
+        if (hasEnded === false) {
           self.dojo_track({
           'type': 'video',
           'key': 'pause'
@@ -802,7 +800,7 @@
 
       var hasEnded = false;
       function onEnd(){
-        var hasEnded = true;
+        hasEnded = true;
         self.dojo_track({
           'type': 'video',
           'key': 'complete'
