@@ -160,24 +160,33 @@
 			return str.charAt(0).toUpperCase()+str.slice(1);
 		},
 		clickthru: function(vars){
-			var tagParams = this.getTagParams();
-			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
-			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
+      var tagParams = this.getTagParams();
+      var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
+      prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
 
-			this.dojo_track({
-				'type': 'click',
-				'key': vars.name,
-			});
+      var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
 
-			var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
-			if (prepend) { url = prepend + encodeURIComponent(url); }
+      this.dojo_track({
+        'type': 'click',
+        'key': vars.name,
+      });
 
-			this.log('opening ' + url);
+      if (prepend) {
+        var prependCheck = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(prepend);
 
-			this.pageTime(false);
-			if (this.isMraid) { mraid.open(url); }
-			else { window.open(url, '_blank'); }
-		},
+        if (prependCheck === true) {
+          url = prepend + encodeURIComponent(url);
+        } else {
+          this.log('could not use prepend');
+        }
+      }
+
+      this.log('opening ' + url);
+
+      this.pageTime(false);
+      if (this.isMraid) { mraid.open(url); }
+      else { window.open(url, '_blank'); }
+    },
 		contract: function(){
 			if (!this.adIsExpanded) { return; }
 			else { this.adIsExpanded = false; }
