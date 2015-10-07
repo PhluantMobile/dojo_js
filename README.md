@@ -255,7 +255,7 @@ Key/value pairs to set clickthru options.
 
 This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
 
-Note that when using a prepend, an encoded version of the URL will be added to the end of the prepend
+_Note that when using a **prepend**, an encoded version of the URL will be added to the end of the prepend URL._
 
 Example with two different clickthru items.  DOJO reporting will tally each of them separately:
 
