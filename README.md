@@ -255,6 +255,8 @@ Key/value pairs to set clickthru options.
 
 This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
 
+Note that when using a prepend, an encoded version of the URL will be added to the end of the prepend
+
 Example with two different clickthru items.  DOJO reporting will tally each of them separately:
 
 ```html
@@ -282,17 +284,17 @@ document.getElementById('boots').addEventListener("click", function (e){
 Example using a click prepend:
 
 ```html
-<div id="clickthrough"></div>
+<button id="clickthrough"></button>
 <script>
-var clickthrough = document.getElementById('clickthrough');
-clickthrough.addEventListener('click', function(){
+document.getElementById('clickthrough').addEventListener('click', function(){
 	dojo.clickthru({
 		'url': 'http://somesite.com',
 		'name': 'clickthrough',
 		'prepend': 'http://ad.tracker.net/click/a1bc23d4?url='
 	});
 });
-// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http://somesite.com
+// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http%3A%2F%2Fsomesite.com
+// (Encoded version of URL is added to the end of the prepend URL)
 </script>
 ```
 _Required for all clickthroughs that are to be tracked, recommended in all other cases._
