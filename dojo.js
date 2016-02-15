@@ -138,7 +138,7 @@
 		capitalize: function(str){
 			return str.charAt(0).toUpperCase()+str.slice(1);
 		},
-		clickthru: function(vars){
+		clickthru: function(vars, silent){
 			var tagParams = this.getTagParams();
 			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
 			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
@@ -150,8 +150,7 @@
 
 			var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
 			if (prepend) { url = prepend + encodeURIComponent(url); }
-
-			this.log('opening ' + url);
+			if (!silent) { this.log('opening ' + url); }
 
 			this.pageTime(false);
 			if (this.isMraid) { mraid.open(url); }
