@@ -29,7 +29,6 @@
 		isDojo: false,
 		isMraid: false,
 		winLoaded: false,
-		dojoConsoleLog: false,
 		videoElement: null,
 		pl: null,
 		unitID: null,
@@ -466,7 +465,7 @@
 		    return 0;
 		},
 		log: function(message, isAutoFired) {
-			if (!this.isDojo || this.dojoConsoleLog) { console.log(message); }
+			if (!this.isDojo) { console.log(message); }
 			else {
 				this.dojo_track({
 					'type': 'Developer',
@@ -717,7 +716,7 @@
 		dojo_track: function(vars, isAutoFired){  // If tracking is auto-fired (not user initiated), don't extend timer
 			if (!isAutoFired) { this.pageTime(true); }
 
-			if (!this.isDojo || this.dojoConsoleLog) { this.log(vars.key); }
+			if (!this.isDojo) { this.log(vars.key); }
 			if (this.isDojo){
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
 				if (typeof global_ad_id1[0] !== 'undefined') {
