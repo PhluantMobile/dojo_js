@@ -30,7 +30,7 @@
 		isMraid: false,
 		winLoaded: false,
 		dojoConsoleLog: false,
-		dojo_videoElement: null,
+		videoElement: null,
 		pl: null,
 		unitID: null,
 		webServiceUrl: 'http://lbs.phluant.com:8080/',
@@ -158,11 +158,10 @@
 			else { window.open(url, '_blank'); }
 		},
 		contract: function(){
-
-      if (typeof(dojo_videoElement) !== "undefined" && dojo_videoElement.videoPlaying === true) {
-        dojo_videoElement.pause();
-        dojo_videoElement.currentTime = 0;
-        dojo_videoElement.videoPlaying = false;
+      if (typeof(this.videoElement) !== "undefined" && !this.videoElement.paused) {
+        this.videoElement.pause();
+        this.videoElement.fastSeek(0);
+        this.videoElement.videoPlaying = false;
       }
 
       //mraid orientation properties
@@ -210,8 +209,8 @@
 				this.addCloseButton();
 			}
 
-      if (this.dojo_videoElement !== null) {
-        this.dojo_videoElement.play();
+      if (this.videoElement !== null && this.videoElement.shouldPlayOnExpand) {
+        this.videoElement.play();
       }
 
       // mraid orientation properties
@@ -768,96 +767,67 @@
        return /^\d{5}(-\d{4})?$/.test(zip);
     },
 
-		video: function(){
+    // Add trackers to video, autoplay on expand (if desired)
+    // Can pass in video element or video element id, or nothing if only a single video element exists on page
+		video: function(videoEl, shouldPlayOnExpand){
 			var self = this;
 
-			if (document.getElementById('video_element') !== null) {
-        dojo_videoElement = document.getElementById("video_element")[0];
-      } else {
-        dojo_videoElement = document.getElementsByTagName("video")[0];
-      }
+			if (videoEl && typeof videoEl === "string") { // passed as ID
+				self.videoElement = document.getElementById(videoEl);
+			} else if (!videoEl) { // not passed
+				self.videoElement = document.getElementsByTagName("video")[0];
+			} else { // passed as video element
+				self.videoElement = videoEl;
+			}
 
-      dojo_videoElement.videoPlaying = true;
+			self.videoElement.shouldPlayOnExpand = !!shouldPlayOnExpand;
 
-      dojo_videoElement.play();
-
-      dojo_videoElement.addEventListener('play', function() {
-      self.dojo_track({
-        'type': 'video',
-        'key': 'play'
+      self.videoElement.addEventListener('play', function() {
+	      self.dojo_track({'type': 'video', 'key': 'play'});
       });
 
-      });
-
-      dojo_videoElement.addEventListener('pause', function(){
-          if (hasEnded === false) {
-            self.dojo_track({
-            'type': 'video',
-            'key': 'pause'
-            });
-          }
-      });
-
-      var quartiles = {};
-      quartiles = {'25': false, '50': false, '75': false};
-      var duration = dojo_videoElement.duration;
-
-      dojo_videoElement.addEventListener('timeupdate', function(){
-
-        if (dojo_videoElement.currentTime) {
-          self.video_position = dojo_videoElement.currentTime;
+      self.videoElement.addEventListener('pause', function(){
+        if (!self.videoElement.ended) {
+          self.dojo_track({'type': 'video', 'key': 'pause'});
         }
+      });
 
-        var check = self.roundIt(((dojo_videoElement.currentTime/duration)*100), 0);
-        for(var q in quartiles){
+      var quartiles = {'25': false, '50': false, '75': false};
+
+      self.videoElement.addEventListener('timeupdate', function(){
+        var check = self.roundIt(((self.videoElement.currentTime/self.videoElement.duration)*100), 0);
+        for (var q in quartiles){
           if(check >= q && !quartiles[q]){
-            self.dojo_track({
-              'type': 'video',
-              'key': 'quartile'+q
-            }, true);
-            var quartEvent = new Event('quartile'+q);
-            dojo_videoElement.dispatchEvent(quartEvent);
+            self.dojo_track({ 'type': 'video', 'key': 'quartile'+q }, true);
             quartiles[q] = true;
           }
         }
       });
 
       var hasEnded = false;
-      function onEnd(){
-        hasEnded = true;
-        self.dojo_track({
-          'type': 'video',
-          'key': 'complete'
-        });
-      }
+      self.videoElement.addEventListener('ended', function() {
+      	if (!hasEnded) {
+      		hasEnded = true;
+        	self.dojo_track({'type': 'video', 'key': 'complete'}, true);
+        }
+      });
+      self.videoElement.addEventListener("seeked", function() {
+	      dojo.dojo_track({ 'type': 'video', 'key' : 'seek' });
+	    });
 
-      dojo_videoElement.addEventListener('ended', onEnd);
-
-      var videoIsMuted = false;
-
-      dojo_videoElement.addEventListener('volumechange', function() {
-
-        if(!videoIsMuted && (dojo_videoElement.muted || dojo_videoElement.volume === 0.0)) {
-          self.dojo_track({
-              'type': 'volume',
-              'key': 'muted'
-            }, true);
-          var muteEvent = new Event('muted');
-          dojo_videoElement.dispatchEvent(muteEvent);
+      var videoIsMuted = self.videoElement.muted;
+      self.videoElement.addEventListener('volumechange', function() {
+        if(!videoIsMuted && (self.videoElement.muted || self.videoElement.volume === 0.0)) {
+          self.dojo_track({'type': 'video', 'key': 'muted'});
           videoIsMuted = true;
-        } else if (videoIsMuted && !dojo_videoElement.muted && dojo_videoElement.volume > 0.0) {
-          self.dojo_track({
-            'type': 'volume',
-            'key': 'unmuted'
-          }, true);
-          var unmuteEvent = new Event('unmuted');
-          dojo_videoElement.dispatchEvent(unmuteEvent);
+        } else if (videoIsMuted && !self.videoElement.muted && self.videoElement.volume > 0.0) {
+          self.dojo_track({'type': 'video', 'key': 'unmuted'});
           videoIsMuted = false;
         }
-        });
+      });
 
-        return dojo_videoElement;
-      },
+      return self.videoElement;
+    },
 
 		xmlToObject: function(xml, parse) {
 			if(parse){
