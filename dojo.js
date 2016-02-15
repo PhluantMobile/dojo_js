@@ -35,6 +35,7 @@
 		unitID: null,
 		webServiceUrl: 'http://lbs.phluant.com:8080/',
 		dojoUrl: 'http://dojo.phluant.com/',
+		mraidOrientationProperties: undefined,
 
 		iframeEl: null,
 		iframeContractSize: {},
@@ -163,14 +164,10 @@
         this.videoElement.videoPlaying = false;
       }
 
-      //mraid orientation properties
-      var prevOrientationProps;
-      if (this.isMraid) {
-        try {
-          mraid.setOrientationProperties(prevOrientationProps);
-        } catch(e) {
-          this.log("can't reset mraid orientation properties");
-        }
+      // Set mraid orientation properties back to original properties
+      if (this.isMraid && this.mraidOrientationProperties) {
+        try { mraid.setOrientationProperties(this.mraidOrientationProperties); }
+        catch(e) { this.log("can't reset mraid orientation properties"); }
       }
 
 			if (!this.adIsExpanded) { return; }
@@ -190,6 +187,7 @@
 			if (this.closeCallback) { this.closeCallback(); }
 		},
 		expand: function(width,height){
+			var self = this;
 			if (this.adIsExpanded) { return; }
 
 			if (typeof(width) === 'number') { width += 'px'; }
@@ -212,21 +210,17 @@
         this.videoElement.play();
       }
 
-      // mraid orientation properties
-      var prevOrientationProps;
+      // Save initial mraid orientation properties
       if (this.isMraid) {
         try {
-          prevOrientationProps = mraid.getOrientationProperties();
-
+          self.mraidOrientationProperties = mraid.getOrientationProperties();
           mraid.setOrientationProperties({
             allowOrientationChange: false,
             forceOrientation: "portrait"
           });
-        } catch(e) {
-          this.log("can't set mraid orientation properties");
         }
+        catch(e) { this.log("can't set mraid orientation properties"); }
       }
-
 			this.track('expand');
 			this.adIsExpanded = true;
 			this.pageTime(true);
@@ -409,8 +403,8 @@
 		},
 		init: function(vars){
 			this.closeCallback = vars.callback; // change arg name from 'callback' to make more clear
-	    	this.expandedEl = this.gid(vars.expandedEl) || this.gid('expanded');
-		    this.useCustomClose = vars.useCustomClose;
+    	this.expandedEl = this.gid(vars.expandedEl) || this.gid('expanded');
+	    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
 			var loadScripts = vars.asynch_load && vars.async_load.scripts || [];
