@@ -260,29 +260,6 @@
 
 	    window.setTimeout(error, 8000);
 		},
-		get_stores: function(vars){
-			var varsExport = {
-				'url': this.webServiceUrl+'phluant/export',
-				'method': 'GET',
-				'callback': vars.callback,
-				'js_object': true,
-				'data': {
-					'limit': 3,
-					'dist': 30
-				}
-			};
-			if (typeof(vars.data.campaign_id) === 'undefined') {
-				this.log('campaign_id is a required attribute for this function');
-				return false;
-			}
-			for (var i in vars.data){
-				if( vars.data.hasOwnProperty( i ) ) {
-					varsExport.data[i] = vars.data[i];
-				}
-			}
-			varsExport.data.type = 'get_stores';
-			this.ajax(varsExport);
-		},
 		getTagParams: function(){
 			if (!dojo.isDojo) { return {}; }
 
