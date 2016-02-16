@@ -139,10 +139,7 @@
 			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
 			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
 
-			this.dojo_track({
-				'type': 'click',
-				'key': vars.name,
-			});
+			this.dojo_track({'type': 'click','key': vars.name,});
 
 			var url = tagParams.ClickthruURL && decodeURIComponent(tagParams.ClickthruURL) || vars.url;
 			if (prepend) { url = prepend + encodeURIComponent(url); }
@@ -153,6 +150,9 @@
 			else { window.open(url, '_blank'); }
 		},
 		contract: function(){
+			if (!this.adIsExpanded) { return; }
+			else { this.adIsExpanded = false; }
+
       if (typeof(this.videoElement) !== "undefined" && !this.videoElement.paused) {
         this.videoElement.pause();
         this.videoElement.fastSeek(0);
@@ -164,9 +164,6 @@
         try { mraid.setOrientationProperties(this.mraidOrientationProperties); }
         catch(e) { this.log("can't reset mraid orientation properties"); }
       }
-
-			if (!this.adIsExpanded) { return; }
-			else { this.adIsExpanded = false; }
 
 			if (this.isMraid && mraid.getState() === 'expanded') { mraid.close(); }
 
