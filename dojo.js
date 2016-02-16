@@ -238,27 +238,27 @@
 				maximumAge: 0
 			});
 
-		    function success(position){
-		    	if (resolved) { return; }
-		    	else { resolved = true; }
+	    function success(position){
+	    	if (resolved) { return; }
+	    	else { resolved = true; }
 
-					vars.callback({
-						'lat': position.coords.latitude,
-						'lng': position.coords.longitude
-					});
-	    	}
+				vars.callback({
+					'lat': position.coords.latitude,
+					'lng': position.coords.longitude
+				});
+    	}
 
-	    	function error(){
-	    		if (resolved) { return; }
-	    		else { resolved = true; }
+    	function error(){
+    		if (resolved) { return; }
+    		else { resolved = true; }
 
-	    		/* TODO: normalize return data to be the
-	        	 same as above, to maintain consistency */
-        	if (vars.failover) { dojo.geolocation(vars); }
-        	else { vars.callback(false); }
-        }
+    		/* TODO: normalize return data to be the
+        	 same as above, to maintain consistency */
+      	if (vars.failover) { dojo.geolocation(vars); }
+      	else { vars.callback(false); }
+      }
 
-		    window.setTimeout(error, 8000);
+	    window.setTimeout(error, 8000);
 		},
 		get_stores: function(vars){
 			var varsExport = {
