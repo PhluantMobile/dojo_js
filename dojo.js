@@ -35,21 +35,17 @@
 		webServiceUrl: 'http://lbs.phluant.com:8080/',
 		dojoUrl: 'http://dojo.phluant.com/',
 		mraidOrientationProperties: undefined,
-
 		iframeEl: null,
 		iframeContractSize: {},
-
 		timeTrackingEndTime: 0,
 		pageTimeInterval: undefined,
 		elapsedTime: 0,
-
 		expandedEl: null,
 		useCustomClose: false,
 		closeImg: null,
 
 		addCloseButton: function() {
 			if (this.closeImg && this.closeImg.parentElement) { return (this.closeImg.style.display = "block"); }
-
 			this.closeImg = new Image();
 			this.closeImg.style.cssText = "position: absolute; right:0; top:0; width: 45px;";
 			this.closeImg.classList.add('close');
@@ -65,14 +61,15 @@
 			var ajaxRequest = new XMLHttpRequest();
 			var sendData = '';
 			var useYQL = false;
-			var asynch = true;
+			var async = true;
 			var self = this;
-			if(typeof(vars.asynch) === 'boolean'){ asynch = vars.asynch; }
-			if(typeof(vars.yql) !== 'undefined'){ useYQL = true; }
+			if(typeof(vars.async) === 'boolean'){ async = vars.async; }
+			if(vars.yql){ useYQL = true; }
 			if(typeof(vars.data) !== 'undefined'){
 				for (var i in vars.data) {
 					if( vars.data.hasOwnProperty( i ) ) {
-						sendData += ((sendData !== '')?'&':'')+i+'='+encodeURIComponent(vars.data[i]);
+						sendData += ((sendData !== '')?'&':'') +
+												i + '=' + encodeURIComponent(vars.data[i]);
 					}
 				}
 			}
@@ -85,21 +82,11 @@
 				var format = ((typeof(vars.yql.format) === 'string')? vars.yql.format : 'json');
 				var yql = 'format='+format+'&q='+encodeURIComponent('select * from '+format+' where url="' +vars.url+ '"');
 				vars.url = 'http://query.yahooapis.com/v1/public/yql';
-				if(vars.method !== 'POST'){
-					vars.url += '?'+yql;
-				}
-				else{
-					sendData = yql;
-				}
+				if(vars.method !== 'POST'){ vars.url += '?'+yql; }
+				else { sendData = yql; }
 			}
-			ajaxRequest.open(vars.method, vars.url, asynch);
-			if(vars.method === 'POST'){
-				ajaxRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-				ajaxRequest.send(sendData);
-			}
-			else{
-				ajaxRequest.send();
-			}
+			ajaxRequest.open(vars.method, vars.url, async);
+
 			if(typeof(vars.callback) !== 'undefined'){
 				var ajaxTimeout = window.setTimeout(function(){
 					ajaxRequest.abort();
@@ -109,30 +96,39 @@
 					});
 				},timeout);
 				ajaxRequest.onreadystatechange = function(){
-					if (ajaxRequest.readyState === 4 && ajaxRequest.status === 200) {
+					if (ajaxRequest.readyState === 4 && ajaxRequest.status >= 200 && ajaxRequest.status < 400) {
 						window.clearTimeout(ajaxTimeout);
 						var resp = ajaxRequest.responseText;
-						if(typeof(vars.js_object) !== 'undefined'){
-							if(vars.js_object){
-								resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') !== -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
-							}
+						if(typeof(vars.js_return) !== 'undefined' && vars.js_return){
+							resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') !== -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
 						}
 						if(useYQL){
 							resp = {
 								'status': 'success',
 								'results': resp,
+								'info': ajaxRequest,
 							};
 						}
-						vars.callback(resp);
+						vars.callback({'status': 'success',
+													 'results': resp,
+													 'info': ajaxRequest,
+													});
 					}
-					else if(ajaxRequest.status !== 200){
+					else if(ajaxRequest.readyState === 4){
 						window.clearTimeout(ajaxTimeout);
 						vars.callback({
 							'status': 'error',
-							'request_info': ajaxRequest
+							'info': ajaxRequest,
 						});
 					}
 				};
+			}
+			if(vars.method === 'POST'){
+				ajaxRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				ajaxRequest.send(sendData);
+			}
+			else {
+				ajaxRequest.send();
 			}
 		},
 		capitalize: function(str){
