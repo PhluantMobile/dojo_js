@@ -278,13 +278,9 @@
 
 			return parsedParams;
 		},
-		gid: function(id){  // TODO remove
-			if (id instanceof HTMLElement) { return id; }
-			else { return document.getElementById(id) || document.getElementsByTagName(id)[0]; }
-		},
 		gmaps_draw: function(vars){
 			if (vars.map_id === undefined) { return this.log('A map id must be specified'); }
-			if (typeof(vars.map_id) === 'string') { vars.map_id = this.gid(vars.map_id); }
+			if (typeof(vars.map_id) === 'string') { vars.map_id = document.getElementById(vars.map_id); }
 
 		    var map = new google.maps.Map(
 		    	vars.map_id,
@@ -372,7 +368,7 @@
 		},
 		init: function(vars){
 			this.closeCallback = vars.callback; // change arg name from 'callback' to make more clear
-    	this.expandedEl = this.gid(vars.expandedEl) || this.gid('expanded');
+    	this.expandedEl = document.getElementById(vars.expandedEl) || document.getElementById('expanded');
 	    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
