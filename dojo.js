@@ -372,26 +372,21 @@
 	    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
-			var loadScripts = vars.asynch_load && vars.async_load.scripts || [];
-			if (typeof(mraid) === 'undefined') { loadScripts.push('mraid.js'); }
-			// TODO: make sure the DOM is ready first
-			this.loadAsync(loadScripts, this.initMraid.bind(this, function(){ // TODO Fix variable, instructions show insert_before
+			this.initMraid.bind(this, function(){
 				if (self.isMraid) { self.configMraid(); }
-
 				if (self.isMraid && !self.winLoaded) {
 					/* mraid failed to fire the load event, so we have to do it manually */
 					self.winLoaded = true;
-				    try { window.dispatchEvent(new Event('load')); }
-				    catch(e) { /* depecrated event construction method */
-				    	var loadEvent = document.createEvent('Event');
-				        loadEvent.initEvent('load', true, true);
-				        window.dispatchEvent(loadEvent);
-				    }
+			    try { window.dispatchEvent(new Event('load')); }
+			    catch(e) { /* deprecated event construction method */
+			    	var loadEvent = document.createEvent('Event');
+		        loadEvent.initEvent('load', true, true);
+		        window.dispatchEvent(loadEvent);
+			    }
 				}
-
 				if (vars.expanded || vars.isInterstitial) { self.expand(); }
 				if (vars.init) { window.setTimeout(vars.init()); } /*delay callback until after doc load callbacks are fired*/
-			}));
+			});
 		},
 		configMraid: function(){
 			var self = this;
@@ -412,14 +407,14 @@
 			else { this.onMraidReady(callback); }
 		},
 		onMraidReady: function(callback){
-			if (mraid.isViewable()) { this.onMraidViewChange(callback); }
+			if (mraid.isViewable()) { callback(); }
 			else { mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback)); }
 		},
 		onMraidViewChange: function(callback){
 			this.log('viewableChange');
 			if (mraid.isViewable()) { /*TODO: don't check isViewable again*/
-				callback();
 				mraid.removeEventListener('viewableChange', this.onMraidViewChange);
+				callback();
 			}
 		},
 		iosVersionCheck: function() {
