@@ -282,47 +282,47 @@
 			if (vars.map_id === undefined) { return this.log('A map id must be specified'); }
 			if (typeof(vars.map_id) === 'string') { vars.map_id = document.getElementById(vars.map_id); }
 
-		    var map = new google.maps.Map(
-		    	vars.map_id,
-		    	{
-		    		zoom: vars.map_zoom,
-		        center: new google.maps.LatLng(vars.center_lat, vars.center_lng),
-		        disableDefaultUI: true,
-		        mapTypeId: google.maps.MapTypeId.ROADMAP
+	    var map = new google.maps.Map(
+	    	vars.map_id,
+	    	{
+	    		zoom: vars.map_zoom,
+	        center: new google.maps.LatLng(vars.center_lat, vars.center_lng),
+	        disableDefaultUI: true,
+	        mapTypeId: google.maps.MapTypeId.ROADMAP
+	    	}
+	    );
+
+	    var bounds = new google.maps.LatLngBounds();
+	    if (vars.markers) {
+	    	vars.markers.forEach(function(marker){
+	        marker.position = new google.maps.LatLng(marker.lat, marker.lng);
+	        marker.map = map;
+
+	        var gMarker = new google.maps.Marker(marker);
+
+	        if (marker.clickthru) {
+	        	google.maps.event.addListener(gMarker, 'click', function() {
+							if (marker.clickthru.callback) { marker.clickthru.callback.call(this); }
+							if (!marker.clickthru.url) {
+								marker.clickthru.url = 'https://maps.google.com/?saddr='+ vars.user_lat +','+ vars.user_lng +'&daddr='+ this.position.lat() +','+ this.position.lng();
+							}
+							dojo.clickthru(marker.clickthru);
+	        	});
+	      	}
+
+	        if (marker.events) {
+	        	for (var event in marker.events) {
+	        		if( marker.events.hasOwnProperty( event ) ) {
+		    				google.maps.event.addListener(gMarker, event, marker.events[event]);
+		    			}
+		    		}
 		    	}
-		    );
-
-		    var bounds = new google.maps.LatLngBounds();
-		    if (vars.markers) {
-		    	vars.markers.forEach(function(marker){
-		        marker.position = new google.maps.LatLng(marker.lat, marker.lng);
-		        marker.map = map;
-
-		        var gMarker = new google.maps.Marker(marker);
-
-		        if (marker.clickthru) {
-		        	google.maps.event.addListener(gMarker, 'click', function() {
-								if (marker.clickthru.callback) { marker.clickthru.callback.call(this); }
-								if (!marker.clickthru.url) {
-									marker.clickthru.url = 'https://maps.google.com/?saddr='+ vars.user_lat +','+ vars.user_lng +'&daddr='+ this.position.lat() +','+ this.position.lng();
-								}
-								dojo.clickthru(marker.clickthru);
-		        	});
-		      	}
-
-		        if (marker.events) {
-		        	for (var event in marker.events) {
-		        		if( marker.events.hasOwnProperty( event ) ) {
-			    				google.maps.event.addListener(gMarker, event, marker.events[event]);
-			    			}
-			    		}
-			    	}
-		        bounds.extend(gMarker.position);
-		    	});
-		    }
-		    if (vars.map_zoom === undefined) { map.fitBounds(bounds); }
+	        bounds.extend(gMarker.position);
+	    	});
+	    }
+	    if (vars.map_zoom === undefined) { map.fitBounds(bounds); }
 		},
-		/* TODO: remove the fallback callback and normalifze the return data for callback */
+		/* TODO: remove the fallback callback and normalize the return data for callback */
 		gmaps_geo: function(vars){
 			if (!vars.callback) { return false; }
 			if (!vars.loc_type) { vars.loc_type = 'address'; }
