@@ -449,8 +449,6 @@
 					}
 				}, 5000);
 			} else {
-				self.elapsedTime = 0;
-				self.timeTrackingEndTime = 0;
 				window.clearInterval(self.pageTimeInterval);
 			}
 		},
