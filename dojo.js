@@ -153,7 +153,7 @@
 			if (!this.adIsExpanded) { return; }
 			else { this.adIsExpanded = false; }
 
-      if (typeof(this.videoElement) !== "undefined" && !this.videoElement.paused) {
+      if (this.videoElement && !this.videoElement.paused) {
         this.videoElement.pause();
         this.videoElement.fastSeek(0);
         this.videoElement.videoPlaying = false;
@@ -418,12 +418,11 @@
 			}
 		},
 		iosVersionCheck: function() {
-		    var agent = window.navigator.userAgent,
-		        start = agent.indexOf( 'OS ' );
-		    if( ( agent.indexOf( 'iPhone' ) > -1 || agent.indexOf( 'iPad' ) > -1 ) && start > -1 ){
-		        return window.Number( agent.substr( start + 3, 3 ).replace( '_', '.' ) );
-		    }
-		    return 0;
+	    var agent = window.navigator.userAgent, start = agent.indexOf( 'OS ' );
+	    if( ( agent.indexOf( 'iPhone' ) > -1 || agent.indexOf( 'iPad' ) > -1 ) && start > -1 ){
+	      return window.Number( agent.substr( start + 3, 3 ).replace( '_', '.' ) );
+	    }
+	    return 0;
 		},
 		log: function(message, isAutoFired) {
 			if (!this.isDojo) { console.log(message); }
