@@ -456,8 +456,7 @@
 			var url = window.location.href;
 			if(url.indexOf('?') !== -1){
 				var urlObj = {};
-				var qString = url.split('?');
-				var params = qString[1].split('&');
+				var params = url.split('?')[1].split('&');
 				for(var i=0; i<params.length; i++){
 					var result = params[i].split('=');
 					urlObj[result[0]] = decodeURIComponent(result[1]);
@@ -473,7 +472,7 @@
 		},
 		roundIt: function(num, round){
 			var roundTo = 1;
-			if(round > 0){
+			if(round != 0){
 				roundTo = Math.pow(10, round);
 			}
 			return Math.round(num*roundTo)/roundTo;
