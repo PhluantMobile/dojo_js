@@ -372,7 +372,7 @@
 	    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
-			this.initMraid.bind(this, function(){
+			this.initMraid(function(){
 				if (self.isMraid) { self.configMraid(); }
 				if (self.isMraid && !self.winLoaded) {
 					/* mraid failed to fire the load event, so we have to do it manually */
