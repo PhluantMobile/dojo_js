@@ -472,7 +472,7 @@
 		},
 		roundIt: function(num, round){
 			var roundTo = 1;
-			if(round != 0){
+			if (round !== 0){
 				roundTo = Math.pow(10, round);
 			}
 			return Math.round(num*roundTo)/roundTo;
@@ -615,7 +615,7 @@
 			var obj = {};
 			if (xml.nodeType === 1) {
 				if (xml.attributes.length > 0) {
-				obj["@attributes"] = {};
+					obj["@attributes"] = {};
 					for (var j = 0; j < xml.attributes.length; j++) {
 						var attribute = xml.attributes.item(j);
 						obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
