@@ -102,17 +102,11 @@
 						if(typeof(vars.js_return) !== 'undefined' && vars.js_return){
 							resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') !== -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
 						}
-						if(useYQL){
-							resp = {
-								'status': 'success',
-								'results': resp,
-								'info': ajaxRequest,
-							};
-						}
-						vars.callback({'status': 'success',
-													 'results': resp,
-													 'info': ajaxRequest,
-													});
+						vars.callback({
+						  'status': 'success',
+						  'results': resp,
+						  'info': ajaxRequest,
+						});
 					}
 					else if(ajaxRequest.readyState === 4){
 						window.clearTimeout(ajaxTimeout);
