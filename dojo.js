@@ -216,7 +216,7 @@
 				'url': this.webServiceUrl+'geolocation/export',
 				'method': 'GET',
 				'callback': vars.callback,
-				'js_object': true,
+				'js_return': true,
 			};
 			if(typeof(vars.data) !== 'undefined'){
 				varsExport.data = vars.data;
