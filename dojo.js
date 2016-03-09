@@ -335,7 +335,7 @@
 				var coords = vars.address.split(',');
 				opts.latLng = new google.maps.LatLng(coords[0], coords[1]);
 			}
-			else { opts.address = encodeURIComponent(vars.address); }
+			else { opts.address = vars.address; }
 
 			this.geocoder.geocode(opts, function(results, status) {
 				dojo.gmaps_return(results, status, vars);
@@ -353,7 +353,7 @@
 				   Also, shouldn't this be done inside the geolocation function? */
 				if (this.valid_zip(vars.address)) { opts.data.type =  'postal_code'; }
 				else if (this.valid_geo(vars.address)) { opts.data.type =  'city_postal_by_geo'; }
-				else { return console.error('invalid address'); }
+				else { return console.error("Fallback dojo.geolocate method won't work for address call"); }
 
 				this.geolocation(opts);
 			}
