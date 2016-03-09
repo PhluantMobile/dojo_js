@@ -506,7 +506,7 @@
 			else {
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
 				if (typeof global_ad_id1[0] !== 'undefined') {
-					g_ad = global_ad_id1[0];
+					var g_ad = global_ad_id1[0];
 					if (g_ad.user_prefs) { url += '&user_prefs=' + g_ad.user_prefs; }
 					if (g_ad.idfa) { url += '&idfa=' + g_ad.idfa; }
 					if (g_ad.location.lat) { url += '&lat=' + g_ad.location.lat; }
