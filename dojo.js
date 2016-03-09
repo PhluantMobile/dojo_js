@@ -212,10 +212,15 @@
 			this.pageTime(true);
 		},
 		geolocation: function(vars){
+			function runCallback(d) {
+				d.status = d.results.status ? d.results.status : d.status;
+				d.results = d.results.results ? d.results.results : d.results;
+				vars.callback(d);
+			}
 			var varsExport = {
 				'url': this.webServiceUrl+'geolocation/export',
 				'method': 'GET',
-				'callback': vars.callback,
+				'callback': runCallback,
 				'js_return': true,
 			};
 			if(typeof(vars.data) !== 'undefined'){
