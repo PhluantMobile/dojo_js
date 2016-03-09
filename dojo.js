@@ -320,6 +320,7 @@
 	    	});
 	    }
 	    if (vars.map_zoom === undefined) { map.fitBounds(bounds); }
+	    return map;
 		},
 		/* TODO: remove the fallback callback and normalize the return data for callback */
 		gmaps_geo: function(vars){
