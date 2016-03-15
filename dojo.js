@@ -102,11 +102,15 @@
 						if(typeof(vars.js_return) !== 'undefined' && vars.js_return){
 							resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') !== -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
 						}
-						vars.callback({
-						  'status': 'success',
+						var callbackVars = {
+							'status': 'success',
 						  'results': resp,
-						  'info': ajaxRequest,
-						});
+						  'info': ajaxRequest
+						};
+						if (useYQL && resp.query.count <= 0 && !resp.query.results) {
+							callbackVars['status'] = 'No YQL Results'
+						}
+						vars.callback(callbackVars);
 					}
 					else if(ajaxRequest.readyState === 4){
 						window.clearTimeout(ajaxTimeout);
