@@ -108,7 +108,7 @@
 						  'info': ajaxRequest
 						};
 						if (useYQL && resp.query.count <= 0 && !resp.query.results) {
-							callbackVars['status'] = 'No YQL Results'
+							callbackVars.status = 'No YQL Results';
 						}
 						vars.callback(callbackVars);
 					}
