@@ -524,20 +524,19 @@
 	        return filter.test(email);
 	    },
 		valid_geo: function(geoTest){
-			var passed = true;
-			geoTest = geoTest.split(',');
-			if(typeof(geoTest) === 'object'){
-				for(var i=0; i<geoTest.length; i++){
-					if(isNaN(geoTest[i])){
-						passed = false;
-						break;
-					}
+			try {
+				geoTest = geoTest.split(',');
+				if (geoTest.length === 2) {
+					return (parseFloat(geoTest[0]) >= -90 &&
+						      parseFloat(geoTest[0]) <= 90 &&
+								  parseFloat(geoTest[1]) >= -180 &&
+								  parseFloat(geoTest[1]) <= 180);
+				} else {
+					return false;
 				}
+			} catch(e) {
+				return false;
 			}
-			else{
-				passed = false;
-			}
-			return passed;
 		},
 		valid_phone: function(phone_num){
 		    if(phone_num){
