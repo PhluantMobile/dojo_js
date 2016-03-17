@@ -530,7 +530,10 @@
 					return (parseFloat(geoTest[0]) >= -90 &&
 						      parseFloat(geoTest[0]) <= 90 &&
 								  parseFloat(geoTest[1]) >= -180 &&
-								  parseFloat(geoTest[1]) <= 180);
+								  parseFloat(geoTest[1]) <= 180) &&
+									/^\-?[0-9]*\.?[0-9]*$/.test(geoTest[0]) &&
+									/^\-?[0-9]*\.?[0-9]*$/.test(geoTest[1]);
+
 				} else {
 					return false;
 				}
