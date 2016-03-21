@@ -234,9 +234,7 @@ document.getElementById('boots').addEventListener("click", function (e){
     dojo.clickthru({
     	'url': "http://somesite.com/boots",
     	'name': "boots",
-    	'prepend': "http://adtracking.com/click?adUnit=1111&redirect=",
     });
-    // Clicks through to http://adtracking.com/click?adUnit=1111&redirect=http%3A%2F%2Fsomesite.com%2Fboots
 });
 </script>
 ```
@@ -266,12 +264,16 @@ _Required for all clickthroughs that are to be tracked, recommended in all other
 ### Custom Trackers
 
 ```javascript
-dojo.track(description);
+dojo.track(description, isAutoFired);
 ```
 
 **description**  
 Type: String  
 Description of custom tracking event (i.e. 'swipe right', 'select product', etc.)
+
+**isAutoFired**  
+Type: Boolean  
+If set to true, indicates tracking event is automatically fired, thus time tracking should not be extended
 
 This function allows custom interactions to be tracked inside DOJO (such as a user navigating to a certain section of the ad, etc.).  For assets running outside of our ad serving network, a message displaying the reporting name will logged to the console.
 
@@ -305,64 +307,40 @@ boots.addEventListener('click', function(){
 
 ### HTML5 Video 
 
-*Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+*Legacy functionality updated in dojo.js version 1.0.0*
 
-This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
+This function adds standard event tracking to any ad utilizing HTML5 video, and also allows the video to auto-play on expand and stop on contract.  This adds tracking for play, pause, quartiles (25%, 50%, 75%), ended, seeked, and volumechange.
 
-Returns an HTML5 video element.
+Returns the HTML5 video element.
 
-Required Attributes:
+```javascript
+dojo.video(videoElement, shouldPlayOnExpand);
+```
 
-* video_url: The URL for the video source.  Can be relative (same server) or absolute (remote server).
-* container_id: The DOM element ID for the container in which to add the video.
+**videoElement**  
+Type: String or Video Element
+String with ID of ```<video>``` tag, or actual video element
 
-Optional Attributes:
-
-* attributes.webkit-playsinline: Default is false.  Must be a boolean.  Some devices may not support inline video in certain environments.
-* attributes.controls: Default is true.  Most be a boolean.
-* attributes.autoplay: Default is true.  Mobile devices will not autoplay a video in a mobile web environment on initial load, but will autoplay on an ad expansion.
-* attributes.xx: Any standard HTML5 video attribute can be utilized.
-* aspect_ratio: Default is 16:9 and used if height or width of parent element can't be determined.  Can be overwritten.
-* close_callback: Default is null.  A function can be specified to call up on the video ending.
-* full_screen: Default is false.  Will expand to full screen if set to true on supported devices and will override webkit-playsinline.
-* pause_callback: Default is null.  A function can be specified to call up on the video pausing.
-* play_callback: Default is null.  A function can be specified to call up on the video ending.
-* reload: Default is false.  Phluant's video framework destroys the video instance by default.  Setting reload to true will override this.
-* style.xx: Any native JavaScript styling attribute can be utilized.
-
-Additional Notes:
-
-* The video tag will take on the height and width of the parent container by default, so be sure these are set properly!  The default z-index is 5000.  These values can be overwritten, along with any other styling attributes inserted as needed.
-* Be sure to utilize the ```dojo.videoPlaying``` boolean if using a click function call, as this will ensure the video isn't called multiple times.
-* Standard HTML video events are emitted on the returned video element.  Additionally, custom quartile events will be emitted on the returned video element for 25%, 50%, and 75% watched (events are 'quartile25', 'quartile50', 'quartile75')
+**shouldPlayOnExpand**  
+Type: Boolean  
+Sets whether video should autoplay on expand (true will autoplay on expand, false will not)
 
 Example:
 
+```html
+<video id="video-1" src='video.mp4'></video>
 ```
-<div id="video_container"></div>
-<script>
-var container = dojo.gid('video_container');
-var videoElement;
-container.addEventListener('click', function(){
-	if(!dojo.videoPlaying){
-		videoElement = dojo.video({
-			'video_url': 'videos/somevideo.mp4',
-			'container_id': video_container,
-			'aspect_ratio': '16:9',
-			'attributes':{
-				'controls': true,
-				'inline': true
-			},
-			'style':{
-				'zIndex': 50000
-			}
-		});
-	}
-});
 
-// To add listeners:
-videoElement.addEventListener('play', function(){...})
-</script>
+```javascript
+dojo.video('video-1', true);
+// Adds trackers to video, sets to auto-play on expand
+```
+
+*OR*
+
+```javascript
+dojo.video(document.getElementById('video-1', false);
+// Adds trackers to video, will not auto-play on expand
 ```
 
 [top](#dojo-framework-library)
@@ -374,33 +352,75 @@ videoElement.addEventListener('play', function(){...})
 Phluant maintains a web based application capable of providing geolocation and weather information based on location, using Maxmind and National Weather Service resources respectively.  All lookups are done by AJAX and require the developer to specify a callback function to return the data. Please be aware the mobile data providers have a wide latitude in assigning IP addresses to users, which may return an inaccurate location.  If geocoordinates can't be obtained from the publisher and precise geocoordinates are needed, it's recommended to use the [HTML5 Geolocation Prompt](#geolocation-prompt).
 
 
-#### Geolocation *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+#### Geolocation
+
+```javascript
+dojo.geolocation(options);
+```
+
+**options**  
+Type: Object  
+Key/value pairs to set options
+
+- **callback**  
+  Type: Function  
+  The callback function to use after geolocation.  __Required__
+- **data**  
+  Type: Object  
+  Key/value pairs to set geolocation types, values
+    - **type**  
+    Type: String
+    Type of geolocation - one of 'dma', 'postal_code', 'geo_by_address', 'address_by_geo', 'city_postal_by_geo', 'weather', 'ip_address'.  __Optional__, default is 'ip_address' if not specified.
+    - **value**  
+    Type: String  
+    Corresponding value of that specific call type.  Varies based on the geolocation type.
 
 Geolocation Lookup Methods:
+* [IP Address (default)](#ip-address)
+* [DMA](#dma)
+* [Postal Code (US and Canadian only)](#postal-code)
+* [Geo (lat/long) by Address](#geo-by-address)
+* [Address by Geo (lat/long)](#address-by-geo)
+* [City/Postal by Geo](#city-by-geo)
+* [Weather](#weather)
 
-* IP Address (default)
-* Postal Code (US and Canadian only)
-* City/Postal by Geo
-
-IP Address code example:
-```
-<script>
+##### IP Address
+```javascript
 function geoReturn(data){
-	console.log(data);
+	// some function using data
 }
-
+// data type and value is not needed for geocoding by IP address
 dojo.geolocation({
 	'callback': geoReturn,
 });
-</script>
 ```
 
-Postal Code Example:
+Response
 
+*Note that not all values (dma code, city, etc.) are available in all circumstances.  Results will not include items that are not available*
+
+```javascript
+{ 
+  info: XMLHttpRequest,
+  results: { 
+    city:"Seattle",
+    country:"US",
+    dma_code:819,
+    lat:47.61,
+    lng:-122.35,
+    postal_code:98121,
+    state_region:"Washington"
+  },
+  status:"success"
+}
 ```
+
+##### Postal Code
+
+```javascript
 <script>
 function geoReturn(data){
-	console.log(data);
+	// some function using data
 }
 
 dojo.geolocation({
@@ -415,7 +435,7 @@ dojo.geolocation({
 
 City/Postal by Geo Example:
 
-```
+```javascript
 <script>
 function geoReturn(data){
 	console.log(data);
