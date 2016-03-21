@@ -41,41 +41,27 @@ For the latest stable release use:
 http://mdn4.phluantmobile.net/jslib/dojo/dojo.min.js (production)
 or http://mdn4.phluantmobile.net/jslib/dojo/dojo.js (development)
 
-*However, we recommend that you __specify the version number__ in order to ensure stability.  As of August 2015, the most up to date version is 0.5.2.  Please check __releases__ for the most up-to-date version.*
+*However, we recommend that you __specify the version number__ in order to ensure stability.  As of March 2016, the most up to date version is 1.0.0.  Please check __releases__ for the most up-to-date version.*
 
 Specific releases can be used by appending "-{MAJOR}.{MINOR}.{PATCH}". For example:
 
 ```html
 <!-- production -->
-<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.5.2.min.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-1.0.0.min.js"></script>
 <!-- development -->
-<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.5.2.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-1.0.0.js"></script>
 ```
 
 [top](#dojo-framework-library)
 
 ---
 
-### Element ID referencing
+### Element ID referencing 
 
+*Removed in version 1.0.0, use standard JavaScript methods instead, i.e.:*
 ```javascript
-dojo.gid( elementId );
+document.getElementById( elementId );
 ```
-
-**elementId**  
-Type: String  
-A string containing the ID of the element you would like to reference.
-
-This function is a shortcut for ```document.getElementById()```.
-
-Example:
-
-```javascript
-var expand_div = dojo.gid('expand_div');
-var close_btn = dojo.gid('close_btn');
-```
-
-_Optional_
 
 [top](#dojo-framework-library)
 
@@ -93,22 +79,13 @@ Key/value pairs to set init options.
 
 - **init**  
   Type: Function  
-  The initialization callback function for an ad.  Required for any ad running on MRAID.  Recommended in all cases.
+  The initialization callback function for an ad.  __Required__ for any ad running on MRAID.  Recommended in all cases.
 - **callback**  
   Type: Function  
-  Callback function that is executed when an expanded ad is contracted.  Required for any expandable ad running on MRAID.  Recommended in all cases.
+  Callback function that is executed when an expanded ad is contracted.  __Required__ for any expandable ad running on MRAID.  Recommended in all cases.
 - **expanded**  
   Type: Boolean  
   Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only required for interstitial ads.
-- **asynch_load**  
-  Type: Object  
-  This allows ad to asynchronously load any JavaScript scripts before running the initialization callback.  Default is null.  Not required.
-  - **insert_before**  
-    Type: String  
-    Designates the reference element that the library will use to reference the load.
-  - **scripts**  
-    Type: Array of Strings  
-    Designates the script URLs to load before running the initialization callback.
 - **useCustomClose**  
   Type: Boolean  
   Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
@@ -134,10 +111,6 @@ dojo.init({
 	'init': initialize,
 	'callback': contractAd,
 	'expanded': false,
-	'asynch_load': {
-		'insert_before': document.getElementsByTagName('head')[0],
-		'scripts': ['http://code.jquery.com/jquery.min.js', 'http://somesite.com/somescript.js']		
-	},
 	'useCustomClose': false,
 	'expandedEl': 'expanded'
 });
@@ -163,7 +136,7 @@ If argument is an integer, indicates the width in number of pixels.  Otherwise, 
 Type: Integer or String  
 If argument is an integer, indicates the height in number of pixels.  Otherwise, a String containing any valid css value may be used.  
 
-Use this function for expandable ads, to switch between contracted and expanded state.  This method resizes the ad's iframe container to the specified size (if necessary), fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. This will automatically begin tracking the amount of time the ad has been expanded.
+Use this function for expandable ads, to switch between contracted and expanded state.  This method resizes the ad's iframe container to the specified size (if the ad is inside an iframe), fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. This will automatically begin tracking the amount of time the ad has been expanded.  Additionally, if a video has been set to play automatically on expand, it will play the video (see [HTML5 video](#html5-video)).
 
 Note that you still need to resize the ad creative manually.
 
@@ -197,7 +170,7 @@ _Required for all expandable ads._
 dojo.contract();
 ```
 
-Use this function for expandable ads, to switch from expanded and contracted state.  It deconstructs any necessary components (such as HTML5 video), restores the ad's iframe container to the size it was before expansion (if necessary), fires an appropriate reporting tracker, executes the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.  This also stops and resets tracking for time spent in the expanded state.
+Use this function for expandable ads, to switch from expanded and contracted state.  It restores the ad's iframe container to the size it was before expansion (if necessary), fires an appropriate reporting tracker, executes the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.  This also stops and resets tracking for time spent in the expanded state, and stops a video (if used with dojo.video, see [HTML5 video](#html5-video)).
 
 Example:
 
@@ -216,7 +189,7 @@ _Requried for all expandable ads as well as interstitial/banner ads that require
 ### Clickthru
 
 ```javascript
-dojo.clickthru(vars);
+dojo.clickthru(vars, silent);
 ```
 
 **vars**  
@@ -233,7 +206,14 @@ Key/value pairs to set clickthru options.
   Type: String  
   A click prepend to be added in front of the URL, usually used for third party click tracking.  Completely optional.
 
+**silent**  
+Type: Boolean  
+If true, will not log the clickthrough URL as a developer event.  Optional.
+
+
 This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
+
+A prepend will automatically be included if one is present in the Phluant ad tag as a parameter (ClickPrependURL=...)
 
 Example with two different clickthru items.  DOJO reporting will tally each of them separately:
 
@@ -253,8 +233,10 @@ document.getElementById('boots').addEventListener("click", function (e){
     e.preventDefault();
     dojo.clickthru({
     	'url': "http://somesite.com/boots",
-    	'name': "boots"
+    	'name': "boots",
+    	'prepend': "http://adtracking.com/click?adUnit=1111&redirect=",
     });
+    // Clicks through to http://adtracking.com/click?adUnit=1111&redirect=http%3A%2F%2Fsomesite.com%2Fboots
 });
 </script>
 ```
@@ -272,7 +254,7 @@ clickthrough.addEventListener('click', function(){
 		'prepend': 'http://ad.tracker.net/click/a1bc23d4?url='
 	});
 });
-// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http://somesite.com
+// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http%3A%2F%2Fsomesite.com
 </script>
 ```
 _Required for all clickthroughs that are to be tracked, recommended in all other cases._
@@ -321,7 +303,9 @@ boots.addEventListener('click', function(){
 
 ---
 
-### HTML5 Video *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### HTML5 Video 
+
+*Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
 
 This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
 
