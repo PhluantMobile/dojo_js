@@ -371,17 +371,20 @@ Key/value pairs to set options
     - **type**  
     Type: String
     Type of geolocation - one of 'dma', 'postal_code', 'geo_by_address', 'address_by_geo', 'city_postal_by_geo', 'weather', 'ip_address'.  __Optional__, default is 'ip_address' if not specified.
+    - **subtype**  
+    Type: String
+    Required only for certain geolocation types - see below examples.
     - **value**  
     Type: String  
     Corresponding value of that specific call type.  Varies based on the geolocation type.
 
 Geolocation Lookup Methods:
 * [IP Address (default)](#ip-address)
-* [DMA](#dma)
 * [Postal Code (US and Canadian only)](#postal-code)
-* [Geo (lat/long) by Address](#geo-by-address)
-* [Address by Geo (lat/long)](#address-by-geo)
-* [City/Postal by Geo](#city-by-geo)
+* [DMA](#dma)
+* [Coordinates(Lat/Long) by Address](#coordinates-by-address)
+* [Address by Coordinates (Lat/Long)](#address-by-coordinates)
+* [City/Postal Code by Coordinates (Lat/Long)](#city-by-coordinates)
 * [Weather](#weather)
 
 ##### IP Address
@@ -393,13 +396,9 @@ function geoReturn(data){
 dojo.geolocation({
 	'callback': geoReturn,
 });
-```
 
-Response
-
-*Note that not all values (dma code, city, etc.) are available in all circumstances.  Results will not include items that are not available*
-
-```javascript
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
 { 
   "info": XMLHttpRequest,
   "results": { 
@@ -429,13 +428,9 @@ dojo.geolocation({
 		'value': '98033'
 	}
 });
-```
 
-Response
-
-*Note that not all values (dma code, city, etc.) are available in all circumstances.  Results will not include items that are not available*
-
-```javascript
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
 { 
   "info": XMLHttpRequest,
   "results": { 
@@ -464,13 +459,9 @@ dojo.geolocation({
         'value': '819' // DMA code number
     }
 });
-```
 
-Response
-
-*Note that not all values are available in all circumstances.  Results will not include items that are not available*
-
-```javascript
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
 {
   "status":"success",
   "results":{
@@ -487,7 +478,7 @@ Response
 }
 ```
 
-##### Geo by Address
+##### Coordinates by Address
 
 ```javascript
 function geoReturn(data){
@@ -501,13 +492,9 @@ dojo.geolocation({
 		'value': '500 Yale Ave N, Seattle, WA 98109'
 	}
 });
-```
 
-Response
-
-*Note that not all values are available in all circumstances.  Results will not include items that are not available*
-
-```javascript
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
 { 
   "info": XMLHttpRequest,
   "results":{
@@ -527,7 +514,7 @@ Response
 }
 ```
 
-##### Address by Geo
+##### Address by Coordinates
 
 ```javascript
 function geoReturn(data){
@@ -541,13 +528,9 @@ dojo.geolocation({
 		'value': '47.6233544, -122.3301121'
 	}
 });
-```
 
-Response
-
-*Note that not all values are available in all circumstances.  Results will not include items that are not available*
-
-```javascript
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
 { 
   "info": XMLHttpRequest,
   "results":{
@@ -567,7 +550,7 @@ Response
 }
 ```
 
-City/Postal by Geo Example:
+##### City by Coordinates
 
 ```javascript
 function geoReturn(data){
@@ -581,14 +564,9 @@ dojo.geolocation({
 		'value': '47.6727,-122.1873'
 	}
 });
-</script>
-```
 
-Response
-
-*Note that not all values are available in all circumstances.  Results will not include items that are not available*
-
-```javascript
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
 { 
   "info": XMLHttpRequest,
   "results":{
@@ -607,18 +585,6 @@ Response
 }
 ```
 
-All geolocation lookup methods return the following data:
-
-* data.results.country: The abbreviated country.
-* data.results.state_region: The abbreviated state, province, or region.
-* data.results.city: The full city name.
-* data.results.lat: The centralized reported latitude of the postal code.
-* data.results.lon: The centralized reported longitude of the postal code.
-* data.results.dma_code:  The DMA code for the user’s current location.
-* data.results.area_code:  The prevailing area code for the user’s current location.  This has no correlation to the user’s actual area code.
-
-_For a comprehensive address lookup, please see the [Google Maps Geocoding](#geocoding) function._
-
 #### Weather
 
 Weather Lookup Methods:
@@ -629,27 +595,24 @@ Weather Lookup Methods:
 
 Weather by IP Example:
 
-```
-<script>
+```javascript
 function weatherReturn(data){
 	console.log(data);
 }
 
 //The data.end spec defines the range of the weather data returned in hours or days, to a maximum of 14 days.  If the default of 1 day is desired, this step can be omitted.
 dojo.geolocation({
-	'callback': geoReturn,
+	'callback': weatherReturn,
 	'data': {
 		'type': 'weather',
 		'end': '3 days',
 	}
 });
-</script>
 ```
 
 Weather by Postal Code Example:
 
-```
-<script>
+```javascript
 function weatherReturn(data){
 	console.log(data);
 }
@@ -664,13 +627,11 @@ dojo.geolocation({
 		'end': '3 days'
 	}
 });
-</script>
 ```
 
 Weather by Geolocation Example:
 
-```
-<script>
+```javascript
 function weatherReturn(data){
 	console.log(data);
 }
@@ -685,231 +646,180 @@ dojo.geolocation({
 		'end': '3 days',
 	}
 });
-</script>
 ```
 
+*Response Example (Shortened)*
 
-The weather data returned can vary based on custom input values.  The start_value_time and end_value_time attributes, if included, are in W3C format. An example response is provided below:
+```javascript
+{
+  "status":"success",
+  "info":  XMLHttpRequest,
+  "results":
+  {
+    "city":"Boston",
+    "state_region":"MA",
+    "postal_code":"02108",
+    "lat":"42.353806",
+    "lng":"-71.102446",
+    "nws_xml":"http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?lat=42.353806&lon=-71.102446&product=time-series&begin=2016-3-25T00:00:00&end=2016-3-26T23:59:59&Unit=e&maxt=maxt&mint=mint&temp=temp&pop12=pop12&qpf=qpf&rh=rh&sky=sky&wspd=wspd&wdir=wdir&wx=wx&icons=icons",
+    "nws_page":"http://forecast.weather.gov/MapClick.php?textField1=42.35&textField2=-71.10",
+    "data": {
+      "icon":
+        [{
+          "value":"http://forecast.weather.gov/images/wtf/nbkn.jpg",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"http://forecast.weather.gov/images/wtf/nra20.jpg",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "weather_conditions":
+        [{
+          "value":"",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"chance light rain showers none ",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "maximum_temp":
+        [{
+          "value":"55&deg;F",
+          "start_valid_time":"2016-03-25T08:00:00-04:00",
+          "end_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"64&deg;F",
+          "start_valid_time":"2016-03-31T08:00:00-04:00",
+          "end_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "minimum_temp":
+        [{
+          "value":"36&deg;F",
+          "start_valid_time":"2016-03-25T20:00:00-04:00",
+          "end_valid_time":"2016-03-26T09:00:00-04:00"
+        },
+        ...
+        {
+          "value":"40&deg;F",
+          "start_valid_time":"2016-03-30T20:00:00-04:00",
+          "end_valid_time":"2016-03-31T09:00:00-04:00"
+        }],
+      "hourly_temp":
+        [{
+          "value":"52&deg;F",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"57&deg;F",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "precipitation":
+        [{
+          "value":"0.06 inches",
+          "start_valid_time":"2016-03-25T14:00:00-04:00",
+          "end_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"0.00 inches",
+          "start_valid_time":"2016-03-27T14:00:00-04:00",
+          "end_valid_time":"2016-03-27T20:00:00-04:00"
+        }],
+      "cloud_cover":
+        [{
+          "value":"81%",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"60%",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "12_hour_precip_prob":
+        [{
+          "value":"81%",
+          "start_valid_time":"2016-03-25T08:00:00-04:00",
+          "end_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"24%",
+          "start_valid_time":"2016-03-31T08:00:00-04:00",
+          "end_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "humidity":
+        [{
+          "value":"83%",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+        "value":"64%",
+        "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "wind_speed":
+        [{
+          "value":"5.75 MPH",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"14.96 MPH",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "wind_dir":
+        [{
+        "value":"NW",
+        "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"SSW",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }]
+      },
+      "timestamp":1458945013,
+      "forecast_length":"1 days"
+    }
+  }
+}
+```
 
-* data.status: the overall outcome of the query.  Is success or error.
-* data.msg: An occasional message may appear if a particular outcome occurs.
-* data.results city: The full city name.
-* data.results.state_region: The abbreviated state, province, or region.
-* data.results.postal_code: The postal code of the user’s location.
-* data.results.lat: The centralized reported latitude of the postal code.
-* data.results.lng: The centralized reported longitude of the postal code.
-* data.results.nws_xml: The URL for the original NWS XML output.
-* data.results.nws_page: The URL for a human friendly NWS weather report page.
-* data.results.data.icon:  An array of weather icon images provided by the NWS.  Within each result contains the value, which is a hyperlink to the image, and start_valid_time.
-* data.results.data.weather_conditions: An array of the weather conditions summary.  Within reach result contains the value, which is a human readable summary of the weather, and start_valid_time.
-* data.results.data.maximum_temp: An array of the maximum daytime temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
-* data.results.data.minimum_temp: An array of the minimum daytime temperatures in fahrenheit. Within reach result contains the value, along with start_valid_time and end_valid_time.
-* data.results.data.hourly_temp: An array of the hourly temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
-* data.results.data.precipitation:  An array of the expected levels of precipitation in inches.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.clould_cover:  An array of the expected cloud cover levels in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.12_hour_precip_prob:  An array of the likeliness of precipitation in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.humidity:  An array of the humidity in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.wind_dir:  An array of the wind directions at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.wind_speed:  An array of the wind speed at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
+Explanation For Weather-Specific Items
+* nws_xml: The URL for the original NWS XML output.
+* nws_page: The URL for a human friendly NWS weather report page.
+* data.icon:  An array of weather icon images provided by the NWS.  Within each result contains the value, which is a hyperlink to the image, and start_valid_time.
+* data.weather_conditions: An array of the weather conditions summary.  Within reach result contains the value, which is a human readable summary of the weather, and start_valid_time.
+* data.maximum_temp: An array of the maximum daytime temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
+* data.minimum_temp: An array of the minimum daytime temperatures in fahrenheit. Within reach result contains the value, along with start_valid_time and end_valid_time.
+* data.hourly_temp: An array of the hourly temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
+* data.precipitation:  An array of the expected levels of precipitation in inches.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.clould_cover:  An array of the expected cloud cover levels in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.12_hour_precip_prob:  An array of the likeliness of precipitation in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.humidity:  An array of the humidity in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.wind_dir:  An array of the wind directions at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.wind_speed:  An array of the wind speed at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
 
 [top](#dojo-framework-library)
 
 ---
 
-### Store Locator API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### Store Locator API Call
 
-This function provides certain clients the ability to pull store location information information for various ads, namely to display the closest number of stores in relation to the user.  If your campaign has been set up with this feature, this API call will work for you.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.
-
-Lookup Methods:
-
-* IP address (default)
-* Lat/lng
-* Postal Code
-
-Required Specs:
-
-* callback - the callback function.
-* data.campaign_id - the campaign ID assigned by Phluant.
-
-
-Optional Specs:
-
-* data.limit - the limit on the number of stores.  Default is 3.
-* data.dist - the limit on the maximum radius distance in miles.  Default is 30.
-* data.subtype - specify as geo or postal_code.
-* data.value - if subtype is declared, use this spec to declare the value.
-
-Store Location by IP Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Distance and limit are shown as an example and can be omitted if satisfied with default values
-dojo.get_stores({
-	'callback': storeReturn,
-	'data': {
-		'campaign_id': 9999,
-		'limit': 3,
-		'dist': 30
-	}
-});
-</script>
-```
-
-Store Location by Geo Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Distance and limit are shown as an example and can be omitted if satisfied with default values.  Subtype and value must be specified for a geolocation lookup.
-dojo.get_stores({
-	'callback': storeReturn,
-	'data': {
-		'campaign_id': 9999,
-		'limit': 3,
-		'dist': 30,
-		'subtype': 'geo',
-		'value': '47.676308399999996,-122.20762579999999'
-	}
-});
-</script>
-```
-
-Store Location by Postal Code Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Distance and limit are shown as an example and can be omitted if satisfied with default values.  Subtype and value must be specified for a geolocation lookup.
-dojo.get_stores({
-	'callback': storeReturn,
-	'data': {
-		'campaign_id': 9999,
-		'limit': 3,
-		'dist': 30,
-		'subtype': 'postal_code',
-		'value': '98033'
-	}
-});
-</script>
-```
+*Removed in version 1.0.0*
 
 [top](#dojo-framework-library)
 
 ---
 
-### ShopLocal API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### ShopLocal API Call
 
-Because Phluant has an established relationship with ShopLocal, we are already set up to aggregate ShopLocal data to our ads. Any Phluant client with an established ShopLocal campaign can utilize this function to call in relevant ShopLocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.  All data is returned in JavaScript object format.
-
-Lookup Methods:
-
-* IP address (default)
-* Lat/lng
-* Postal Code
-
-Required Specs:
-
-* callback - the callback function.
-* data.campaignid - the campaign ID assigned by ShopLocal.  This is NOT the same campaign ID assigned by Phluant.
-* data.company - the company name assigned by ShopLocal.
-
-
-Optional Specs:
-
-* data.subtype - For obtaining the user's location if an IP based lookup isn't desired.  Specify as geo or postal_code if desired.
-* data.value - Set to applicable value if data.suptype is geo or postal_code.
-* data.call_type - default is store.  While any number of different categories can potentially work, only retailertag has been fully tested with our system.  Separate multiple call types with a comma.  This spec will override the default.
-* data.<category>ids - Used in conjunction with retailertag or any other category, and is required if the related category is set.  Separate multiple category id's with a comma.
-* data.storeid - Used to look up categories from a specified store.  Please be aware that this value isn't necessary if the stores are being looked up along with a category, as the first store in the query result will override this value.
-* listingcount - Default is 50.
-* listingimagewidth - Default is 90.
-* resultset - Default is full.
-* sortby - Default is 6.
-* data.pd - Used for some ShopLocal campaigns to override any date restrictions for development purposes.  This is a value assigned by ShopLocal.
-* data.name_flag - If set, the system will watch out for any store name containing this value and remove it from the results.
-
-ShopLocal by IP Example:
-
-```
-<script>
-function ShopLocalReturn(data){
-	console.log(data);
-}
-
-//Optional values are shown as an example and can be omitted if satisfied with defaults.
-dojo.ShopLocal({
-	'callback': storeReturn,
-	'data': {
-		'campaignid': 'abc123def456',
-		'company': 'ABC, Inc.',
-		'call_type': 'store,retailertag',
-		'retailertagids': '2334'
-	}
-});
-</script>
-```
-
-ShopLocal by Geo Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocation lookup.
-dojo.shoplocal({
-	'callback': storeReturn,
-	'data': {
-		'campaignid': 'abc123def456',
-		'company': 'ABC, Inc.',
-		'call_type': 'store,retailertag',
-		'retailertagids': '2334',
-		'subtype': 'geo',
-		'value': 'value': '47.676308399999996,-122.20762579999999'
-	}
-});
-</script>
-```
-
-ShopLocal by Postal Code Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocation lookup.
-dojo.shoplocal({
-	'callback': storeReturn,
-	'data': {
-		'campaignid': 'abc123def456',
-		'company': 'ABC, Inc.',
-		'call_type': 'store,retailertag',
-		'retailertagids': '2334'
-		'subtype': 'postal_code',
-		'value': 'value': '98033'
-	}
-});
-</script>
-```
-
-* The bulk of all store related data can be found in data.stores.results.collection.data.  Multiple locations may exist.
-* The bulk of all category data, using retailertag as an example, can be found in data.retailertag.xxxx.results.collection[0][0].
-* If an IP address or geolocation was used to calculate the user's address, the results will be returned.  The data can be found in data.user_info.results.
-
-*Because ShopLocal return data can vary and this library is still in beta, we working on expanding the return data samples.*
+*Removed in version 1.0.0*
 
 [top](#dojo-framework-library)
 
