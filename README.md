@@ -401,8 +401,8 @@ Response
 
 ```javascript
 { 
-  info: XMLHttpRequest,
-  results: { 
+  "info": XMLHttpRequest,
+  "results": { 
     city:"Seattle",
     country:"US",
     dma_code:819,
@@ -411,14 +411,13 @@ Response
     postal_code:98121,
     state_region:"Washington"
   },
-  status:"success"
+  "status":"success"
 }
 ```
 
 ##### Postal Code
 
 ```javascript
-<script>
 function geoReturn(data){
 	// some function using data
 }
@@ -430,13 +429,147 @@ dojo.geolocation({
 		'value': '98033'
 	}
 });
-</script>
+```
+
+Response
+
+*Note that not all values (dma code, city, etc.) are available in all circumstances.  Results will not include items that are not available*
+
+```javascript
+{ 
+  "info": XMLHttpRequest,
+  "results": { 
+    "postal_code":"98033",
+    "lat":"47.673263",
+    "lng":"-122.187029",
+    "city":"Kirkland",
+    "state_region":"WA",
+    "county":"King",
+    "country":"US"
+  },
+  "status":"success"
+}
+```
+
+##### DMA
+```javascript
+function geoReturn(data){
+	// some function using data
+}
+// data type and value is not needed for geocoding by IP address
+dojo.geolocation({
+    'callback': geoReturn,
+    'data': {
+        'type': 'dma',
+        'value': '819' // DMA code number
+    }
+});
+```
+
+Response
+
+*Note that not all values are available in all circumstances.  Results will not include items that are not available*
+
+```javascript
+{
+  "status":"success",
+  "results":{
+    "id":168,
+    "dma_code":"819",
+    "region_name":"Seattle-Tacoma, WA",
+    "lng":-121.842,
+    "lat":47.6212,
+    "adperc":"21.3",
+    "tvperc":"93.8",
+    "cableperc":"72.8"
+  },
+  "info":{}
+}
+```
+
+##### Geo by Address
+
+```javascript
+function geoReturn(data){
+	// some function using data
+}
+
+dojo.geolocation({
+	'callback': geoReturn,
+	'data': {
+		'type': 'geo_by_address',
+		'value': '500 Yale Ave N, Seattle, WA 98109'
+	}
+});
+```
+
+Response
+
+*Note that not all values are available in all circumstances.  Results will not include items that are not available*
+
+```javascript
+{ 
+  "info": XMLHttpRequest,
+  "results":{
+    "street_number":"500",
+    "route":"Yale Ave N",
+    "neighborhood":"SLU",
+    "locality":"Seattle",
+    "administrative_area_level_2":"King County",
+    "administrative_area_level_1":"WA",
+    "country":"US",
+    "postal_code":"98109",
+    "postal_code_suffix":"5680",
+    "lat":47.6233544,
+    "lng":-122.3301121
+  },
+  "status":"success"
+}
+```
+
+##### Address by Geo
+
+```javascript
+function geoReturn(data){
+	// some function using data
+}
+
+dojo.geolocation({
+	'callback': geoReturn,
+	'data': {
+		'type': 'address_by_geo',
+		'value': '47.6233544, -122.3301121'
+	}
+});
+```
+
+Response
+
+*Note that not all values are available in all circumstances.  Results will not include items that are not available*
+
+```javascript
+{ 
+  "info": XMLHttpRequest,
+  "results":{
+    "street_number":"500",
+    "route":"Yale Ave N",
+    "neighborhood":"SLU",
+    "locality":"Seattle",
+    "administrative_area_level_2":"King County",
+    "administrative_area_level_1":"WA",
+    "country":"US",
+    "postal_code":"98109",
+    "postal_code_suffix":"5680",
+    "lat":47.6233544,
+    "lng":-122.3301121
+  },
+  "status":"success"
+}
 ```
 
 City/Postal by Geo Example:
 
 ```javascript
-<script>
 function geoReturn(data){
 	console.log(data);
 }
@@ -449,6 +582,29 @@ dojo.geolocation({
 	}
 });
 </script>
+```
+
+Response
+
+*Note that not all values are available in all circumstances.  Results will not include items that are not available*
+
+```javascript
+{ 
+  "info": XMLHttpRequest,
+  "results":{
+    "id":3535,
+    "country":"US",
+    "state_region":"WA",
+    "city":"Kirkland",
+    "postal_code":"98033",
+    "lat":47.6815,
+    "lng":-122.209,
+    "dma_code":"819",
+    "area_code":"425",
+    "distance":1
+  },
+  "status":"success"
+}
 ```
 
 All geolocation lookup methods return the following data:
