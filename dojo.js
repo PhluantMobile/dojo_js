@@ -135,7 +135,8 @@
 		clickthru: function(vars, silent){
 			var tagParams = this.getTagParams();
 			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
-			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
+			prepend = vars.prepend || prepend && decodeURIComponent(prepend);
+			prepend = /^https?\:\/\/.*$/.test(prepend) ? prepend : false;
 
 			this.dojo_track({'type': 'click','key': vars.name,});
 
@@ -346,7 +347,9 @@
 			});
 		},
 		gmaps_return: function(results, status, vars){
-			if (status === google.maps.GeocoderStatus.OK) { return vars.callback(results); }
+			if (status === google.maps.GeocoderStatus.OK) {
+				return vars.callback(results[0]);
+			}
 			else if (vars.failover) {
 				var opts = {
 					data: {value: vars.address},
@@ -663,7 +666,7 @@
 		for (var k = 0; k < scripts.length; k++){
 		  var scriptSrc = scripts[k].src;
 		  if(scriptSrc.indexOf('dojo.phluant.com') !== -1){
-		    scriptSrc = scriptSrc.replace('http://dojo.phluant.com/adj/', '');
+		    scriptSrc = scriptSrc.replace(/https?\:\/\/(staging\.)?dojo\.phluant\.com\/adj\//, '');
 		    scriptSrc = scriptSrc.split('/');
 		    dojo.pl = scriptSrc[0];
 		    break;
