@@ -41,41 +41,27 @@ For the latest stable release use:
 http://mdn4.phluantmobile.net/jslib/dojo/dojo.min.js (production)
 or http://mdn4.phluantmobile.net/jslib/dojo/dojo.js (development)
 
-*However, we recommend that you __specify the version number__ in order to ensure stability.  As of August 2015, the most up to date version is 0.5.2.  Please check __releases__ for the most up-to-date version.*
+*However, we recommend that you __specify the version number__ in order to ensure stability.  As of March 2016, the most up to date version is 1.0.0.  Please check __releases__ for the most up-to-date version.*
 
 Specific releases can be used by appending "-{MAJOR}.{MINOR}.{PATCH}". For example:
 
 ```html
 <!-- production -->
-<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.5.2.min.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-1.0.0.min.js"></script>
 <!-- development -->
-<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-0.5.2.js"></script>
+<script src="http://mdn4.phluantmobile.net/jslib/dojo/dojo-1.0.0.js"></script>
 ```
 
 [top](#dojo-framework-library)
 
 ---
 
-### Element ID referencing
+### Element ID referencing 
 
+*Removed in version 1.0.0, use standard JavaScript methods instead, i.e.:*
 ```javascript
-dojo.gid( elementId );
+document.getElementById( elementId );
 ```
-
-**elementId**  
-Type: String  
-A string containing the ID of the element you would like to reference.
-
-This function is a shortcut for ```document.getElementById()```.
-
-Example:
-
-```javascript
-var expand_div = dojo.gid('expand_div');
-var close_btn = dojo.gid('close_btn');
-```
-
-_Optional_
 
 [top](#dojo-framework-library)
 
@@ -93,22 +79,13 @@ Key/value pairs to set init options.
 
 - **init**  
   Type: Function  
-  The initialization callback function for an ad.  Required for any ad running on MRAID.  Recommended in all cases.
+  The initialization callback function for an ad.  __Required__ for any ad running on MRAID.  Recommended in all cases.
 - **callback**  
   Type: Function  
-  Callback function that is executed when an expanded ad is contracted.  Required for any expandable ad running on MRAID.  Recommended in all cases.
+  Callback function that is executed when an expanded ad is contracted.  __Required__ for any expandable ad running on MRAID.  Recommended in all cases.
 - **expanded**  
   Type: Boolean  
   Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only required for interstitial ads.
-- **asynch_load**  
-  Type: Object  
-  This allows ad to asynchronously load any JavaScript scripts before running the initialization callback.  Default is null.  Not required.
-  - **insert_before**  
-    Type: String  
-    Designates the reference element that the library will use to reference the load.
-  - **scripts**  
-    Type: Array of Strings  
-    Designates the script URLs to load before running the initialization callback.
 - **useCustomClose**  
   Type: Boolean  
   Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
@@ -134,10 +111,6 @@ dojo.init({
 	'init': initialize,
 	'callback': contractAd,
 	'expanded': false,
-	'asynch_load': {
-		'insert_before': document.getElementsByTagName('head')[0],
-		'scripts': ['http://code.jquery.com/jquery.min.js', 'http://somesite.com/somescript.js']		
-	},
 	'useCustomClose': false,
 	'expandedEl': 'expanded'
 });
@@ -163,7 +136,7 @@ If argument is an integer, indicates the width in number of pixels.  Otherwise, 
 Type: Integer or String  
 If argument is an integer, indicates the height in number of pixels.  Otherwise, a String containing any valid css value may be used.  
 
-Use this function for expandable ads, to switch between contracted and expanded state.  This method resizes the ad's iframe container to the specified size (if necessary), fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. This will automatically begin tracking the amount of time the ad has been expanded.
+Use this function for expandable ads, to switch between contracted and expanded state.  This method resizes the ad's iframe container to the specified size (if the ad is inside an iframe), fires off the appropriate reporting tracker, and expands the webview to take up the entire screen if executed in an MRAID environment. This will automatically begin tracking the amount of time the ad has been expanded.  Additionally, if a video has been set to play automatically on expand, it will play the video (see [HTML5 video](#html5-video)).
 
 Note that you still need to resize the ad creative manually.
 
@@ -197,7 +170,7 @@ _Required for all expandable ads._
 dojo.contract();
 ```
 
-Use this function for expandable ads, to switch from expanded and contracted state.  It deconstructs any necessary components (such as HTML5 video), restores the ad's iframe container to the size it was before expansion (if necessary), fires an appropriate reporting tracker, executes the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.  This also stops and resets tracking for time spent in the expanded state.
+Use this function for expandable ads, to switch from expanded and contracted state.  It restores the ad's iframe container to the size it was before expansion (if necessary), fires an appropriate reporting tracker, executes the close callback provided at initialization, and calls mraid.close() when executed in an MRAID environment.  This also stops and resets tracking for time spent in the expanded state, and stops a video (if used with dojo.video, see [HTML5 video](#html5-video)).
 
 Example:
 
@@ -216,7 +189,7 @@ _Requried for all expandable ads as well as interstitial/banner ads that require
 ### Clickthru
 
 ```javascript
-dojo.clickthru(vars);
+dojo.clickthru(vars, silent);
 ```
 
 **vars**  
@@ -233,7 +206,14 @@ Key/value pairs to set clickthru options.
   Type: String  
   A click prepend to be added in front of the URL, usually used for third party click tracking.  Completely optional.
 
+**silent**  
+Type: Boolean  
+If true, will not log the clickthrough URL as a developer event.  Optional.
+
+
 This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
+
+A prepend will automatically be included if one is present in the Phluant ad tag as a parameter (ClickPrependURL=...)
 
 Example with two different clickthru items.  DOJO reporting will tally each of them separately:
 
@@ -253,7 +233,7 @@ document.getElementById('boots').addEventListener("click", function (e){
     e.preventDefault();
     dojo.clickthru({
     	'url': "http://somesite.com/boots",
-    	'name': "boots"
+    	'name': "boots",
     });
 });
 </script>
@@ -272,7 +252,7 @@ clickthrough.addEventListener('click', function(){
 		'prepend': 'http://ad.tracker.net/click/a1bc23d4?url='
 	});
 });
-// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http://somesite.com
+// On click user is sent to http://ad.tracker.net/click/a1bc23d4?url=http%3A%2F%2Fsomesite.com
 </script>
 ```
 _Required for all clickthroughs that are to be tracked, recommended in all other cases._
@@ -284,12 +264,16 @@ _Required for all clickthroughs that are to be tracked, recommended in all other
 ### Custom Trackers
 
 ```javascript
-dojo.track(description);
+dojo.track(description, isAutoFired);
 ```
 
 **description**  
 Type: String  
 Description of custom tracking event (i.e. 'swipe right', 'select product', etc.)
+
+**isAutoFired**  
+Type: Boolean  
+If set to true, indicates tracking event is automatically fired, thus time tracking should not be extended
 
 This function allows custom interactions to be tracked inside DOJO (such as a user navigating to a certain section of the ad, etc.).  For assets running outside of our ad serving network, a message displaying the reporting name will logged to the console.
 
@@ -321,64 +305,42 @@ boots.addEventListener('click', function(){
 
 ---
 
-### HTML5 Video *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### HTML5 Video 
 
-This function ensures that any HTML5 video that needs to be played can have the proper code rendered, inside or outside of Phluant's ad serving network.  It isn't necessary to include any video tags in the HTML.  All that is needed is a container element and the proper JavaScript code.  It is also possible for a video to auto play on an expansion.  All that would be required is to add in the function callup to the applicable expand code.  All videos automatically close on the completion of the video or contracting the ad.  For any other events that require closure, ```dojo.video_close()``` can be utilized.
+*Legacy functionality updated in dojo.js version 1.0.0*
 
-Returns an HTML5 video element.
+This function adds standard event tracking to any ad utilizing HTML5 video, and also allows the video to auto-play on expand and stop on contract.  This adds tracking for play, pause, quartiles (25%, 50%, 75%), ended, seeked, and volumechange.
 
-Required Attributes:
+Returns the HTML5 video element.
 
-* video_url: The URL for the video source.  Can be relative (same server) or absolute (remote server).
-* container_id: The DOM element ID for the container in which to add the video.
+```javascript
+dojo.video(videoElement, shouldPlayOnExpand);
+```
 
-Optional Attributes:
+**videoElement**  
+Type: String or Video Element
+String with ID of ```<video>``` tag, or actual video element
 
-* attributes.webkit-playsinline: Default is false.  Must be a boolean.  Some devices may not support inline video in certain environments.
-* attributes.controls: Default is true.  Most be a boolean.
-* attributes.autoplay: Default is true.  Mobile devices will not autoplay a video in a mobile web environment on initial load, but will autoplay on an ad expansion.
-* attributes.xx: Any standard HTML5 video attribute can be utilized.
-* aspect_ratio: Default is 16:9 and used if height or width of parent element can't be determined.  Can be overwritten.
-* close_callback: Default is null.  A function can be specified to call up on the video ending.
-* full_screen: Default is false.  Will expand to full screen if set to true on supported devices and will override webkit-playsinline.
-* pause_callback: Default is null.  A function can be specified to call up on the video pausing.
-* play_callback: Default is null.  A function can be specified to call up on the video ending.
-* reload: Default is false.  Phluant's video framework destroys the video instance by default.  Setting reload to true will override this.
-* style.xx: Any native JavaScript styling attribute can be utilized.
-
-Additional Notes:
-
-* The video tag will take on the height and width of the parent container by default, so be sure these are set properly!  The default z-index is 5000.  These values can be overwritten, along with any other styling attributes inserted as needed.
-* Be sure to utilize the ```dojo.videoPlaying``` boolean if using a click function call, as this will ensure the video isn't called multiple times.
-* Standard HTML video events are emitted on the returned video element.  Additionally, custom quartile events will be emitted on the returned video element for 25%, 50%, and 75% watched (events are 'quartile25', 'quartile50', 'quartile75')
+**shouldPlayOnExpand**  
+Type: Boolean  
+Sets whether video should autoplay on expand (true will autoplay on expand, false will not)
 
 Example:
 
+```html
+<video id="video-1" src='video.mp4'></video>
 ```
-<div id="video_container"></div>
-<script>
-var container = dojo.gid('video_container');
-var videoElement;
-container.addEventListener('click', function(){
-	if(!dojo.videoPlaying){
-		videoElement = dojo.video({
-			'video_url': 'videos/somevideo.mp4',
-			'container_id': video_container,
-			'aspect_ratio': '16:9',
-			'attributes':{
-				'controls': true,
-				'inline': true
-			},
-			'style':{
-				'zIndex': 50000
-			}
-		});
-	}
-});
 
-// To add listeners:
-videoElement.addEventListener('play', function(){...})
-</script>
+```javascript
+dojo.video('video-1', true);
+// Adds trackers to video, sets to auto-play on expand
+```
+
+*OR*
+
+```javascript
+dojo.video(document.getElementById('video-1', false);
+// Adds trackers to video, will not auto-play on expand
 ```
 
 [top](#dojo-framework-library)
@@ -390,33 +352,73 @@ videoElement.addEventListener('play', function(){...})
 Phluant maintains a web based application capable of providing geolocation and weather information based on location, using Maxmind and National Weather Service resources respectively.  All lookups are done by AJAX and require the developer to specify a callback function to return the data. Please be aware the mobile data providers have a wide latitude in assigning IP addresses to users, which may return an inaccurate location.  If geocoordinates can't be obtained from the publisher and precise geocoordinates are needed, it's recommended to use the [HTML5 Geolocation Prompt](#geolocation-prompt).
 
 
-#### Geolocation *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+#### Geolocation
+
+```javascript
+dojo.geolocation(options);
+```
+
+**options**  
+Type: Object  
+Key/value pairs to set options
+
+- **callback**  
+  Type: Function  
+  The callback function to use after geolocation.  __Required__
+- **data**  
+  Type: Object  
+  Key/value pairs to set geolocation types, values
+    - **type**  
+    Type: String
+    Type of geolocation - one of 'dma', 'postal_code', 'geo_by_address', 'address_by_geo', 'city_postal_by_geo', 'weather', 'ip_address'.  __Optional__, default is 'ip_address' if not specified.
+    - **subtype**  
+    Type: String
+    Required only for certain geolocation types - see below examples.
+    - **value**  
+    Type: String  
+    Corresponding value of that specific call type.  Varies based on the geolocation type.
 
 Geolocation Lookup Methods:
+* [IP Address (default)](#ip-address)
+* [Postal Code (US and Canadian only)](#postal-code)
+* [DMA](#dma)
+* [Coordinates(Lat/Long) by Address](#coordinates-by-address)
+* [Address by Coordinates (Lat/Long)](#address-by-coordinates)
+* [City/Postal Code by Coordinates (Lat/Long)](#city-by-coordinates)
+* [Weather](#weather)
 
-* IP Address (default)
-* Postal Code (US and Canadian only)
-* City/Postal by Geo
-
-IP Address code example:
-```
-<script>
+##### IP Address
+```javascript
 function geoReturn(data){
-	console.log(data);
+	// some function using data
 }
-
+// data type and value is not needed for geocoding by IP address
 dojo.geolocation({
 	'callback': geoReturn,
 });
-</script>
+
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
+{ 
+  "info": XMLHttpRequest,
+  "results": { 
+    city:"Seattle",
+    country:"US",
+    dma_code:819,
+    lat:47.61,
+    lng:-122.35,
+    postal_code:98121,
+    state_region:"Washington"
+  },
+  "status":"success"
+}
 ```
 
-Postal Code Example:
+##### Postal Code
 
-```
-<script>
+```javascript
 function geoReturn(data){
-	console.log(data);
+	// some function using data
 }
 
 dojo.geolocation({
@@ -426,13 +428,131 @@ dojo.geolocation({
 		'value': '98033'
 	}
 });
-</script>
+
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
+{ 
+  "info": XMLHttpRequest,
+  "results": { 
+    "postal_code":"98033",
+    "lat":"47.673263",
+    "lng":"-122.187029",
+    "city":"Kirkland",
+    "state_region":"WA",
+    "county":"King",
+    "country":"US"
+  },
+  "status":"success"
+}
 ```
 
-City/Postal by Geo Example:
+##### DMA
+```javascript
+function geoReturn(data){
+	// some function using data
+}
+// data type and value is not needed for geocoding by IP address
+dojo.geolocation({
+    'callback': geoReturn,
+    'data': {
+        'type': 'dma',
+        'value': '819' // DMA code number
+    }
+});
 
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
+{
+  "status":"success",
+  "results":{
+    "id":168,
+    "dma_code":"819",
+    "region_name":"Seattle-Tacoma, WA",
+    "lng":-121.842,
+    "lat":47.6212,
+    "adperc":"21.3",
+    "tvperc":"93.8",
+    "cableperc":"72.8"
+  },
+  "info":{}
+}
 ```
-<script>
+
+##### Coordinates by Address
+
+```javascript
+function geoReturn(data){
+	// some function using data
+}
+
+dojo.geolocation({
+	'callback': geoReturn,
+	'data': {
+		'type': 'geo_by_address',
+		'value': '500 Yale Ave N, Seattle, WA 98109'
+	}
+});
+
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
+{ 
+  "info": XMLHttpRequest,
+  "results":{
+    "street_number":"500",
+    "route":"Yale Ave N",
+    "neighborhood":"SLU",
+    "locality":"Seattle",
+    "administrative_area_level_2":"King County",
+    "administrative_area_level_1":"WA",
+    "country":"US",
+    "postal_code":"98109",
+    "postal_code_suffix":"5680",
+    "lat":47.6233544,
+    "lng":-122.3301121
+  },
+  "status":"success"
+}
+```
+
+##### Address by Coordinates
+
+```javascript
+function geoReturn(data){
+	// some function using data
+}
+
+dojo.geolocation({
+	'callback': geoReturn,
+	'data': {
+		'type': 'address_by_geo',
+		'value': '47.6233544, -122.3301121'
+	}
+});
+
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
+{ 
+  "info": XMLHttpRequest,
+  "results":{
+    "street_number":"500",
+    "route":"Yale Ave N",
+    "neighborhood":"SLU",
+    "locality":"Seattle",
+    "administrative_area_level_2":"King County",
+    "administrative_area_level_1":"WA",
+    "country":"US",
+    "postal_code":"98109",
+    "postal_code_suffix":"5680",
+    "lat":47.6233544,
+    "lng":-122.3301121
+  },
+  "status":"success"
+}
+```
+
+##### City by Coordinates
+
+```javascript
 function geoReturn(data){
 	console.log(data);
 }
@@ -444,20 +564,26 @@ dojo.geolocation({
 		'value': '47.6727,-122.1873'
 	}
 });
-</script>
+
+// Response Object
+// Note that not all values are available in all circumstances.  Results will not include items that are not available
+{ 
+  "info": XMLHttpRequest,
+  "results":{
+    "id":3535,
+    "country":"US",
+    "state_region":"WA",
+    "city":"Kirkland",
+    "postal_code":"98033",
+    "lat":47.6815,
+    "lng":-122.209,
+    "dma_code":"819",
+    "area_code":"425",
+    "distance":1
+  },
+  "status":"success"
+}
 ```
-
-All geolocation lookup methods return the following data:
-
-* data.results.country: The abbreviated country.
-* data.results.state_region: The abbreviated state, province, or region.
-* data.results.city: The full city name.
-* data.results.lat: The centralized reported latitude of the postal code.
-* data.results.lon: The centralized reported longitude of the postal code.
-* data.results.dma_code:  The DMA code for the user’s current location.
-* data.results.area_code:  The prevailing area code for the user’s current location.  This has no correlation to the user’s actual area code.
-
-_For a comprehensive address lookup, please see the [Google Maps Geocoding](#geocoding) function._
 
 #### Weather
 
@@ -469,27 +595,24 @@ Weather Lookup Methods:
 
 Weather by IP Example:
 
-```
-<script>
+```javascript
 function weatherReturn(data){
 	console.log(data);
 }
 
 //The data.end spec defines the range of the weather data returned in hours or days, to a maximum of 14 days.  If the default of 1 day is desired, this step can be omitted.
 dojo.geolocation({
-	'callback': geoReturn,
+	'callback': weatherReturn,
 	'data': {
 		'type': 'weather',
 		'end': '3 days',
 	}
 });
-</script>
 ```
 
 Weather by Postal Code Example:
 
-```
-<script>
+```javascript
 function weatherReturn(data){
 	console.log(data);
 }
@@ -504,13 +627,11 @@ dojo.geolocation({
 		'end': '3 days'
 	}
 });
-</script>
 ```
 
 Weather by Geolocation Example:
 
-```
-<script>
+```javascript
 function weatherReturn(data){
 	console.log(data);
 }
@@ -525,231 +646,180 @@ dojo.geolocation({
 		'end': '3 days',
 	}
 });
-</script>
 ```
 
+*Response Example (Shortened)*
 
-The weather data returned can vary based on custom input values.  The start_value_time and end_value_time attributes, if included, are in W3C format. An example response is provided below:
+```javascript
+{
+  "status":"success",
+  "info":  XMLHttpRequest,
+  "results":
+  {
+    "city":"Boston",
+    "state_region":"MA",
+    "postal_code":"02108",
+    "lat":"42.353806",
+    "lng":"-71.102446",
+    "nws_xml":"http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?lat=42.353806&lon=-71.102446&product=time-series&begin=2016-3-25T00:00:00&end=2016-3-26T23:59:59&Unit=e&maxt=maxt&mint=mint&temp=temp&pop12=pop12&qpf=qpf&rh=rh&sky=sky&wspd=wspd&wdir=wdir&wx=wx&icons=icons",
+    "nws_page":"http://forecast.weather.gov/MapClick.php?textField1=42.35&textField2=-71.10",
+    "data": {
+      "icon":
+        [{
+          "value":"http://forecast.weather.gov/images/wtf/nbkn.jpg",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"http://forecast.weather.gov/images/wtf/nra20.jpg",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "weather_conditions":
+        [{
+          "value":"",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"chance light rain showers none ",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "maximum_temp":
+        [{
+          "value":"55&deg;F",
+          "start_valid_time":"2016-03-25T08:00:00-04:00",
+          "end_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"64&deg;F",
+          "start_valid_time":"2016-03-31T08:00:00-04:00",
+          "end_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "minimum_temp":
+        [{
+          "value":"36&deg;F",
+          "start_valid_time":"2016-03-25T20:00:00-04:00",
+          "end_valid_time":"2016-03-26T09:00:00-04:00"
+        },
+        ...
+        {
+          "value":"40&deg;F",
+          "start_valid_time":"2016-03-30T20:00:00-04:00",
+          "end_valid_time":"2016-03-31T09:00:00-04:00"
+        }],
+      "hourly_temp":
+        [{
+          "value":"52&deg;F",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"57&deg;F",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "precipitation":
+        [{
+          "value":"0.06 inches",
+          "start_valid_time":"2016-03-25T14:00:00-04:00",
+          "end_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"0.00 inches",
+          "start_valid_time":"2016-03-27T14:00:00-04:00",
+          "end_valid_time":"2016-03-27T20:00:00-04:00"
+        }],
+      "cloud_cover":
+        [{
+          "value":"81%",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"60%",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "12_hour_precip_prob":
+        [{
+          "value":"81%",
+          "start_valid_time":"2016-03-25T08:00:00-04:00",
+          "end_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"24%",
+          "start_valid_time":"2016-03-31T08:00:00-04:00",
+          "end_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "humidity":
+        [{
+          "value":"83%",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+        "value":"64%",
+        "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "wind_speed":
+        [{
+          "value":"5.75 MPH",
+          "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"14.96 MPH",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }],
+      "wind_dir":
+        [{
+        "value":"NW",
+        "start_valid_time":"2016-03-25T20:00:00-04:00"
+        },
+        ...
+        {
+          "value":"SSW",
+          "start_valid_time":"2016-03-31T20:00:00-04:00"
+        }]
+      },
+      "timestamp":1458945013,
+      "forecast_length":"1 days"
+    }
+  }
+}
+```
 
-* data.status: the overall outcome of the query.  Is success or error.
-* data.msg: An occasional message may appear if a particular outcome occurs.
-* data.results city: The full city name.
-* data.results.state_region: The abbreviated state, province, or region.
-* data.results.postal_code: The postal code of the user’s location.
-* data.results.lat: The centralized reported latitude of the postal code.
-* data.results.lng: The centralized reported longitude of the postal code.
-* data.results.nws_xml: The URL for the original NWS XML output.
-* data.results.nws_page: The URL for a human friendly NWS weather report page.
-* data.results.data.icon:  An array of weather icon images provided by the NWS.  Within each result contains the value, which is a hyperlink to the image, and start_valid_time.
-* data.results.data.weather_conditions: An array of the weather conditions summary.  Within reach result contains the value, which is a human readable summary of the weather, and start_valid_time.
-* data.results.data.maximum_temp: An array of the maximum daytime temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
-* data.results.data.minimum_temp: An array of the minimum daytime temperatures in fahrenheit. Within reach result contains the value, along with start_valid_time and end_valid_time.
-* data.results.data.hourly_temp: An array of the hourly temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
-* data.results.data.precipitation:  An array of the expected levels of precipitation in inches.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.clould_cover:  An array of the expected cloud cover levels in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.12_hour_precip_prob:  An array of the likeliness of precipitation in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.humidity:  An array of the humidity in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.wind_dir:  An array of the wind directions at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
-* data.results.data.wind_speed:  An array of the wind speed at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
+Explanation For Weather-Specific Items
+* nws_xml: The URL for the original NWS XML output.
+* nws_page: The URL for a human friendly NWS weather report page.
+* data.icon:  An array of weather icon images provided by the NWS.  Within each result contains the value, which is a hyperlink to the image, and start_valid_time.
+* data.weather_conditions: An array of the weather conditions summary.  Within reach result contains the value, which is a human readable summary of the weather, and start_valid_time.
+* data.maximum_temp: An array of the maximum daytime temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
+* data.minimum_temp: An array of the minimum daytime temperatures in fahrenheit. Within reach result contains the value, along with start_valid_time and end_valid_time.
+* data.hourly_temp: An array of the hourly temperatures in fahrenheit. Within reach result contains the value, start_valid_time and end_valid_time.
+* data.precipitation:  An array of the expected levels of precipitation in inches.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.clould_cover:  An array of the expected cloud cover levels in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.12_hour_precip_prob:  An array of the likeliness of precipitation in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.humidity:  An array of the humidity in percentage.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.wind_dir:  An array of the wind directions at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
+* data.wind_speed:  An array of the wind speed at specified time periods.  Within reach result contains the value, start_valid_time, and end_valid_time.
 
 [top](#dojo-framework-library)
 
 ---
 
-### Store Locator API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### Store Locator API Call
 
-This function provides certain clients the ability to pull store location information information for various ads, namely to display the closest number of stores in relation to the user.  If your campaign has been set up with this feature, this API call will work for you.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.
-
-Lookup Methods:
-
-* IP address (default)
-* Lat/lng
-* Postal Code
-
-Required Specs:
-
-* callback - the callback function.
-* data.campaign_id - the campaign ID assigned by Phluant.
-
-
-Optional Specs:
-
-* data.limit - the limit on the number of stores.  Default is 3.
-* data.dist - the limit on the maximum radius distance in miles.  Default is 30.
-* data.subtype - specify as geo or postal_code.
-* data.value - if subtype is declared, use this spec to declare the value.
-
-Store Location by IP Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Distance and limit are shown as an example and can be omitted if satisfied with default values
-dojo.get_stores({
-	'callback': storeReturn,
-	'data': {
-		'campaign_id': 9999,
-		'limit': 3,
-		'dist': 30
-	}
-});
-</script>
-```
-
-Store Location by Geo Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Distance and limit are shown as an example and can be omitted if satisfied with default values.  Subtype and value must be specified for a geolocation lookup.
-dojo.get_stores({
-	'callback': storeReturn,
-	'data': {
-		'campaign_id': 9999,
-		'limit': 3,
-		'dist': 30,
-		'subtype': 'geo',
-		'value': '47.676308399999996,-122.20762579999999'
-	}
-});
-</script>
-```
-
-Store Location by Postal Code Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Distance and limit are shown as an example and can be omitted if satisfied with default values.  Subtype and value must be specified for a geolocation lookup.
-dojo.get_stores({
-	'callback': storeReturn,
-	'data': {
-		'campaign_id': 9999,
-		'limit': 3,
-		'dist': 30,
-		'subtype': 'postal_code',
-		'value': '98033'
-	}
-});
-</script>
-```
+*Removed in version 1.0.0*
 
 [top](#dojo-framework-library)
 
 ---
 
-### ShopLocal API Call *Legacy functionality scheduled to be removed in dojo.js version 1.0.0*
+### ShopLocal API Call
 
-Because Phluant has an established relationship with ShopLocal, we are already set up to aggregate ShopLocal data to our ads. Any Phluant client with an established ShopLocal campaign can utilize this function to call in relevant ShopLocal store and category data.  Store and category data can be looked up all at once or separately.  All lookups are done by AJAX and require the developer to specify a callback function to return the data.  All data is returned in JavaScript object format.
-
-Lookup Methods:
-
-* IP address (default)
-* Lat/lng
-* Postal Code
-
-Required Specs:
-
-* callback - the callback function.
-* data.campaignid - the campaign ID assigned by ShopLocal.  This is NOT the same campaign ID assigned by Phluant.
-* data.company - the company name assigned by ShopLocal.
-
-
-Optional Specs:
-
-* data.subtype - For obtaining the user's location if an IP based lookup isn't desired.  Specify as geo or postal_code if desired.
-* data.value - Set to applicable value if data.suptype is geo or postal_code.
-* data.call_type - default is store.  While any number of different categories can potentially work, only retailertag has been fully tested with our system.  Separate multiple call types with a comma.  This spec will override the default.
-* data.<category>ids - Used in conjunction with retailertag or any other category, and is required if the related category is set.  Separate multiple category id's with a comma.
-* data.storeid - Used to look up categories from a specified store.  Please be aware that this value isn't necessary if the stores are being looked up along with a category, as the first store in the query result will override this value.
-* listingcount - Default is 50.
-* listingimagewidth - Default is 90.
-* resultset - Default is full.
-* sortby - Default is 6.
-* data.pd - Used for some ShopLocal campaigns to override any date restrictions for development purposes.  This is a value assigned by ShopLocal.
-* data.name_flag - If set, the system will watch out for any store name containing this value and remove it from the results.
-
-ShopLocal by IP Example:
-
-```
-<script>
-function ShopLocalReturn(data){
-	console.log(data);
-}
-
-//Optional values are shown as an example and can be omitted if satisfied with defaults.
-dojo.ShopLocal({
-	'callback': storeReturn,
-	'data': {
-		'campaignid': 'abc123def456',
-		'company': 'ABC, Inc.',
-		'call_type': 'store,retailertag',
-		'retailertagids': '2334'
-	}
-});
-</script>
-```
-
-ShopLocal by Geo Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocation lookup.
-dojo.shoplocal({
-	'callback': storeReturn,
-	'data': {
-		'campaignid': 'abc123def456',
-		'company': 'ABC, Inc.',
-		'call_type': 'store,retailertag',
-		'retailertagids': '2334',
-		'subtype': 'geo',
-		'value': 'value': '47.676308399999996,-122.20762579999999'
-	}
-});
-</script>
-```
-
-ShopLocal by Postal Code Example:
-
-```
-<script>
-function storeReturn(data){
-	console.log(data);
-}
-
-//Optional values are shown as an example and can be omitted if satisfied with defaults.  Subtype and value must be specified for a geolocation lookup.
-dojo.shoplocal({
-	'callback': storeReturn,
-	'data': {
-		'campaignid': 'abc123def456',
-		'company': 'ABC, Inc.',
-		'call_type': 'store,retailertag',
-		'retailertagids': '2334'
-		'subtype': 'postal_code',
-		'value': 'value': '98033'
-	}
-});
-</script>
-```
-
-* The bulk of all store related data can be found in data.stores.results.collection.data.  Multiple locations may exist.
-* The bulk of all category data, using retailertag as an example, can be found in data.retailertag.xxxx.results.collection[0][0].
-* If an IP address or geolocation was used to calculate the user's address, the results will be returned.  The data can be found in data.user_info.results.
-
-*Because ShopLocal return data can vary and this library is still in beta, we working on expanding the return data samples.*
+*Removed in version 1.0.0*
 
 [top](#dojo-framework-library)
 
