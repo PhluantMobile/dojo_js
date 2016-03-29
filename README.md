@@ -116,7 +116,7 @@ dojo.init({
 });
 ```
 
-_Required for all expandable ads, interstitial/banner ads that need close funcitonality, and any ad that will run in MRAID._
+_Required for all expandable ads, interstitial/banner ads that need close functionality, and any ad that will run in MRAID._
 
 [top](#dojo-framework-library)
 
@@ -309,10 +309,6 @@ boots.addEventListener('click', function(){
 
 *Legacy functionality updated in dojo.js version 1.0.0*
 
-This function adds standard event tracking to any ad utilizing HTML5 video, and also allows the video to auto-play on expand and stop on contract.  This adds tracking for play, pause, quartiles (25%, 50%, 75%), ended, seeked, and volumechange.
-
-Returns the HTML5 video element.
-
 ```javascript
 dojo.video(videoElement, shouldPlayOnExpand);
 ```
@@ -324,6 +320,10 @@ String with ID of ```<video>``` tag, or actual video element
 **shouldPlayOnExpand**  
 Type: Boolean  
 Sets whether video should autoplay on expand (true will autoplay on expand, false will not)
+
+This function adds standard event tracking to any ad utilizing HTML5 video, and also allows the video to auto-play on expand and stop on contract.  This adds tracking for play, pause, quartiles (25%, 50%, 75%), ended, seeked, and volumechange.
+
+Returns the HTML5 video element.
 
 Example:
 
@@ -587,6 +587,35 @@ dojo.geolocation({
 
 #### Weather
 
+Weather
+
+```javascript
+dojo.geolocation(options);
+```
+
+**options**  
+Type: Object  
+Key/value pairs to set options
+
+- **callback**  
+  Type: Function  
+  The callback function to use after weather forecast retrieval.  __Required__
+- **data**  
+  Type: Object  
+  Key/value pairs to set geolocation types, values
+    - **type**  
+    Type: String
+    Should always be 'weather' for weather lookup
+    - **subtype**  
+    Type: String
+    Should be 'ip_address', 'postal_code' or 'geo'.  Optional - defaults to 'ip_address' if not specified.
+    - **value**  
+    Type: String  
+    Location value corresponding to subtype, see below for examples.
+    - **end**  
+    Type: String  
+    String containing the number of days desired, maximum 14 days worth of weather data can be collected.  Optional - default is one day if not specified.
+
 Weather Lookup Methods:
 
 * IP address (default)
@@ -827,18 +856,25 @@ Explanation For Weather-Specific Items
 
 ### Geolocation Prompt
 
+```javascript
+dojo.geolocation_prompt( settings );
+```
+
+**settings**  
+Type: Object  
+Key/value pairs to set options.
+
+- **callback**  
+  Type: Function  
+  Callback function that is executed when an expanded ad is contracted.  __Required__ for any expandable ad running on MRAID.
+- **failover**  
+  Type: Boolean  
+  Set to true for the system to fail over to the Geolocation lookup by IP.
+
 The function provides a means to prompt the user for their geo-coordinates.  A callback function must be included to receive the results, which are returned as a JavaScript object if the user approves, or a false boolean if the user declines.  The developer can optionally specify to use the [Geolocation IP lookup](#geolocation) as a failover and specify a failover callback.
 
-Required Specs:
-* callback - The callback function.
-
-Optional Specs:
-* failover - Set to true for the system to fail over to the Geolocation IP lookup.
-
 Example:
-```
-<script>
-
+```javascript
 function geoPromptReturn(data){
 	console.log(data);
 }
@@ -849,7 +885,12 @@ dojo.geolocation_prompt({
 	'failover': true,
 });
 
-</script>
+// Result Object
+{ 
+  lat: 47.6205063,
+  lng: -122.3514661
+}
+
 ```
 
 [top](#dojo-framework-library)
@@ -858,7 +899,7 @@ dojo.geolocation_prompt({
 
 ### Google Maps
 
-The following functions give a simplified method to utilize the Google Maps JavaScript API.  At present, both the geocoding and map drawing functions are supported.  Both features require the Google Maps JavaScript reference placed before the PCF reference, be it in the head or inline.  A callback function is also required. Example Google Maps JavaScript reference:
+The following functions give a simplified method to utilize the Google Maps JavaScript API.  At present, both the geocoding and map drawing functions are supported.  Both features require the Google Maps JavaScript reference placed before the dojo.js reference, be it in the head or inline.  A callback function is also required. Example Google Maps JavaScript reference:
 
 ```
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
@@ -866,22 +907,35 @@ The following functions give a simplified method to utilize the Google Maps Java
 
 #### Geocoding
 
+```javascript
+dojo.gmaps_geo(options);
+```
+
+**options**  
+Type: Object  
+Key/value pairs to set options
+
+- **callback**  
+  Type: Function  
+  The callback function to use after location retrieval.  __Required__
+- **loc_type**  
+  Type: String
+  Should be 'address' for geocoding (get lat/long from address), 'geo' for reverse geocoding (get address from lat/long).  Defaults to 'address' if not specified.
+- **address**  
+  Type: Object  
+  Full or partial address, city/state, postal code for 'address' type, comma separated lat/lng values for 'geo' type
+- **failover**  
+  Type: Boolean
+  If set to true, will try alternative geocoding method if google geocoding does not work.
+- **failover_callback**  
+  Type: Function  
+  Function to run if failover method successfully resolves geolocation
+
 Returns Google Maps API information on a location.  May be a full or partial address, city/state, postal code, lat/lng values, etc. Specifying Phluant's [Geolocation](#geolocation) services as a failover is optional, and the system will detect to use the IP, Postal Code, or Lat/Lng lookup based on address format.  If the failover is not specified and Google doesn't return any data, a false boolean will be returned to the callback.
 
-Required Specs:
-* address - Full or partial address, city/state, postal code, lat/lng values, etc.
-* callback - The callback function.
+Geocoding example:
 
-Optional Specs:
-* failover - Default is false.  The system will determine which method to use based on the address qualities.
-* loc_type - Default is address.  If set to geo, the library will do a reverse geocode so long as the address is set as lat,lng.  Google limits the number of reverse geocodes to 5 per page onload event, so use sparingly.
-* failover_callback - If a different callback from the regular failover is desired.  Be aware that if this value isn't specified and failover is set to true, the failover data will be returned to the regular callback function.
-
-Example:
-
-```
-<script>
-
+```javascript
 function gmapsReturn(data){
 	console.log(data);
 }
@@ -890,13 +944,88 @@ function geoReturn(data){
 	console.log(data);
 }
 
+//
+// Geocode
+//
 dojo.gmaps_geo({
 	'address': '98033',
 	'callback': gmapsReturn,
 	'failover': true,
 	'failover_callback': geoReturn
 });
-</script>
+
+//
+// Reverse Geocode
+//
+dojo.gmaps_geo({
+	'loc_type': 'geo',
+	'address': '47.6903285, -122.3552972',
+	'callback': gmapsReturn,
+	'failover': true,
+	'failover_callback': geoReturn
+});
+
+//
+// Example Result (same for either method)
+// 
+
+{
+  {
+    "address_components":
+    [
+      { "long_name":"98033",
+        "short_name":"98033",
+        "types":["postal_code"]
+      },
+      { "long_name":"Kirkland",
+        "short_name":"Kirkland",
+        "types":["locality",
+        "political"]
+      },
+      {"long_name":"King County",
+        "short_name":"King County",
+        "types":["administrative_area_level_2",
+        "political"]
+      },
+      { "long_name":"Washington",
+        "short_name":"WA",
+        "types":["administrative_area_level_1",
+        "political"]
+      },
+      { "long_name":"United States",
+        "short_name":"US",
+        "types":["country",
+        "political"]
+      }
+    ],
+    "formatted_address":"Kirkland,WA 98033,USA",
+    "geometry":
+    {
+      "bounds":
+      { 
+        "south":47.6419889,
+        "west":-122.23183499999999,
+        "north":47.704279,
+        "east":-122.15385500000002
+      },
+      "location":
+      {
+        "lat":47.6688298,
+        "lng":-122.1923875
+      },
+      "location_type":"APPROXIMATE",
+      "viewport":
+      {
+        "south":47.6419889,
+        "west":-122.23183499999999,
+        "north":47.704279,
+        "east":-122.15385500000002
+      }
+    },
+    "place_id":"ChIJT0vJX8ASkFQRvIA-Y7fEgIc",
+    "types":["postal_code"]
+  }
+}
 ```
 
 For more information, please visit the about the [Google Maps Geocoder API page](https://developers.google.com/maps/documentation/javascript/geocoding).
@@ -905,6 +1034,53 @@ _Per Google's API policy, this function is only to be used when populating a Goo
 
 #### Map Draw
 
+**options**  
+Type: Object  
+Key/value pairs to set options
+
+- **map_id**  
+  Type: String  
+  The element ID for the map.  __Required__
+- **center_lat**  
+  Type: Number
+  Latitude for the map's central location.  __Required__
+- **center_lng**  
+  Type: Number  
+  Longitude for the map's central location.  __Required__
+- **map_zoom**  
+  Type: Number
+  Yhe zoom level of the map. Optional - a bounding box is generated from the markers by default.
+- **user_lat**  
+  Type: Number  
+  Latitude for the user's location.  Required only for the default Google Maps clickthrough.
+- **user_lng**  
+  Type: Number  
+  Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+- **markers**  
+  Type: Array  
+  Array of Marker Objects
+    **Marker Object**
+    - **events**  
+    Type: Number  
+    Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+    - **lat**  
+    Type: Number  
+    Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+    - **lng**  
+    Type: Number  
+    Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+    - **clickthru**  
+    Type: Object  
+    Key/value pairs to set options
+      - **name**  
+      Type: Number  
+      Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+      - **url**  
+      Type: Number  
+      Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+      - **callback**  
+      Type: Number  
+      Longitude for the user's location.  Required only for the default Google Maps clickthrough.
 Uses relevant data to draw out a Google Map in a specified element.
 
 Required specs:
