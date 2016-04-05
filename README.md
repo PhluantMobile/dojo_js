@@ -1059,65 +1059,45 @@ Key/value pairs to set options
 - **markers**  
   Type: Array  
   Array of Marker Objects
-    **Marker Object**
-    - **events**  
-    Type: Number  
-    Longitude for the user's location.  Required only for the default Google Maps clickthrough.
-    - **lat**  
-    Type: Number  
-    Longitude for the user's location.  Required only for the default Google Maps clickthrough.
-    - **lng**  
-    Type: Number  
-    Longitude for the user's location.  Required only for the default Google Maps clickthrough.
-    - **clickthru**  
-    Type: Object  
-    Key/value pairs to set options
-      - **name**  
-      Type: Number  
-      Longitude for the user's location.  Required only for the default Google Maps clickthrough.
-      - **url**  
-      Type: Number  
-      Longitude for the user's location.  Required only for the default Google Maps clickthrough.
-      - **callback**  
-      Type: Number  
-      Longitude for the user's location.  Required only for the default Google Maps clickthrough.
+
+**Marker Object**
+- **events**  
+  Type: Object
+  An object that has event names for keys and callback functions for values.
+- **lat**  
+  Type: Number  
+  Latitude for the marker location.
+- **lng**  
+  Type: Number  
+  Longitude for the marker location.
+- **clickthru**  
+  Type: Object  
+  Key/value pairs to set options
+  - **name**  
+    Type: String  
+    Name of clickthrough for reporting
+  - **url**  
+    Type: String  
+    Landing page url.  Will override default Google Maps link.
+  - **callback**  
+    Type: Function  
+    Optional callback function which will run before the clickthrough.
+
 Uses relevant data to draw out a Google Map in a specified element.
 
-Required specs:
-
-* map_id - the element ID for the map.
-* center_lat - the latitude for the map's central location.
-* center_lng - the longitude for the map's central location.
-
-Optional specs:
-
-* map_zoom - the zoom level of the map. A bounding box is generated from the markers by default.
-* user_lat - the latitude for the user's location.  Required for the default Google Maps clickthrough.
-* user_lat - the longitude for the user's location.  Required for the default Google Maps clickthrough.
-* markers - an object containing relevant information for any desired markers.
-	* markers[i].events - an object that has event names for keys and callback functions for values.
-	* markers[i].lat - the latitude of the desired marker.  Required for marker to be set.
-	* markers[i].lng - the longitude of the desired marker.  Required for marker to be set.
-	* markers[i].clickthru - an object containing relevant information for any marker to be a clickthrough.  Default is a Google Maps hyperlink using the original lat/lng values as the start point and the lat/lng values as the end point
-		* markers[i].clickthru.name - the name of the clickthrough, used for reporting.  Essentially the same functionality as a standard clickthrough.
-		* markers[i].clickthru.url - An optional URL value that will override the default Google Maps link.
-		* markers[i].clickthru.callback - An optional callback function that will call up custom code before the clickthrough is run.
-	* The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers).
+* The Map Draw function supports all of the optional marker specifications.  For more detailed information,  please visit the [Google Maps Marker API page](https://developers.google.com/maps/documentation/javascript/markers).
 
 Example:
 
-```
-<div id="google_map"></div>
-<script>
-var google_map = dojo.gid('google_map');
+```javascript
 var mapOptions = {
-	'lat': 47.676308399999996,
-	'lng': -122.20762579999999,
-	'map_id': google_map,
+	'center_lat': 47.676308399999996,
+	'center_lng': -122.20762579999999,
+	'map_id': 'google_map',
 	'map_zoom': 10,
 	'markers': [],
 }
-//Pretend the data variable is an object that contains store information.
+// Assume the data variable is an object that contains location information.
 for(var i in data.results){
 	var numAdd = eval(i+1);
 	mapOptions.markers.push({
@@ -1126,12 +1106,12 @@ for(var i in data.results){
 		'title': data.results[i].name,
 		'zIndex': numAdd,
 		'clickthru': {
-			'name': 'GoogleMaps'
+			'name': 'GoogleMaps',
+			'url': 'http://phluant.com',
 		}
 	});
 }
 dojo.gmaps_draw(mapOptions);
-</script>
 ```
 
 [top](#dojo-framework-library)
