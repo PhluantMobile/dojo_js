@@ -8,19 +8,19 @@
 		iosVersion: null,
 		isMobile: {
 		    Android: function() {
-		        return navigator.userAgent.match(/Android/i);
+		        return !!navigator.userAgent.match(/Android/i);
 		    },
 		    BlackBerry: function() {
-		        return navigator.userAgent.match(/BlackBerry/i);
+		        return !!navigator.userAgent.match(/BlackBerry/i);
 		    },
 		    iOS: function() {
-		        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+		        return !!navigator.userAgent.match(/iPhone|iPad|iPod/i);
 		    },
 		    Opera: function() {
-		        return navigator.userAgent.match(/Opera Mini/i);
+		        return !!navigator.userAgent.match(/Opera Mini/i);
 		    },
 		    Windows: function() {
-		        return navigator.userAgent.match(/IEMobile/i);
+		        return !!navigator.userAgent.match(/IEMobile/i);
 		    },
 		    any: function() {
 		        return (this.Android() || this.BlackBerry() || this.iOS() || this.Opera() || this.Windows());
@@ -459,16 +459,16 @@
 				window.clearInterval(self.pageTimeInterval);
 			}
 		},
-		query_string: function(jsonConvert){
+		query_string: function(shouldStringify){
 			var url = window.location.href;
 			if(url.indexOf('?') !== -1){
 				var urlObj = {};
 				var params = url.split('?')[1].split('&');
 				for(var i=0; i<params.length; i++){
 					var result = params[i].split('=');
-					urlObj[result[0]] = decodeURIComponent(result[1]);
+					urlObj[decodeURIComponent(result[0])] = decodeURIComponent(result[1]);
 				}
-				if(jsonConvert){
+				if(shouldStringify){
 					urlObj = JSON.stringify(urlObj);
 				}
 				return urlObj;
