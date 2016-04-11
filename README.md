@@ -34,7 +34,7 @@ The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's cli
 * [Phone Number Validation](#phone-number-validation)
 * [Zip Code Validation](#zip-code-validation)
 
-###### Geolocation
+###### Geolocation Functionality
 
 * [All geolocation and weather API calls to Phluant's resources](#geolocationweather-api-calls)
 	* [Geolocation](#geolocation)
@@ -113,13 +113,13 @@ Key/value pairs to set init options.
 
 - **init**  
   Type: Function  
-  The initialization callback function for an ad.  __Required__ for any ad running on MRAID.  Recommended in all cases.
+  The initialization callback function for an ad.  *Required* for any ad running on MRAID.  Recommended in all cases.
 - **callback**  
   Type: Function  
-  Callback function that is executed when an expanded ad is contracted.  __Required__ for any expandable ad running on MRAID.  Recommended in all cases.
+  Callback function that is executed when an expanded ad is contracted.  *Required* for any expandable ad running on MRAID.  Recommended in all cases.
 - **expanded**  
   Type: Boolean  
-  Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only required for interstitial ads.
+  Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only *required* for interstitial ads.
 - **useCustomClose**  
   Type: Boolean  
   Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
@@ -235,14 +235,14 @@ Key/value pairs to set clickthru options.
   A name to describe the clickthrough (for reporting purposes only).  Recommended in all cases.
 - **url**  
   Type: String  
-  The landing page URL.  Required.
+  The landing page URL.  *Required*
 - **prepend**  
   Type: String  
-  A click prepend to be added in front of the URL, usually used for third party click tracking.  Completely optional.
+  A click prepend to be added in front of the URL, usually used for third party click tracking.  *Optional*
 
 **silent**  
 Type: Boolean  
-If true, will not log the clickthrough URL as a developer event.  Optional.
+If true, will not log the clickthrough URL as a developer event.  *Optional*
 
 
 This function ensures any user initiated clickthrough is recorded in DOJO (if served through DOJO), and will open the destination URI in either a new browser tab (mobile web) or in the mobile app's web view (in-app / MRAID).  For assets running outside of our ad serving network, the reporting name will be logged to the console.
@@ -348,7 +348,7 @@ dojo.video(videoElement, shouldPlayOnExpand);
 ```
 
 **videoElement**  
-Type: String or Video Element
+Type: String or Video Element  
 String with ID of ```<video>``` tag, or actual video element
 
 **shouldPlayOnExpand**  
@@ -389,7 +389,7 @@ dojo.video(document.getElementById('video-1', false);
 
 **url**  
 Type: String  
-Image URL  __Required__
+Image URL  *Required*
 
 This function provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-requests) function.
 
@@ -415,30 +415,30 @@ Key/value pairs to set options
 
 - **url**  
   Type: String  
-  AJAX request endpoint  __Required__
+  AJAX request endpoint  *Required*
 - **callback**  
-  Type: Function
-  Function to call after ajax request (both successful and unsuccessful) __Suggested__
+  Type: Function  
+  Function to call after ajax request (both successful and unsuccessful) *Suggested*
 - **yql**  
-  Type: Object
+  Type: Object  
   Indicates if Yahoo Query Language (YQL) should be used
   - **format**  
-    Type: String
+    Type: String  
     Sets expected return format for data, can be 'xml' or 'json'
 - **data**  
-  Type: Object
+  Type: Object  
   An object of key/value pairs needed to complete the request
 - **method**  
-  Type: String
+  Type: String  
   HTTP method ('GET' or 'POST'), defaults to 'GET'
 - **js_return**  
-  Type: Boolean
+  Type: Boolean  
   Set to true if JSON or XML return data is expected, defaults to false
 - **timeout**  
-  Type: Number
+  Type: Number  
   Set request timeout (in milliseconds), defaults to 10000 milliseconds (10 seconds)
 - **async**  
-  Type: Boolean
+  Type: Boolean  
   Set whether AJAX calls should be performed asynchronously, default is true
 
 Sends AJAX request, GET and POST requests are supported.  Using Yahoo Query Language (YQL) is also supported for enhanced CORS capabilities.  If expected return data is JSON or XML, data is converted into a JavaScript object.
@@ -526,9 +526,9 @@ Example:
  dojo.query_string(shouldStringify);
 ```
 
-**shouldStringify**
-Type: Boolean
-Set to true to return a string, otherwise a JS object is returned  __Optional__
+**shouldStringify**  
+Type: Boolean  
+Set to true to return a string, otherwise a JS object is returned  *Optional*
 
 This function detects and returns any query string keys and values as a JavaScript object.  Returned as a JS object by default, or optionally as a string.  Returns false if no query string is detected.
 
@@ -555,9 +555,9 @@ This function detects and returns any query string keys and values as a JavaScri
  dojo.capitalize(string);
 ```
 
-**string**
-Type: String
-String to capitalize  __Required__
+**string**  
+Type: String  
+String to capitalize  *Required*
 
 This function returns a capitalized version of a word or string.
 
@@ -577,9 +577,9 @@ console.log(dojo.capitalize('jordan')); // 'Jordan'
  dojo.valid_email(email_address);
 ```
 
-**email_address**
-Type: String
-Email address to check  __Required__
+**email_address**  
+Type: String  
+Email address to check  *Required*
 
 This function checks for a valid email format.
 
@@ -603,9 +603,9 @@ console.log(dojo.valid_email('onetwothree'));
 dojo.valid_phone(phone_number);
 ```
 
-**phone_number**
-Type: String
-Phone number address to check  __Required__
+**phone_number**  
+Type: String  
+Phone number address to check  *Required*
 
 This function checks for a valid North American 10 digit phone number.  It will automatically strip out any non-numeric characters.
 
@@ -629,9 +629,9 @@ console.log(dojo.valid_phone('2-4-6'));
 dojo.valid_zip(zip);
 ```
 
-**zip**
-Type: String
-Zip code to check  __Required__
+**zip**  
+Type: String  
+Zip code to check  *Required*
 
 This function checks for a valid US zip code, with both 5 digit and hyphenated 9 digit formats supported.
 
@@ -669,15 +669,15 @@ Key/value pairs to set options
 
 - **callback**  
   Type: Function  
-  The callback function to use after geolocation.  __Required__
+  The callback function to use after geolocation.  *Required*
 - **data**  
   Type: Object  
   Key/value pairs to set geolocation types, values
     - **type**  
-    Type: String
-    Type of geolocation - one of 'dma', 'postal_code', 'geo_by_address', 'address_by_geo', 'city_postal_by_geo', 'weather', 'ip_address'.  __Optional__, default is 'ip_address' if not specified.
+    Type: String  
+    Type of geolocation - one of 'dma', 'postal_code', 'geo_by_address', 'address_by_geo', 'city_postal_by_geo', 'weather', 'ip_address'.  *Optional*, default is 'ip_address' if not specified.
     - **subtype**  
-    Type: String
+    Type: String  
     Required only for certain geolocation types - see below examples.
     - **value**  
     Type: String  
@@ -892,8 +892,6 @@ dojo.geolocation({
 
 #### Weather
 
-Weather
-
 ```javascript
 dojo.geolocation(options);
 ```
@@ -904,22 +902,22 @@ Key/value pairs to set options
 
 - **callback**  
   Type: Function  
-  The callback function to use after weather forecast retrieval.  __Required__
+  The callback function to use after weather forecast retrieval.  *Required*
 - **data**  
   Type: Object  
   Key/value pairs to set geolocation types, values
     - **type**  
-    Type: String
+    Type: String  
     Should always be 'weather' for weather lookup
     - **subtype**  
-    Type: String
-    Should be 'ip_address', 'postal_code' or 'geo'.  Optional - defaults to 'ip_address' if not specified.
+    Type: String  
+    Should be 'ip_address', 'postal_code' or 'geo'.  *Optional*, defaults to 'ip_address' if not specified.
     - **value**  
     Type: String  
     Location value corresponding to subtype, see below for examples.
     - **end**  
     Type: String  
-    String containing the number of days desired, maximum 14 days worth of weather data can be collected.  Optional - default is one day if not specified.
+    String containing the number of days desired, maximum 14 days worth of weather data can be collected.  *Optional*, default is one day if not specified.
 
 Weather Lookup Methods:
 
@@ -1155,7 +1153,7 @@ Key/value pairs to set options.
 
 - **callback**  
   Type: Function  
-  Callback function that is executed when an expanded ad is contracted.  __Required__ for any expandable ad running on MRAID.
+  Callback function that is executed when an expanded ad is contracted.  *Required* for any expandable ad running on MRAID.
 - **failover**  
   Type: Boolean  
   Set to true for the system to fail over to the Geolocation lookup by IP.
@@ -1206,7 +1204,7 @@ Key/value pairs to set options
 
 - **callback**  
   Type: Function  
-  The callback function to use after location retrieval.  __Required__
+  The callback function to use after location retrieval.  *Required*
 - **loc_type**  
   Type: String
   Should be 'address' for geocoding (get lat/long from address), 'geo' for reverse geocoding (get address from lat/long).  Defaults to 'address' if not specified.
@@ -1333,16 +1331,16 @@ Key/value pairs to set options
 
 - **map_id**  
   Type: String  
-  The element ID for the map.  __Required__
+  The element ID for the map.  *Required*
 - **center_lat**  
-  Type: Number
-  Latitude for the map's central location.  __Required__
+  Type: Number  
+  Latitude for the map's central location.  *Required*
 - **center_lng**  
   Type: Number  
-  Longitude for the map's central location.  __Required__
+  Longitude for the map's central location.  *Required*
 - **map_zoom**  
-  Type: Number
-  Yhe zoom level of the map. Optional - a bounding box is generated from the markers by default.
+  Type: Number  
+  The zoom level of the map. *Optional*, a bounding box is generated from the markers by default.
 - **user_lat**  
   Type: Number  
   Latitude for the user's location.  Required only for the default Google Maps clickthrough.
@@ -1355,7 +1353,7 @@ Key/value pairs to set options
 
 **Marker Object**
 - **events**  
-  Type: Object
+  Type: Object  
   An object that has event names for keys and callback functions for values.
 - **lat**  
   Type: Number  
@@ -1374,7 +1372,7 @@ Key/value pairs to set options
     Landing page url.  Will override default Google Maps link.
   - **callback**  
     Type: Function  
-    Optional callback function which will run before the clickthrough.
+    *Optional* callback function which will run before the clickthrough.
 
 Uses relevant data to draw out a Google Map in a specified element.
 
