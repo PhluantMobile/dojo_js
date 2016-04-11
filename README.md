@@ -2,32 +2,50 @@
 
 The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's clients in developing their rich media campaign assets.  The concept of the framework is to provide our clients with a code base that works both inside and outside of our Dojo ad serving network, which will substantially reduce the amount of time needed to launch a rich media campaign.  It also provides a number of core features that are very common in the rich media campaigns we run.  It is written in pure JavaScript, so all core features will work independently of jQuery or any other JavaScript framework library.  Some features may require supporting libraries (i.e. Google Maps) and will be indicated as such in the documentation.  The feature list is below.
 
+* [How To Use](#how-to-use)
+
+###### Legacy Functionality
+
 * [Element ID referencing](#element-id-referencing)
+* [Store locator API call](#store-locator-api-call)
+* [ShopLocal API call](#shoplocal-api-call)
+
+###### Basic Functionality and MRAID
+
 * [Initialization](#initialization)
-* [Automatic MRAID detection and handling](#initialization)
 * [Expand](#expand)
 * [Contract](#contract)
 * [Clickthru](#clickthru)
+
+###### Tracking
+
 * [Custom trackers](#custom-trackers)
 * [HTML5 video](#html5-video)
-* [All geolocation and weather API calls to Phluant's resources](#geolocationweather-api-calls)
-	* [Geolocation](#geolocation)
-	* [Weather](#weather)
-* [HTML5 geolocation prompt with optional IP lookup as a fallback](#geolocation-prompt)
-* [Store locator API call](#store-locator-api-call)
-* [ShopLocal API call](#shoplocal-api-call)
-* [Google Maps](#google-maps)
-	* [Geocoding](#geocoding)
-	* [Map Draw](#map-draw)
-* [Standard AJAX Requests](#standard-ajax-requests)
 * [Image Tracker](#image-tracker)
-* [Mobile and platform specific detection](#)
+
+###### Utility
+
+* [Standard AJAX Requests](#standard-ajax-requests)
+* [Mobile and platform specific detection](#mobile-and-platform-specific-detection)
 * [iOS version detection (namely for iOS 7)](#ios-version-detection)
-* [Query string detection](#query-sring-detection)
+* [Query string detection](#query-string-detection)
 * [Word Capitalization](#word-capitalization)
 * [Email Validation](#email-validation)
 * [Phone Number Validation](#phone-number-validation)
 * [Zip Code Validation](#zip-code-validation)
+
+###### Geolocation
+
+* [All geolocation and weather API calls to Phluant's resources](#geolocationweather-api-calls)
+	* [Geolocation](#geolocation)
+	* [Weather](#weather)
+* [HTML5 geolocation prompt with optional IP lookup as a fallback](#geolocation-prompt)
+* [Google Maps](#google-maps)
+	* [Geocoding](#geocoding)
+	* [Map Draw](#map-draw)
+
+###### Support and Contributing
+
 * [Technical Support](#technical-support)
 * [Contributing and Testing](#contributing-and-testing)
 
@@ -62,6 +80,22 @@ Specific releases can be used by appending "-{MAJOR}.{MINOR}.{PATCH}". For examp
 ```javascript
 document.getElementById( elementId );
 ```
+
+[top](#dojo-framework-library)
+
+---
+
+### Store Locator API Call
+
+*Removed in version 1.0.0*
+
+[top](#dojo-framework-library)
+
+---
+
+### ShopLocal API Call
+
+*Removed in version 1.0.0*
 
 [top](#dojo-framework-library)
 
@@ -341,6 +375,277 @@ dojo.video('video-1', true);
 ```javascript
 dojo.video(document.getElementById('video-1', false);
 // Adds trackers to video, will not auto-play on expand
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Image tracker
+
+```javascript
+ dojo.image_tracker(url);
+```
+
+**url**  
+Type: String  
+Image URL  __Required__
+
+This function provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-requests) function.
+
+Example:
+
+```javascript
+ dojo.image_tracker('http://somesite.com/1x1_image_gif');
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Standard AJAX Requests
+
+```javascript
+ dojo.ajax(options);
+```
+
+**options**  
+Type: Object  
+Key/value pairs to set options
+
+- **url**  
+  Type: String  
+  AJAX request endpoint  __Required__
+- **callback**  
+  Type: Function
+  Function to call after ajax request (both successful and unsuccessful) __Suggested__
+- **yql**  
+  Type: Object
+  Indicates if Yahoo Query Language (YQL) should be used
+  - **format**  
+    Type: String
+    Sets expected return format for data, can be 'xml' or 'json'
+- **data**  
+  Type: Object
+  An object of key/value pairs needed to complete the request
+- **method**  
+  Type: String
+  HTTP method ('GET' or 'POST'), defaults to 'GET'
+- **js_return**  
+  Type: Boolean
+  Set to true if JSON or XML return data is expected, defaults to false
+- **timeout**  
+  Type: Number
+  Set request timeout (in milliseconds), defaults to 10000 milliseconds (10 seconds)
+- **async**  
+  Type: Boolean
+  Set whether AJAX calls should be performed asynchronously, default is true
+
+Sends AJAX request, GET and POST requests are supported.  Using Yahoo Query Language (YQL) is also supported for enhanced CORS capabilities.  If expected return data is JSON or XML, data is converted into a JavaScript object.
+
+Phluant is not responsible for ensuring cross-domain access or any other accessibility issue concerning a non-Phluant AJAX source.
+
+Example:
+
+```javascript
+ function ajaxReturn(data){ console.log(data); }
+
+ dojo.ajax({
+ 	'url': 'http://somesite.com/get/some/data',
+	'yql': { 'format': 'xml' },
+ 	'callback': ajaxReturn,
+ 	'js_return': 'true',
+ 	'method': 'GET',
+ 	'timeout': 5000,
+ 	'data': {
+ 		'foo': 'bar',
+ 		'getmy': 'data',
+  },
+  'async': 'true'
+ });
+
+ // Response
+
+ { 
+  "status":"success",
+  "results": {...}, // Response data
+  "info": XMLHttpRequest
+ }
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Mobile and Platform Specific Detection
+
+```javascript
+ dojo.isMobile.Android();
+ dojo.isMobile.Blackberry();
+ dojo.isMobile.iOS();
+ dojo.isMobile.Opera();
+ dojo.isMobile.Windows();
+ dojo.isMobile.any();
+```
+
+These functions will detect if a mobile/tablet device is being used, and the device type.  It can detect Android, Blackberry, iOS, Opera Mini, Windows Mobile, or can detect if the user is using any of the above.  Returns true or false (Boolean).
+
+Example:
+
+```javascript
+ console.log(dojo.isMobile.Android());  // true
+
+ console.log(dojo.isMobile.Blackberry());  // false
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### iOS version detection
+
+```javascript
+ dojo.iosVersion;
+```
+
+This variable provides a method to detect what iOS version, if any, is being run.  Returns the numerical version if an iOS version is detected, otherwise returns 0.
+
+Example:
+
+```javascript
+ console.log(dojo.iosVersion); // 8.2
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Query String Detection
+
+```javascript
+ dojo.query_string(shouldStringify);
+```
+
+**shouldStringify**
+Type: Boolean
+Set to true to return a string, otherwise a JS object is returned  __Optional__
+
+This function detects and returns any query string keys and values as a JavaScript object.  Returned as a JS object by default, or optionally as a string.  Returns false if no query string is detected.
+
+```javascript
+ // http://somesite.com/index.html?foo=bar&getmy=data
+ 
+ console.log(dojo.query_string());
+ // {
+ //  foo: "bar", 
+ //  getmy: "data"
+ // }
+
+ console.log(dojo.query_string(true));
+ // '{"foo":"bar","getmy":"data"}'
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Word Capitalization
+
+```javascript
+ dojo.capitalize(string);
+```
+
+**string**
+Type: String
+String to capitalize  __Required__
+
+This function returns a capitalized version of a word or string.
+
+Example:
+
+```javascript
+console.log(dojo.capitalize('jordan')); // 'Jordan'
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Email Validation
+
+```javascript
+ dojo.valid_email(email_address);
+```
+
+**email_address**
+Type: String
+Email address to check  __Required__
+
+This function checks for a valid email format.
+
+Example:
+
+```javascript
+console.log(dojo.valid_email('somebody@somesite.com'));
+// true
+
+console.log(dojo.valid_email('onetwothree'));
+// false
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Phone Number Validation
+
+```javascript
+dojo.valid_phone(phone_number);
+```
+
+**phone_number**
+Type: String
+Phone number address to check  __Required__
+
+This function checks for a valid North American 10 digit phone number.  It will automatically strip out any non-numeric characters.
+
+Example:
+
+```javascript
+console.log(dojo.valid_phone('555-555-5555'));
+// true
+
+console.log(dojo.valid_phone('2-4-6'));
+// false
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Zip Code Validation
+
+```javascript
+dojo.valid_zip(zip);
+```
+
+**zip**
+Type: String
+Zip code to check  __Required__
+
+This function checks for a valid US zip code, with both 5 digit and hyphenated 9 digit formats supported.
+
+Example:
+
+```javascript
+console.log(dojo.valid_zip('98034'));
+// true
+
+console.log(dojo.valid_zip('98034-1234'));
+// true
+
+console.log(dojo.valid_zip('9803'));
+// false
 ```
 
 [top](#dojo-framework-library)
@@ -838,22 +1143,6 @@ Explanation For Weather-Specific Items
 
 ---
 
-### Store Locator API Call
-
-*Removed in version 1.0.0*
-
-[top](#dojo-framework-library)
-
----
-
-### ShopLocal API Call
-
-*Removed in version 1.0.0*
-
-[top](#dojo-framework-library)
-
----
-
 ### Geolocation Prompt
 
 ```javascript
@@ -1116,277 +1405,6 @@ for(var i in data.results){
 	});
 }
 dojo.gmaps_draw(mapOptions);
-```
-
-[top](#dojo-framework-library)
-
----
-
-### Standard AJAX Requests
-
-```javascript
- dojo.ajax(options);
-```
-
-**options**  
-Type: Object  
-Key/value pairs to set options
-
-- **url**  
-  Type: String  
-  AJAX request endpoint  __Required__
-- **callback**  
-  Type: Function
-  Function to call after ajax request (both successful and unsuccessful) __Suggested__
-- **yql**  
-  Type: Object
-  Indicates if Yahoo Query Language (YQL) should be used
-  - **format**  
-    Type: String
-    Sets expected return format for data, can be 'xml' or 'json'
-- **data**  
-  Type: Object
-  An object of key/value pairs needed to complete the request
-- **method**  
-  Type: String
-  HTTP method ('GET' or 'POST'), defaults to 'GET'
-- **js_return**  
-  Type: Boolean
-  Set to true if JSON or XML return data is expected, defaults to false
-- **timeout**  
-  Type: Number
-  Set request timeout (in milliseconds), defaults to 10000 milliseconds (10 seconds)
-- **async**  
-  Type: Boolean
-  Set whether AJAX calls should be performed asynchronously, default is true
-
-Sends AJAX request, GET and POST requests are supported.  Using Yahoo Query Language (YQL) is also supported for enhanced CORS capabilities.  If expected return data is JSON or XML, data is converted into a JavaScript object.
-
-Phluant is not responsible for ensuring cross-domain access or any other accessibility issue concerning a non-Phluant AJAX source.
-
-Example:
-
-```javascript
- function ajaxReturn(data){ console.log(data); }
-
- dojo.ajax({
- 	'url': 'http://somesite.com/get/some/data',
-	'yql': { 'format': 'xml' },
- 	'callback': ajaxReturn,
- 	'js_return': 'true',
- 	'method': 'GET',
- 	'timeout': 5000,
- 	'data': {
- 		'foo': 'bar',
- 		'getmy': 'data',
-  },
-  'async': 'true'
- });
-
- // Response
-
- { 
-  "status":"success",
-  "results": {...}, // Response data
-  "info": XMLHttpRequest
- }
-```
-
-[top](#dojo-framework-library)
-
- ---
-
-### Image tracker
-
-```javascript
- dojo.image_tracker(url);
-```
-
-**url**  
-Type: String  
-Image URL  __Required__
-
-This function provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-requests) function.
-
-Example:
-
-```javascript
- dojo.image_tracker('http://somesite.com/1x1_image_gif');
-```
-
-[top](#dojo-framework-library)
-
- ---
-
-### Mobile and Platform Specific Detection
-
-```javascript
- dojo.isMobile.Android();
- dojo.isMobile.Blackberry();
- dojo.isMobile.iOS();
- dojo.isMobile.Opera();
- dojo.isMobile.Windows();
- dojo.isMobile.any();
-```
-
-These functions will detect if a mobile/tablet device is being used, and the device type.  It can detect Android, Blackberry, iOS, Opera Mini, Windows Mobile, or can detect if the user is using any of the above.  Returns true or false (Boolean).
-
-Example:
-
-```javascript
- console.log(dojo.isMobile.Android());  // true
-
- console.log(dojo.isMobile.Blackberry());  // false
-```
-
-[top](#dojo-framework-library)
-
----
-
-### iOS version detection
-
-```javascript
- dojo.iosVersion;
-```
-
-This variable provides a method to detect what iOS version, if any, is being run.  Returns the numerical version if an iOS version is detected, otherwise returns 0.
-
-Example:
-
-```javascript
- console.log(dojo.iosVersion); // 8.2
-```
-
-[top](#dojo-framework-library)
-
----
-
-### Query String Detection
-
-```javascript
- dojo.query_string(shouldStringify);
-```
-
-**shouldStringify**
-Type: Boolean
-Set to true to return a string, otherwise a JS object is returned  __Optional__
-
-This function detects and returns any query string keys and values as a JavaScript object.  Returned as a JS object by default, or optionally as a string.  Returns false if no query string is detected.
-
-```javascript
- // http://somesite.com/index.html?foo=bar&getmy=data
- 
- console.log(dojo.query_string());
- // {
- //  foo: "bar", 
- //  getmy: "data"
- // }
-
- console.log(dojo.query_string(true));
- // '{"foo":"bar","getmy":"data"}'
-```
-
-[top](#dojo-framework-library)
-
----
-
-### Word Capitalization
-
-```javascript
- dojo.capitalize(string);
-```
-
-**string**
-Type: String
-String to capitalize  __Required__
-
-This function returns a capitalized version of a word or string.
-
-Example:
-
-```javascript
-console.log(dojo.capitalize('jordan')); // 'Jordan'
-```
-
-[top](#dojo-framework-library)
-
----
-
-### Email Validation
-
-```javascript
- dojo.valid_email(email_address);
-```
-
-**email_address**
-Type: String
-Email address to check  __Required__
-
-This function checks for a valid email format.
-
-Example:
-
-```javascript
-console.log(dojo.valid_email('somebody@somesite.com'));
-// true
-
-console.log(dojo.valid_email('onetwothree'));
-// false
-```
-
-[top](#dojo-framework-library)
-
----
-
-### Phone Number Validation
-
-```javascript
-dojo.valid_phone(phone_number);
-```
-
-**phone_number**
-Type: String
-Phone number address to check  __Required__
-
-This function checks for a valid North American 10 digit phone number.  It will automatically strip out any non-numeric characters.
-
-Example:
-
-```javascript
-console.log(dojo.valid_phone('555-555-5555'));
-// true
-
-console.log(dojo.valid_phone('2-4-6'));
-// false
-```
-
-[top](#dojo-framework-library)
-
----
-
-### Zip Code Validation
-
-```javascript
-dojo.valid_zip(zip);
-```
-
-**zip**
-Type: String
-Zip code to check  __Required__
-
-This function checks for a valid US zip code, with both 5 digit and hyphenated 9 digit formats supported.
-
-Example:
-
-```javascript
-console.log(dojo.valid_zip('98034'));
-// true
-
-console.log(dojo.valid_zip('98034-1234'));
-// true
-
-console.log(dojo.valid_zip('9803'));
-// false
 ```
 
 [top](#dojo-framework-library)
