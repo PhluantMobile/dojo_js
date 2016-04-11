@@ -1,26 +1,26 @@
-/*Dojo.js Framework v0.5.2 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v1.0.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '0.5.2',
+		version: '1.0.0',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
 		iosVersion: null,
 		isMobile: {
 		    Android: function() {
-		        return navigator.userAgent.match(/Android/i);
+		        return !!navigator.userAgent.match(/Android/i);
 		    },
 		    BlackBerry: function() {
-		        return navigator.userAgent.match(/BlackBerry/i);
+		        return !!navigator.userAgent.match(/BlackBerry/i);
 		    },
 		    iOS: function() {
-		        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+		        return !!navigator.userAgent.match(/iPhone|iPad|iPod/i);
 		    },
 		    Opera: function() {
-		        return navigator.userAgent.match(/Opera Mini/i);
+		        return !!navigator.userAgent.match(/Opera Mini/i);
 		    },
 		    Windows: function() {
-		        return navigator.userAgent.match(/IEMobile/i);
+		        return !!navigator.userAgent.match(/IEMobile/i);
 		    },
 		    any: function() {
 		        return (this.Android() || this.BlackBerry() || this.iOS() || this.Opera() || this.Windows());
@@ -102,17 +102,15 @@
 						if(typeof(vars.js_return) !== 'undefined' && vars.js_return){
 							resp = ajaxRequest.getResponseHeader("Content-Type").indexOf('xml') !== -1 ? self.xmlToObject(resp, true): JSON.parse(resp);
 						}
-						if(useYQL){
-							resp = {
-								'status': 'success',
-								'results': resp,
-								'info': ajaxRequest,
-							};
+						var callbackVars = {
+							'status': 'success',
+						  'results': resp,
+						  'info': ajaxRequest
+						};
+						if (useYQL && resp.query.count <= 0 && !resp.query.results) {
+							callbackVars.status = 'No YQL Results';
 						}
-						vars.callback({'status': 'success',
-													 'results': resp,
-													 'info': ajaxRequest,
-													});
+						vars.callback(callbackVars);
 					}
 					else if(ajaxRequest.readyState === 4){
 						window.clearTimeout(ajaxTimeout);
@@ -137,7 +135,8 @@
 		clickthru: function(vars, silent){
 			var tagParams = this.getTagParams();
 			var prepend = tagParams.ClickPrependURL || tagParams.prependclickcontent;
-			prepend = prepend && decodeURIComponent(prepend) || vars.prepend;
+			prepend = vars.prepend || prepend && decodeURIComponent(prepend);
+			prepend = /^https?\:\/\/.*$/.test(prepend) ? prepend : false;
 
 			this.dojo_track({'type': 'click','key': vars.name,});
 
@@ -218,11 +217,16 @@
 			this.pageTime(true);
 		},
 		geolocation: function(vars){
+			function runCallback(d) {
+				d.status = d.results.status ? d.results.status : d.status;
+				d.results = d.results.results ? d.results.results : d.results;
+				vars.callback(d);
+			}
 			var varsExport = {
 				'url': this.webServiceUrl+'geolocation/export',
 				'method': 'GET',
-				'callback': vars.callback,
-				'js_object': true,
+				'callback': runCallback,
+				'js_return': true,
 			};
 			if(typeof(vars.data) !== 'undefined'){
 				varsExport.data = vars.data;
@@ -321,6 +325,7 @@
 	    	});
 	    }
 	    if (vars.map_zoom === undefined) { map.fitBounds(bounds); }
+	    return map;
 		},
 		/* TODO: remove the fallback callback and normalize the return data for callback */
 		gmaps_geo: function(vars){
@@ -335,14 +340,16 @@
 				var coords = vars.address.split(',');
 				opts.latLng = new google.maps.LatLng(coords[0], coords[1]);
 			}
-			else { opts.address = encodeURIComponent(vars.address); }
+			else { opts.address = vars.address; }
 
 			this.geocoder.geocode(opts, function(results, status) {
 				dojo.gmaps_return(results, status, vars);
 			});
 		},
 		gmaps_return: function(results, status, vars){
-			if (status === google.maps.GeocoderStatus.OK) { return vars.callback(results); }
+			if (status === google.maps.GeocoderStatus.OK) {
+				return vars.callback(results[0]);
+			}
 			else if (vars.failover) {
 				var opts = {
 					data: {value: vars.address},
@@ -353,7 +360,7 @@
 				   Also, shouldn't this be done inside the geolocation function? */
 				if (this.valid_zip(vars.address)) { opts.data.type =  'postal_code'; }
 				else if (this.valid_geo(vars.address)) { opts.data.type =  'city_postal_by_geo'; }
-				else { return console.error('invalid address'); }
+				else { return console.error("Fallback dojo.geolocate method won't work for address call"); }
 
 				this.geolocation(opts);
 			}
@@ -372,7 +379,7 @@
 	    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
-			this.initMraid.bind(this, function(){
+			this.initMraid(function(){
 				if (self.isMraid) { self.configMraid(); }
 				if (self.isMraid && !self.winLoaded) {
 					/* mraid failed to fire the load event, so we have to do it manually */
@@ -452,16 +459,16 @@
 				window.clearInterval(self.pageTimeInterval);
 			}
 		},
-		query_string: function(jsonConvert){
+		query_string: function(shouldStringify){
 			var url = window.location.href;
 			if(url.indexOf('?') !== -1){
 				var urlObj = {};
 				var params = url.split('?')[1].split('&');
 				for(var i=0; i<params.length; i++){
 					var result = params[i].split('=');
-					urlObj[result[0]] = decodeURIComponent(result[1]);
+					urlObj[decodeURIComponent(result[0])] = decodeURIComponent(result[1]);
 				}
-				if(jsonConvert){
+				if(shouldStringify){
 					urlObj = JSON.stringify(urlObj);
 				}
 				return urlObj;
@@ -506,7 +513,7 @@
 			else {
 				var url = this.dojoUrl+'rmstat?pl='+this.pl+'&adunit='+this.unitID+'&type='+encodeURIComponent(vars.type)+'&key='+encodeURIComponent(vars.key)+'&time='+Date.now();
 				if (typeof global_ad_id1[0] !== 'undefined') {
-					g_ad = global_ad_id1[0];
+					var g_ad = global_ad_id1[0];
 					if (g_ad.user_prefs) { url += '&user_prefs=' + g_ad.user_prefs; }
 					if (g_ad.idfa) { url += '&idfa=' + g_ad.idfa; }
 					if (g_ad.location.lat) { url += '&lat=' + g_ad.location.lat; }
@@ -520,20 +527,22 @@
 	        return filter.test(email);
 	    },
 		valid_geo: function(geoTest){
-			var passed = true;
-			geoTest = geoTest.split(',');
-			if(typeof(geoTest) === 'object'){
-				for(var i=0; i<geoTest.length; i++){
-					if(isNaN(geoTest[i])){
-						passed = false;
-						break;
-					}
+			try {
+				geoTest = geoTest.split(',');
+				if (geoTest.length === 2) {
+					return (parseFloat(geoTest[0]) >= -90 &&
+						      parseFloat(geoTest[0]) <= 90 &&
+								  parseFloat(geoTest[1]) >= -180 &&
+								  parseFloat(geoTest[1]) <= 180) &&
+									/^\-?[0-9]*\.?[0-9]*$/.test(geoTest[0].replace(' ','')) &&
+									/^\-?[0-9]*\.?[0-9]*$/.test(geoTest[1].replace(' ',''));
+
+				} else {
+					return false;
 				}
+			} catch(e) {
+				return false;
 			}
-			else{
-				passed = false;
-			}
-			return passed;
 		},
 		valid_phone: function(phone_num){
 		    if(phone_num){
@@ -657,7 +666,7 @@
 		for (var k = 0; k < scripts.length; k++){
 		  var scriptSrc = scripts[k].src;
 		  if(scriptSrc.indexOf('dojo.phluant.com') !== -1){
-		    scriptSrc = scriptSrc.replace('http://dojo.phluant.com/adj/', '');
+		    scriptSrc = scriptSrc.replace(/https?\:\/\/(staging\.)?dojo\.phluant\.com\/adj\//, '');
 		    scriptSrc = scriptSrc.split('/');
 		    dojo.pl = scriptSrc[0];
 		    break;
