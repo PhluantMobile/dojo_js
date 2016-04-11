@@ -29,6 +29,8 @@ The Dojo Framework (dojo) Library is a framework for use by Phluant Mobile's cli
 * [Mobile and platform specific detection](#mobile-and-platform-specific-detection)
 * [iOS version detection (namely for iOS 7)](#ios-version-detection)
 * [Query string detection](#query-string-detection)
+* [Get Ad Tag Parameters](#get-tag-parameters)
+* [Rounding](#rounding)
 * [Word Capitalization](#word-capitalization)
 * [Email Validation](#email-validation)
 * [Phone Number Validation](#phone-number-validation)
@@ -543,6 +545,65 @@ This function detects and returns any query string keys and values as a JavaScri
 
  console.log(dojo.query_string(true));
  // '{"foo":"bar","getmy":"data"}'
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Get Tag Parameters
+
+```javascript
+ dojo.getTagParams();
+```
+
+This function pulls any URL parameters included in the ad script tag.  Returns a JavaScript object.
+
+```html
+<script language="JavaScript1.1" src="http://dojo.phluant.com/adj/abcd1234efgh5678/abr=!ie;sz=320x50;ord=95176234?t=1&idfa=ABCD52E7-03EE-455A-B3C4-E57283966239&AppID=com.devuni.flashlight&lat=47.7041&long=-122.3277&trackingpixelurl=http%3A%2F%2Fexample.com%2Fpixel.jpg&ClickPrependURL=http%3A%2F%2Fclick.example.com%2Fabc123%3Fredirect%3D"></script>
+
+<script>
+console.log(dojo.getTagParams());
+
+// Result:
+// {
+// 	"t":"1",
+// 	"idfa":"ABCD52E7-03EE-455A-B3C4-E57283966239",
+// 	"AppID":"com.devuni.flashlight",
+// 	"lat":"47.7041",
+// 	"long":"-122.3277",
+// 	"trackingpixelurl":"http%3A%2F%2Fexample.com%2Fpixel.jpg",
+// 	"ClickPrependURL":"http%3A%2F%2Fclick.example.com%2Fabc123%3Fredirect%3D"
+// }
+</script>
+```
+
+[top](#dojo-framework-library)
+
+---
+
+### Rounding
+
+```javascript
+ dojo.roundIt(num, decimalPlaces);
+```
+
+**num**  
+Type: Number  
+Number you would like to round  *Required*
+
+**decimalPlaces**  
+Type: Number  
+Number of decimals to round to.  *Optional*, defaults to zero decimals
+
+This function rounds a number to a specified decimal place.  A negative value may also be used for the decimal places to round to the neares ten, hundred, thousand, etc.
+
+```javascript
+dojo.roundIt(7447.7822, 1);
+// returns 7447.8
+
+dojo.roundIt(7447.7822, -2);
+// returns 7400
 ```
 
 [top](#dojo-framework-library)
