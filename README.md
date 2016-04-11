@@ -41,7 +41,7 @@ For the latest stable release use:
 http://mdn4.phluantmobile.net/jslib/dojo/dojo.min.js (production)
 or http://mdn4.phluantmobile.net/jslib/dojo/dojo.js (development)
 
-*However, we recommend that you __specify the version number__ in order to ensure stability.  As of March 2016, the most up to date version is 1.0.0.  Please check __releases__ for the most up-to-date version.*
+*However, we recommend that you __specify the version number__ in order to ensure stability.  As of April 2016, the most up to date version is 1.0.0.  Please check __releases__ for the most up-to-date version.*
 
 Specific releases can be used by appending "-{MAJOR}.{MINOR}.{PATCH}". For example:
 
@@ -1034,6 +1034,10 @@ _Per Google's API policy, this function is only to be used when populating a Goo
 
 #### Map Draw
 
+```javascript
+dojo.gmaps_draw(options);
+```
+
 **options**  
 Type: Object  
 Key/value pairs to set options
@@ -1120,46 +1124,72 @@ dojo.gmaps_draw(mapOptions);
 
 ### Standard AJAX Requests
 
-This function allows for AJAX requests.  Both GET and POST requests are supported.  Using Yahoo Query Language (YQL) is also supported for enhanced CORS capabilities.  If the expected return data is in 100% JSON or XML format, instructions can be passed to convert the data into a JavaScript object.  Using a callback function is optional, but will be necessary to use the response data. Unless explicitly specified in a campaign contract, Phluant is not responsible for ensuring cross-domain access or any other accessibility issue concerning a non-Phluant AJAX source.  YQL may not resolve all cross-domain access issues.
+```javascript
+ dojo.ajax(options);
+```
 
-Required specs:
+**options**  
+Type: Object  
+Key/value pairs to set options
 
-* url - The URL the request is being made to.
+- **url**  
+  Type: String  
+  AJAX request endpoint  __Required__
+- **callback**  
+  Type: Function
+  Function to call after ajax request (both successful and unsuccessful) __Suggested__
+- **yql**  
+  Type: Object
+  Indicates if Yahoo Query Language (YQL) should be used
+  - **format**  
+    Type: String
+    Sets expected return format for data, can be 'xml' or 'json'
+- **data**  
+  Type: Object
+  An object of key/value pairs needed to complete the request
+- **method**  
+  Type: String
+  HTTP method ('GET' or 'POST'), defaults to 'GET'
+- **js_return**  
+  Type: Boolean
+  Set to true if JSON or XML return data is expected, defaults to false
+- **timeout**  
+  Type: Number
+  Set request timeout (in milliseconds), defaults to 10000 milliseconds (10 seconds)
+- **async**  
+  Type: Boolean
+  Set whether AJAX calls should be performed asynchronously, default is true
 
-Optional specs:
+Sends AJAX request, GET and POST requests are supported.  Using Yahoo Query Language (YQL) is also supported for enhanced CORS capabilities.  If expected return data is JSON or XML, data is converted into a JavaScript object.
 
-* callback - The callback function for the data.
-* yql - Default is false.  Set to either true, or list as an object to specify the format.
-	* yql.format - Default is json if yql is utilized.  Can be changed to xml or any other YQL supported format.
-* data - An object of any GET/POST key/value pairs needed to complete the request.
-* method - Default is false.  Should only be set to true if the expected return data is JSON or XML.
-* timeout - The timeout for the AJAX call.  Default is 10000 milliseconds.
-* asynch - Default is true.  Set to false for synchronous AJAX calls.
+Phluant is not responsible for ensuring cross-domain access or any other accessibility issue concerning a non-Phluant AJAX source.
 
 Example:
 
-```
-<script>
-
- function ajaxReturn(data){
- 	console.log(data);
- }
+```javascript
+ function ajaxReturn(data){ console.log(data); }
 
  dojo.ajax({
  	'url': 'http://somesite.com/get/some/data',
-	 'yql': {
-			'format': 'xml',
-		},
+	'yql': { 'format': 'xml' },
  	'callback': ajaxReturn,
- 	'json_return': 'true',
+ 	'js_return': 'true',
  	'method': 'GET',
- 	'timeout': 10000,
+ 	'timeout': 5000,
  	'data': {
  		'foo': 'bar',
  		'getmy': 'data',
- 	}
+  },
+  'async': 'true'
  });
- </script>
+
+ // Response
+
+ { 
+  "status":"success",
+  "results": {...}, // Response data
+  "info": XMLHttpRequest
+ }
 ```
 
 [top](#dojo-framework-library)
@@ -1168,14 +1198,20 @@ Example:
 
 ### Image tracker
 
- This function provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-requests) function.
+```javascript
+ dojo.image_tracker(url);
+```
+
+**url**  
+Type: String  
+Image URL  __Required__
+
+This function provides the ability to fire off 1x1 image trackers for custom events other than the initialization.  For code-based trackers, please utilize the [AJAX](#standard-ajax-requests) function.
 
 Example:
 
-```
-<script>
-dojo.image_tracker('http://somesite.com/1x1_image_gif');
-</script>
+```javascript
+ dojo.image_tracker('http://somesite.com/1x1_image_gif');
 ```
 
 [top](#dojo-framework-library)
@@ -1184,19 +1220,23 @@ dojo.image_tracker('http://somesite.com/1x1_image_gif');
 
 ### Mobile and Platform Specific Detection
 
-This set of functions provides a method to detect if a mobile/tablet device is being used, along with specific type.  It will detect Android, Blackberry, iOS, Opera Mini, Windows Mobile, or if the user is using any of the previously mentioned platforms.  Returns null if the device isn't detected.
+```javascript
+ dojo.isMobile.Android();
+ dojo.isMobile.Blackberry();
+ dojo.isMobile.iOS();
+ dojo.isMobile.Opera();
+ dojo.isMobile.Windows();
+ dojo.isMobile.any();
+```
+
+These functions will detect if a mobile/tablet device is being used, and the device type.  It can detect Android, Blackberry, iOS, Opera Mini, Windows Mobile, or can detect if the user is using any of the above.  Returns true or false (Boolean).
 
 Example:
 
-```
-<script>
-console.log(dojo.isMobile.Android());
-console.log(dojo.isMobile.Blackberry());
-console.log(dojo.isMobile.iOS());
-console.log(dojo.isMobile.Opera());
-console.log(dojo.isMobile.Windows());
-console.log(dojo.isMobile.any());
-</script>
+```javascript
+ console.log(dojo.isMobile.Android());  // true
+
+ console.log(dojo.isMobile.Blackberry());  // false
 ```
 
 [top](#dojo-framework-library)
@@ -1205,14 +1245,16 @@ console.log(dojo.isMobile.any());
 
 ### iOS version detection
 
-This variable provides a method to detect what iOS version, if any, is being run.  This is namely for iOS 7, which currently has usability issues and bugs in the Safari browser.  Returns the numerical version if an iOS version, returns 0 for all other devices.
+```javascript
+ dojo.iosVersion;
+```
+
+This variable provides a method to detect what iOS version, if any, is being run.  Returns the numerical version if an iOS version is detected, otherwise returns 0.
 
 Example:
 
-```
-<script>
-console.log(dojo.iosVersion);
-</script>
+```javascript
+ console.log(dojo.iosVersion); // 8.2
 ```
 
 [top](#dojo-framework-library)
@@ -1221,18 +1263,27 @@ console.log(dojo.iosVersion);
 
 ### Query String Detection
 
-This function detects and returns any query string keys and values as a JavaScript object.  Can be specified as JSON if desired.  It works when the URL has a standard query string format.  Returns false if no query string is detected.
-
-Example URL:  http://somesite.com/index.html?foo=bar&getmy=data.
-
-Example JavaScript:
+```javascript
+ dojo.query_string(shouldStringify);
 ```
-<script>
-var query_string = dojo.query_string();
-//If JSON format is desired
-var query_string_json = dojo.query_string(true);
-console.log(query_string);
-</script>
+
+**shouldStringify**
+Type: Boolean
+Set to true to return a string, otherwise a JS object is returned  __Optional__
+
+This function detects and returns any query string keys and values as a JavaScript object.  Returned as a JS object by default, or optionally as a string.  Returns false if no query string is detected.
+
+```javascript
+ // http://somesite.com/index.html?foo=bar&getmy=data
+ 
+ console.log(dojo.query_string());
+ // {
+ //  foo: "bar", 
+ //  getmy: "data"
+ // }
+
+ console.log(dojo.query_string(true));
+ // '{"foo":"bar","getmy":"data"}'
 ```
 
 [top](#dojo-framework-library)
@@ -1241,13 +1292,20 @@ console.log(query_string);
 
 ### Word Capitalization
 
-This function returns a capitalized version of a specified word.
+```javascript
+ dojo.capitalize(string);
+```
+
+**string**
+Type: String
+String to capitalize  __Required__
+
+This function returns a capitalized version of a word or string.
 
 Example:
-```
-<script>
-console.log(dojo.capitalize('jordan'));
-</script>
+
+```javascript
+console.log(dojo.capitalize('jordan')); // 'Jordan'
 ```
 
 [top](#dojo-framework-library)
@@ -1256,13 +1314,24 @@ console.log(dojo.capitalize('jordan'));
 
 ### Email Validation
 
-This function returns a regex result for a valid email format.
+```javascript
+ dojo.valid_email(email_address);
+```
+
+**email_address**
+Type: String
+Email address to check  __Required__
+
+This function checks for a valid email format.
 
 Example:
-```
-<script>
+
+```javascript
 console.log(dojo.valid_email('somebody@somesite.com'));
-</script>
+// true
+
+console.log(dojo.valid_email('onetwothree'));
+// false
 ```
 
 [top](#dojo-framework-library)
@@ -1271,13 +1340,24 @@ console.log(dojo.valid_email('somebody@somesite.com'));
 
 ### Phone Number Validation
 
-This function returns a regex result for a valid North American phone number.  It will automatically strip out any non-numeric characters.
+```javascript
+dojo.valid_phone(phone_number);
+```
+
+**phone_number**
+Type: String
+Phone number address to check  __Required__
+
+This function checks for a valid North American 10 digit phone number.  It will automatically strip out any non-numeric characters.
 
 Example:
-```
-<script>
+
+```javascript
 console.log(dojo.valid_phone('555-555-5555'));
-</script>
+// true
+
+console.log(dojo.valid_phone('2-4-6'));
+// false
 ```
 
 [top](#dojo-framework-library)
@@ -1286,13 +1366,27 @@ console.log(dojo.valid_phone('555-555-5555'));
 
 ### Zip Code Validation
 
-This function returns a regex result for a valid US zip code, with both 5 digit and hyphenated 9 digit formats supported.
+```javascript
+dojo.valid_zip(zip);
+```
+
+**zip**
+Type: String
+Zip code to check  __Required__
+
+This function checks for a valid US zip code, with both 5 digit and hyphenated 9 digit formats supported.
 
 Example:
-```
-<script>
+
+```javascript
 console.log(dojo.valid_zip('98034'));
-</script>
+// true
+
+console.log(dojo.valid_zip('98034-1234'));
+// true
+
+console.log(dojo.valid_zip('9803'));
+// false
 ```
 
 [top](#dojo-framework-library)
@@ -1316,4 +1410,4 @@ If you would like to contribute an improvement or a bug fix, please:
 
 ---
 
-Copyright 2014 Phluant Mobile, Inc.  All rights reserved.  This framework library is intended for use by Phluant Mobile clients for designing and developing mobile advertisements intended for eventual use in Phluant's ad serving network.  All other use is strictly prohibited.
+Copyright 2016 Phluant Mobile, Inc.  All rights reserved.  This framework library is intended for use by Phluant Mobile clients for designing and developing mobile advertisements intended for eventual use in Phluant's ad serving network.  All other use is strictly prohibited.
