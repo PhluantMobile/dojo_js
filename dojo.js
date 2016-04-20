@@ -375,7 +375,14 @@
 		},
 		init: function(vars){
 			this.closeCallback = vars.callback; // change arg name from 'callback' to make more clear
-    	this.expandedEl = document.getElementById(vars.expandedEl) || document.getElementById('expanded');
+    	if (vars.expandedEl && typeof vars.expandedEl === "string") { // passed as ID
+				this.expandedEl = document.getElementById(vars.expandedEl);
+			} else if (!vars.expandedEl) { // not passed, try searching for element w "expanded" ID
+				this.expandedEl = document.getElementById('expanded');
+			} else { // passed as element
+				this.expandedEl = vars.expandedEl;
+			}
+
 	    this.useCustomClose = vars.useCustomClose;
 
 			var self = this;
