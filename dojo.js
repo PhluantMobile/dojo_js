@@ -1,7 +1,7 @@
-/*Dojo.js Framework v1.0.0 | (c) 2014 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v1.1.0 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '1.0.0',
+		version: '1.1.0',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -161,7 +161,7 @@
       // Set mraid orientation properties back to original properties
       if (this.isMraid && this.mraidOrientationProperties) {
         try { mraid.setOrientationProperties(this.mraidOrientationProperties); }
-        catch(e) { this.log("can't reset mraid orientation properties"); }
+        catch(f) { this.log("can't reset mraid orientation properties"); }
       }
 
 			if (this.isMraid && mraid.getState() === 'expanded') { mraid.close(); }
