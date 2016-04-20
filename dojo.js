@@ -148,7 +148,7 @@
 			if (this.isMraid) { mraid.open(url); }
 			else { window.open(url, '_blank'); }
 		},
-		contract: function(){
+		contract: function(e){
 			if (!this.adIsExpanded) { return; }
 			else { this.adIsExpanded = false; }
 
@@ -175,7 +175,7 @@
 			this.track('contract');
 			this.pageTime(false);
 
-			if (this.closeCallback) { this.closeCallback(); }
+			if (this.closeCallback) { this.closeCallback(e); }
 		},
 		expand: function(width,height){
 			var self = this;

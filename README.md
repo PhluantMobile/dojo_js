@@ -118,7 +118,7 @@ Key/value pairs to set init options.
   The initialization callback function for an ad.  *Required* for any ad running on MRAID.  Recommended in all cases.
 - **callback**  
   Type: Function  
-  Callback function that is executed when an expanded ad is contracted.  *Required* for any expandable ad running on MRAID.  Recommended in all cases.
+  Callback function that is executed when an expanded ad is contracted.  If available, an Event is passed through to this function.  *Required* for any expandable ad running on MRAID.  Recommended in all cases.
 - **expanded**  
   Type: Boolean  
   Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only *required* for interstitial ads.
@@ -126,7 +126,7 @@ Key/value pairs to set init options.
   Type: Boolean  
   Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
 - **expandedEl**  
-  Type: String  
+  Type: String or HTML Element  
   ID of the element within which to add the close button.  If not included, will try to get the element with id of 'expanded'.
 
 This function initializes the framework for expandable ads and interstitial/banner ads that need close functionality.  It also initializes any MRAID specific functionality if the MRAID framework is detected.  The developer will need to ensure an appropriate callback function is designated for contracting/closing the ad.  If the callback function contains object function calls, the object must have an explicit reference.
