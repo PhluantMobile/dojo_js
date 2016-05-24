@@ -27,6 +27,7 @@
 		    }
 		},
 		isDojo: false,
+		isInterstitial: false,
 		isMraid: false,
 		winLoaded: false,
 		videoElement: null,
@@ -164,16 +165,21 @@
         catch(f) { this.log("can't reset mraid orientation properties"); }
       }
 
-			if (this.isMraid && mraid.getState() === 'expanded') { mraid.close(); }
+      this.track('contract');
+			this.pageTime(false);
+
+			if (this.isMraid) {
+				if ( mraid.getState() === 'expanded' ||
+					   (mraid.getState() === 'default' && this.isInterstitial) ) {
+					mraid.close();
+				}
+			}
 
 			if (this.iframeEl) {
 				this.iframeEl.style.width = this.iframeContractSize.x + 'px';
 				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
 			}
 			if (!this.isMraid && !this.useCustomClose) { this.removeCloseButton(); }
-
-			this.track('contract');
-			this.pageTime(false);
 
 			if (this.closeCallback) { this.closeCallback(e); }
 		},
@@ -212,7 +218,9 @@
         }
         catch(e) { this.log("can't set mraid orientation properties"); }
       }
-			this.track('expand');
+      if (!this.isInterstitial) {
+      	this.track('expand');
+      }
 			this.adIsExpanded = true;
 			this.pageTime(true);
 		},
@@ -384,6 +392,7 @@
 			}
 
 	    this.useCustomClose = vars.useCustomClose;
+	    this.isInterstitial = vars.isInterstitial;
 
 			var self = this;
 			this.initMraid(function(){
