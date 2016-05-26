@@ -121,7 +121,10 @@ Key/value pairs to set init options.
   Callback function that is executed when an expanded ad is contracted.  If available, an Event is passed through to this function.  *Required* for any expandable ad running on MRAID.  Recommended in all cases.
 - **expanded**  
   Type: Boolean  
-  Indicates if the ad begins in an expanded state.  Should be set to **true** for interstitial ads.  Only *required* for interstitial ads.
+  Indicates if the ad begins in an expanded state.  *Required* for expandable ads that start in the expanded state.
+- **isInterstitial**
+  Type: Boolean  
+  Indicates if the ad is an interstitial.  Only *required* for interstitial ads.
 - **useCustomClose**  
   Type: Boolean  
   Set to true to use your own close graphic & behavior, otherwise a default close button and click behavior will be added.
@@ -148,7 +151,8 @@ dojo.init({
 	'callback': contractAd,
 	'expanded': false,
 	'useCustomClose': false,
-	'expandedEl': 'expanded'
+	'expandedEl': 'expanded',
+	'isInterstitial': false
 });
 ```
 
