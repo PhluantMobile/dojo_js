@@ -433,9 +433,9 @@
 			if (mraid.isViewable()) { callback(); }
 			else { mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback)); }
 		},
-		onMraidViewChange: function(callback){
+		onMraidViewChange: function(callback, isItVisible){
 			this.log('viewableChange');
-			if (mraid.isViewable()) { /*TODO: don't check isViewable again*/
+			if (isItVisible) {
 				mraid.removeEventListener('viewableChange', this.onMraidViewChange);
 				callback();
 			}
