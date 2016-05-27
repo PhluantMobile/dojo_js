@@ -1,7 +1,7 @@
-/*Dojo.js Framework v1.1.1 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v1.1.2 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '1.1.1',
+		version: '1.1.2',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -48,9 +48,13 @@
 		addCloseButton: function() {
 			if (this.closeImg && this.closeImg.parentElement) { return (this.closeImg.style.display = "block"); }
 			this.closeImg = new Image();
-			this.closeImg.style.cssText = "position: absolute; right:0; top:0; width: 45px;";
+			this.closeImg.style.cssText = "position: absolute; right:0; top:0; width: 45px; z-index: 999999;";
 			this.closeImg.classList.add('close');
-			this.closeImg.addEventListener('click', this.contract.bind(this));
+			var self = this;
+			this.closeImg.addEventListener('click', function(e) {
+				e.stopPropagation();
+				self.contract.apply(self);
+			});
 			this.closeImg.src = "http://mdn4.phluantmobile.net/jslib/dojo/close.png";
 			if (this.expandedEl) { this.expandedEl.appendChild(this.closeImg); }
 		},
