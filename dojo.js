@@ -434,13 +434,13 @@
 			else { this.onMraidReady(callback); }
 		},
 		onMraidReady: function(callback){
+			mraid.removeEventListener('ready');
 			if (mraid.isViewable()) { callback(); }
 			else { mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback)); }
 		},
 		onMraidViewChange: function(callback, isItVisible){
-			this.log('viewableChange');
 			if (isItVisible) {
-				mraid.removeEventListener('viewableChange', this.onMraidViewChange);
+				mraid.removeEventListener('viewableChange');
 				callback();
 			}
 		},
