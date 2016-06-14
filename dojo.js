@@ -1,7 +1,7 @@
-/*Dojo.js Framework v1.1.2 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v1.1.3 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '1.1.2',
+		version: '1.1.3',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -434,13 +434,13 @@
 			else { this.onMraidReady(callback); }
 		},
 		onMraidReady: function(callback){
+			mraid.removeEventListener('ready');
 			if (mraid.isViewable()) { callback(); }
 			else { mraid.addEventListener('viewableChange', this.onMraidViewChange.bind(this,callback)); }
 		},
 		onMraidViewChange: function(callback, isItVisible){
-			this.log('viewableChange');
 			if (isItVisible) {
-				mraid.removeEventListener('viewableChange', this.onMraidViewChange);
+				mraid.removeEventListener('viewableChange');
 				callback();
 			}
 		},
