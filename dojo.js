@@ -1,7 +1,7 @@
-/*Dojo.js Framework v1.1.3 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v1.1.4 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '1.1.3',
+		version: '1.1.4',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -477,6 +477,7 @@
 				}, 5000);
 			} else {
 				window.clearInterval(self.pageTimeInterval);
+				self.timeTrackingEndTime = self.elapsedTime;
 			}
 		},
 		query_string: function(shouldStringify){
