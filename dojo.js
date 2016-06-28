@@ -1,7 +1,7 @@
-/*Dojo.js Framework v1.1.4 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
-(function(){
-	window.dojo = {
-		version: '1.1.4',
+/*Dojo.js Framework v2.0.0 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
+window.getDojoObject = function(){
+	var dojo = {
+		version: '2.0.0',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -725,4 +725,6 @@
 	    if (document.readyState === 'complete') { dojo.winLoaded = true; }
 	    /* TODO: maybe remove event listener */
 	}, false);
-})();
+
+	return dojo;
+};
