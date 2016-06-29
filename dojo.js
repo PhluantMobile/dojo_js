@@ -153,7 +153,7 @@
 			if (this.isMraid) { mraid.open(url); }
 			else { window.open(url, '_blank'); }
 		},
-		contract: function(e){
+		contract: function(width, height, e){
 			if (!this.adIsExpanded) { return; }
 			else { this.adIsExpanded = false; }
 
@@ -180,8 +180,10 @@
 			}
 
 			if (this.iframeEl) {
-				this.iframeEl.style.width = this.iframeContractSize.x + 'px';
-				this.iframeEl.style.height = this.iframeContractSize.y + 'px';
+				if (typeof width === 'number') { width = width + 'px'; }
+				if (typeof height === 'number') { height = height + 'px'; }
+				this.iframeEl.style.width = width ? width : this.iframeContractSize.x + 'px';
+				this.iframeEl.style.height = height ? height : this.iframeContractSize.y + 'px';
 			}
 			if (!this.isMraid && !this.useCustomClose) { this.removeCloseButton(); }
 
