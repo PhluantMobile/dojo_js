@@ -203,7 +203,7 @@
 				if (width) { this.iframeEl.style.width = width; }
 				if (height) { this.iframeEl.style.height = height; }
 			}
-			if (this.isMraid) { mraid.expand(); }
+			if (this.isMraid && !this.isInterstitial) { mraid.expand(); }
 
 			if (!this.useCustomClose && !this.isMraid) {
 				this.addCloseButton();
