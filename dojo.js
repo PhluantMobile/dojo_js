@@ -1,7 +1,7 @@
-/*Dojo.js Framework v1.2.1 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
+/*Dojo.js Framework v1.2.2 | (c) 2016 Phluant, Inc. All rights Reserved | See documentation for more details*/
 (function(){
 	window.dojo = {
-		version: '1.2.1',
+		version: '1.2.2',
 		adIsExpanded: false, /* TODO:  remove this stupid property */
 		closeCallback: null,
 		geocoder: null,
@@ -677,12 +677,15 @@
 	};
 	dojo.iosVersion = dojo.iosVersionCheck();
 	if(typeof(global_ad_id1) !== 'undefined'){
+    dojo.isDojo = true;
 		var newUrl = global_ad_id1[0].url.split('?');
 		var metricsArray = newUrl[1].split('&');
 		var metrics = {};
 		for(var i=0; i<metricsArray.length; i++){
 		  var metricParams = metricsArray[i].split('=');
-		  metrics[metricParams[0]] = decodeURIComponent(metricParams[1]);
+      try {
+		    metrics[metricParams[0]] = decodeURIComponent(metricParams[1]);
+      } catch(e) { console.log(e); }
 		}
 		dojo.unitID = metrics.ad_id;
 		var scripts = document.getElementsByTagName('script');
@@ -695,7 +698,6 @@
 		    break;
 		  }
 		}
-		dojo.isDojo = true;
 		dojo.dojoUrl = global_ad_id1[0].url.substring(0,global_ad_id1[0].url.indexOf("dojo.phluant.com") + 17);
 	}
 
